@@ -1,11 +1,23 @@
 !> This module defines functions to manipulate strings of characters.
 !!
-!! It provides functions similar to those present in Python.
+!! It provides functions similar to those present in Python method strings:
 !!
-!!  - [x] `str()`: cast numbers to strings
-!!  - [x] `upper()`: Converts a string to uppercase
-!!  - [x] `lower()`: Converts a string to lowerrcase
-!!  - [x] `swapcase()`: Swap cases lower -> upper and upper -> lower
+!!  + `str()`: cast numbers to strings
+!!  + `upper()`: Converts a string to uppercase
+!!  + `lower()`: Converts a string to lowerrcase
+!!  + `swapcase()`: Swap cases: (lower -> upper) and (upper -> lower)
+!!  + `center()`: Centers a string in a line
+!!  + `reverse()`: Reverses a string "abc" -> "cba"
+!!  + `find()`: Finds a substring in a string
+!!  + `issub()`: Test whether a substring is in a string
+!!  + `count()`: Counts the number of occurrences of a substring in a string
+!!  + `replace()`: Replaces a substring with other in a string
+!!  + `endswith()`: Test wheter a string ends with a given suffix
+!!  + `startswith()`: Test wheter a string starts with a given prefix
+!!  + `lstrip()`: Removes leading chars in a string
+!!  + `rstrip()`: Removes trailing chars in a string
+!!  + `strip()`: Removes leading and trailing chars in a string
+!!  + `zfill()`: Padds with zeroes a string
 
 module strings
 
