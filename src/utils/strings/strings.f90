@@ -185,16 +185,16 @@ contains
   end function strip
 
   !> Return the number of occurrences of substring sub in string S[start:end].
-  function count(S, sub, start, end) result(count)
+  function count_sub(S, sub, start, end) result(cnt)
     implicit none
-    character(len=*), intent(in) :: S !< Original string to which count occurrences
+    character(len=*), intent(in) :: S   !< Original string
     character(len=*), intent(in) :: sub !< substring to count
     integer, intent(in), optional :: start !< initial position to consider
-    integer, intent(in), optional :: end   !< final position to consider
-    integer :: count                       !< Number of occurrences of sub in S
+    integer, intent(in), optional :: end !< final position to consider
+    integer :: cnt              !< Number of occurrences of sub in S
     integer :: i
     integer :: start_, end_
-    count = 0
+    cnt = 0
     start_ = 1
     end_ = len(trim(S))
 
@@ -211,9 +211,9 @@ contains
       i = index(S(start_:end_), sub)
       IF (i == 0) return
       start_ = start_ + i
-      count = count + 1
+      cnt = cnt + 1
     end do
-  end function count
+  end function count_sub
 
   !> @brief Returns .True. if sub is present in S, .False. otherwise
   function issub(S, sub) result(is_in)
@@ -222,7 +222,7 @@ contains
     character(len=*), intent(in) :: sub !< substring to find
     logical :: is_in                    !< True if `sub` is present in `S`
 
-    is_in = (count(S, sub) > 0)
+    is_in = (count_sub(S, sub) > 0)
   end function issub
 
   !> Pad a string with zeroes ("0") to specified width. If width is <= input
@@ -338,7 +338,7 @@ contains
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
     write (S_, '(g0)') rin
-    Sout = rstrip(S_, '0 ')
+    Sout = lower(rstrip(S_, '0 '))
   end function dp2str
 
   !> Casts a real(8) into an string
@@ -348,7 +348,7 @@ contains
     character(len=:), allocatable :: Sout !< String converted
     character(len=21) :: S_
     write (S_, '(g0)') rin
-    Sout = rstrip(S_, '0 ')
+    Sout = lower(rstrip(S_, '0 '))
   end function r2str
 
 end module strings
