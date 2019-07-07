@@ -42,7 +42,7 @@ module strings
 contains
 
   !> @brief Returns a copy of the string converted to uppercase.
-  function str_upper(S) result(Sout)
+  function upper(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S     !< Original string
     character(len=:), allocatable :: Sout !< String converted to uppercase
@@ -53,10 +53,10 @@ contains
       n = INDEX(ascii_lowercase, Sout(i:i))
       IF (n /= 0) Sout(i:i) = ascii_uppercase(n:n)
     end do
-  end function str_upper
+  end function upper
 
   !> @brief Returns a copy of the string converted to lowercase.
-  function str_lower(S) result(Sout)
+  function lower(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     character(len=:), allocatable :: Sout !< String converted to uppercase
@@ -67,10 +67,10 @@ contains
       n = index(ascii_uppercase, Sout(i:i))
       IF (n /= 0) Sout(i:i) = ascii_lowercase(n:n)
     end do
-  end function str_lower
+  end function lower
 
   !> @brief Return str with case of letters swapped
-  function str_swapcase(S) result(Sout)
+  function swapcase(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     character(len=:), allocatable :: Sout !< String with cases swapped
@@ -85,10 +85,10 @@ contains
         IF (nl /= 0) Sout(i:i) = ascii_uppercase(nl:nl)
       end if
     end do
-  end function str_swapcase
+  end function swapcase
 
   !> @brief Reverse a string.
-  function str_reverse(S) result(Sout)
+  function reverse(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     character(len=:), allocatable :: Sout !< Reversed string
@@ -99,7 +99,7 @@ contains
       Sout(i:i) = S(n:n)
       n = n - 1
     end do
-  end function str_reverse
+  end function reverse
 
   !> Return True if S starts with the specified prefix, False otherwise.
   !!
@@ -125,7 +125,7 @@ contains
 
   !> This function returns a copy of the string with leading chars removed
   !!
-  function str_lstrip(S, chars) result(Sout)
+  function lstrip(S, chars) result(Sout)
     implicit none
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
@@ -138,11 +138,11 @@ contains
 
     n = verify(S, ch_)
     Sout = S(n:)
-  end function str_lstrip
+  end function lstrip
 
   !> This function returns a copy of the string with trailing chars removed
   !!
-  function str_rstrip(S, chars) result(Sout)
+  function rstrip(S, chars) result(Sout)
     implicit none
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
@@ -155,11 +155,11 @@ contains
 
     n = verify(S, chars, back=.True.)
     Sout = S(:n)
-  end function str_rstrip
+  end function rstrip
 
   !> This function returns a copy of the string with leading and trailing chars removed
   !!
-  function str_strip(S, chars) result(Sout)
+  function strip(S, chars) result(Sout)
     implicit none
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
@@ -169,11 +169,11 @@ contains
     ch_ = ' '
     if (Present(chars)) ch_ = chars
 
-    Sout = str_lstrip(str_rstrip(S, ch_), ch_)
-  end function str_strip
+    Sout = lstrip(rstrip(S, ch_), ch_)
+  end function strip
 
   !> Return the number of occurrences of substring sub in string S[start:end].
-  function str_count(S, sub, start, end) result(count)
+  function count(S, sub, start, end) result(count)
     implicit none
     character(len=*), intent(in) :: S !< Original string to which count occurrences
     character(len=*), intent(in) :: sub !< substring to count
@@ -201,22 +201,22 @@ contains
       start_ = start_ + i
       count = count + 1
     end do
-  end function str_count
+  end function count
 
   !> @brief Returns .True. if sub is present in S, .False. otherwise
-  function str_issub(S, sub) result(is_in)
+  function issub(S, sub) result(is_in)
     implicit none
     character(len=*), intent(in) :: S   !< Original string
     character(len=*), intent(in) :: sub !< substring to find
     logical :: is_in                    !< True if `sub` is present in `S`
 
-    is_in = (str_count(S, sub) > 0)
-  end function str_issub
+    is_in = (count(S, sub) > 0)
+  end function issub
 
   !> Pad a string with zeroes ("0") to specified width. If width is <= input
   !!        string width, then the original string is returned.
   !! @note The string is never truncated
-  function str_zfill(S, width) result(Sout)
+  function zfill(S, width) result(Sout)
     implicit none
     character(len=*), intent(in) :: S     !< Original string
     integer, intent(in) :: width          !< width of padded string
@@ -228,11 +228,11 @@ contains
     else
       Sout = repeat("0", width - lS)//S
     endif
-  end function str_zfill
+  end function zfill
 
   !> Center a string to a specified width.  The default character to fill in the
   !>        centered string is a blank character.
-  function str_center(S, width, fillchar) result(Sout)
+  function center(S, width, fillchar) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     integer, intent(in) :: width      !< Total width of centered string
@@ -254,10 +254,10 @@ contains
         Sout = repeat(fchar_, (Lfill / 2) + 1)//trim(S)//repeat(fchar_, Lfill / 2)
       endif
     endif
-  end function str_center
+  end function center
 
   !> Return the lowest index in S where substring sub is found
-  function str_find(S, sub, start, end) result(nindex)
+  function find(S, sub, start, end) result(nindex)
     implicit none
     integer :: nindex !< position where found
     character(len=*), intent(IN) :: S      !< original string
@@ -280,10 +280,10 @@ contains
 
     nindex = index(S(start_:end_), sub)
     IF (nindex /= 0) nindex = nindex + (start_ - 1)
-  end function str_find
+  end function find
 
   !> Return a copy with all occurrences of substring old replaced by new
-  function str_replace(S, old, new, count) result(Sout)
+  function replace(S, old, new, count) result(Sout)
     implicit none
     character(len=*), intent(in) :: S   !< original string
     character(len=*), intent(in) :: old !< substring to replace
@@ -307,7 +307,7 @@ contains
       Sout = Sout(:i - 1)//new//Sout(i + nold:)
       c = c + 1
     end do
-  end function str_replace
+  end function replace
 
   !> Casts a default integer into an string
   function i2str(nin) result(Sout)
@@ -316,7 +316,7 @@ contains
     character(len=:), allocatable :: Sout !< String converted
     character(len=10) :: S_
     write (S_, '(i8)') nin
-    Sout = str_strip(S_)
+    Sout = strip(S_)
   end function i2str
 
   !> Casts a real(8) into an string
@@ -326,7 +326,7 @@ contains
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
     write (S_, '(g0)') rin
-    Sout = str_rstrip(S_, '0 ')
+    Sout = rstrip(S_, '0 ')
   end function dp2str
 
   !> Casts a real(8) into an string
@@ -336,7 +336,7 @@ contains
     character(len=:), allocatable :: Sout !< String converted
     character(len=21) :: S_
     write (S_, '(g0)') rin
-    Sout = str_rstrip(S_, '0 ')
+    Sout = rstrip(S_, '0 ')
   end function r2str
 
 end module strings
