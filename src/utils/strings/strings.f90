@@ -1,29 +1,61 @@
 !> This module defines functions to manipulate strings of characters.
 !!
-!! It provides functions similar to those present in Python
+!! It provides functions similar to those present in Python.
+!!
+!!  - [x] `str()`: cast numbers to strings
+!!  - [x] `upper()`: Converts a string to uppercase
+!!  - [x] `lower()`: Converts a string to lowerrcase
+!!  - [x] `swapcase()`: Swap cases lower -> upper and upper -> lower
+
 module strings
 
   character(*), Parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
   character(*), Parameter :: ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
   Public
+  Private :: i2str, r2str, dp2str
+
+  !> `str()` converts a number (integer or real) to a string
+  !!
+  !! Use:
+  !! ```
+  !! USE strings, only: str
+  !! print *, 'I2str: - int:', 123, '- string: |'//str(123)//'|'
+  !! print *, 'r2str:  - real:', 123.121000_4, '- string: |'//str(123.12100_4)//'|'
+  !! print *, 'dp2str: - real:', 123.1221_8, '- string: |'//str(123.1221_8)//'|'
+  !! print *, 'dp2str: - real:', -123.121_8, '- string: |'//str(-123.121_8)//'|'
+  !! print *, 'dp2str: - real:', -123.1221e-12_8, '- string: |'//str(-123.1221e-12_8)//'|'
+  !! ```
+  !! Gives:
+  !! ```
+  !! !    I2str: - int:         123 - string: |123|
+  !! !    r2str:  - real:   123.121002     - string: |123.121002|
+  !! !    dp2str: - real:   123.12210000000000      - string: |123.1221|
+  !! !    dp2str: - real:  -123.12100000000000      - string: |-123.121|
+  !! !    dp2str: - real:  -1.2312210000000001E-010 - string: |-0.12312210000000001E-009|
+  !! !
+  !! ```
+  interface str
+    module procedure i2str, r2str, dp2str
+  end interface str
+
 contains
 
-  !> @brief Return a copy of the string converted to uppercase.
+  !> @brief Returns a copy of the string converted to uppercase.
   function str_upper(S) result(Sout)
     implicit none
-    character(len=*), intent(in) :: S !< Original string
+    character(len=*), intent(in) :: S     !< Original string
     character(len=:), allocatable :: Sout !< String converted to uppercase
     integer :: i
     integer :: n
     Sout = S
     do i = 1, len_trim(S)
-      n = INDEX(ascii_lowercase, Sout(i:i)) ! Find the location of letter
-      IF (n /= 0) Sout(i:i) = ascii_uppercase(n:n) ! If current substring is a lower case letter, make it upper case
+      n = INDEX(ascii_lowercase, Sout(i:i))
+      IF (n /= 0) Sout(i:i) = ascii_uppercase(n:n)
     end do
   end function str_upper
 
-  !> @brief Return a copy of the string converted to lowercase.
+  !> @brief Returns a copy of the string converted to lowercase.
   function str_lower(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
@@ -32,8 +64,8 @@ contains
     integer :: n
     Sout = S
     do i = 1, len_trim(S)
-      n = index(ascii_uppercase, Sout(i:i)) ! Find the location of letter
-      IF (n /= 0) Sout(i:i) = ascii_lowercase(n:n) ! If current substring is a upper case letter, make it lower case
+      n = index(ascii_uppercase, Sout(i:i))
+      IF (n /= 0) Sout(i:i) = ascii_lowercase(n:n)
     end do
   end function str_lower
 
@@ -98,9 +130,13 @@ contains
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
     character(len=:), allocatable :: Sout                        !< String with chars removed
-
     integer :: n
-    n = verify(S, chars)
+    character(len=:), allocatable :: ch_
+
+    ch_ = ' '
+    if (Present(chars)) ch_ = chars
+
+    n = verify(S, ch_)
     Sout = S(n:)
   end function str_lstrip
 
@@ -112,6 +148,10 @@ contains
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
     character(len=:), allocatable :: Sout !< String with chars removed
     integer :: n
+    character(len=:), allocatable :: ch_
+
+    ch_ = ' '
+    if (Present(chars)) ch_ = chars
 
     n = verify(S, chars, back=.True.)
     Sout = S(:n)
@@ -124,7 +164,12 @@ contains
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
     character(len=:), allocatable :: Sout !< String with chars removed
-    Sout = str_lstrip(str_rstrip(S, chars), chars)
+    character(len=:), allocatable :: ch_
+
+    ch_ = ' '
+    if (Present(chars)) ch_ = chars
+
+    Sout = str_lstrip(str_rstrip(S, ch_), ch_)
   end function str_strip
 
   !> Return the number of occurrences of substring sub in string S[start:end].
@@ -158,12 +203,12 @@ contains
     end do
   end function str_count
 
-  !> @brief Return .True. if sub is present in string, .False. otherwise
+  !> @brief Returns .True. if sub is present in S, .False. otherwise
   function str_issub(S, sub) result(is_in)
     implicit none
-    character(len=*), intent(in) :: S !< Original string
+    character(len=*), intent(in) :: S   !< Original string
     character(len=*), intent(in) :: sub !< substring to find
-    logical :: is_in
+    logical :: is_in                    !< True if `sub` is present in `S`
 
     is_in = (str_count(S, sub) > 0)
   end function str_issub
@@ -173,9 +218,9 @@ contains
   !! @note The string is never truncated
   function str_zfill(S, width) result(Sout)
     implicit none
-    character(len=*), intent(in) :: S !< Original string
-    integer, intent(in) :: width        !< width of padded string
-    character(len=:), allocatable :: Sout
+    character(len=*), intent(in) :: S     !< Original string
+    integer, intent(in) :: width          !< width of padded string
+    character(len=:), allocatable :: Sout !< 0-padded string
     integer :: lS
     lS = len_trim(S)
     if (width <= lS) then
@@ -240,7 +285,7 @@ contains
   !> Return a copy with all occurrences of substring old replaced by new
   function str_replace(S, old, new, count) result(Sout)
     implicit none
-    character(len=*), intent(in) :: S !< original string
+    character(len=*), intent(in) :: S   !< original string
     character(len=*), intent(in) :: old !< substring to replace
     character(len=*), intent(in) :: new !< substring to substitute from old
     integer, optional, intent(in) :: count !< Maximum number of occurrences to replace
@@ -256,97 +301,42 @@ contains
 
     c = 0
     do
+      IF (c == count_) exit
       i = index(Sout, old)
       IF (i == 0) exit
       Sout = Sout(:i - 1)//new//Sout(i + nold:)
       c = c + 1
-      IF (c == count_) exit
     end do
-
   end function str_replace
 
-  ! !> @brief Split string based on a character delimiter and return string given by the
-  ! !>        column number.
-  ! !> @param[in] str - string to work on
-  ! !> @param[in] delim -
-  ! !> @param[in] col - delimited column to return
-  ! !> @return string
-  ! function str_split(S, sep, maxsplit) result(Sout)
-  !   implicit none
-  !   character(len=*), intent(in) :: S             !< original string
-  !   character(len=1), optional, intent(in) :: sep !< character delimiter
-  !   integer, optional, intent(in) :: maxsplit     !< Maximum number of splits to do
-  !   character(len=:), allocatable :: Sout
-  !   character(len=:), allocatable :: ctemp
-  !   character(len=:), allocatable :: cwork
-  !   integer :: i, cnt, lastpos
-  !   cnt = 0
-  !   lastpos = 0
-  !   Sout = ""
-  !   if (maxsplit .le. 0 .or. maxsplit .gt. (str_count(S, sep) + 1) .or. str_count(S, sep) .eq. 0) then
-  !     Sout = S
-  !     return
-  !   endif
-  !   ctemp = S//sep
-  !   do i = 1, len_trim(ctemp)
-  !     if (ctemp(i:i) .eq. sep) then
-  !       cnt = cnt + 1
-  !       if (cnt .eq. maxsplit) then
-  !         cwork = ctemp(lastpos + 1:i - 1)
-  !         exit
-  !       endif
-  !       lastpos = i
-  !     endif
-  !   end do
-  !   Sout = cwork
-  ! end function str_split
+  !> Casts a default integer into an string
+  function i2str(nin) result(Sout)
+    implicit none
+    integer, intent(IN) :: nin !< Integer to convert
+    character(len=:), allocatable :: Sout !< String converted
+    character(len=10) :: S_
+    write (S_, '(i8)') nin
+    Sout = str_strip(S_)
+  end function i2str
 
-  ! ! -------------------------------------------------------------------------------------
-  ! ! Function: str_uniq
-  ! !> @brief Removed duplicative entries from a \b delimited string.
-  ! !> @param[in] str - string to work on
-  ! !> @param[in] delim - character delimiter
-  ! !> @return modified string
-  ! ! -------------------------------------------------------------------------------------
-  ! function str_uniq(str, delim) result(strout)
-  !   implicit none
-  !   character(len=*), intent(in) :: str
-  !   character(len=1), intent(in) :: delim
-  !   character(len=:), allocatable :: strout
-  !   character(len=:), allocatable :: ctemp
-  !   character(len=:), allocatable :: col
-  !   integer :: n, nn, ncols, ndelims, nuniq, strlen
-  !   logical(kind=1) :: strfound
-  !   ncols = 0
-  !   ndelims = 0
-  !   nuniq = 0
-  !   strlen = 0
-  !   ctemp = trim(adjustl(str))
-  !   strlen = len(ctemp)
-  !   ndelims = str_count(ctemp, delim)
-  !   ncols = ndelims + 1
-  !   strout = ""
-  !   do n = 1, ncols
-  !     col = str_split(ctemp, delim, n)
-  !     if (n .eq. 1) then
-  !       strout = col//delim
-  !       nuniq = len(strout)
-  !     endif
-  !     strfound = .false.
-  !     do nn = 1, nuniq
-  !       if (col .eq. strout(nn:(nn + len(col)) - 1)) then
-  !         strfound = .true.
-  !         exit
-  !       endif
-  !     end do
-  !     if (.not. strfound) then
-  !       strout = strout//col//delim
-  !       nuniq = len(strout)
-  !     endif
-  !   end do
-  !   if (strout(1:1) .eq. delim) strout = strout(2:len(strout))
-  !   strlen = len(strout)
-  !   if (strout(strlen:strlen) .eq. delim) strout = strout(1:len(strout) - 1)
-  ! end function str_uniq
+  !> Casts a real(8) into an string
+  function dp2str(rin) result(Sout)
+    implicit none
+    real(8), intent(IN) :: rin !< number to convert
+    character(len=:), allocatable :: Sout !< String converted
+    character(len=25) :: S_
+    write (S_, '(g0)') rin
+    Sout = str_rstrip(S_, '0 ')
+  end function dp2str
+
+  !> Casts a real(8) into an string
+  function r2str(rin) result(Sout)
+    implicit none
+    real(4), intent(IN) :: rin !< number to convert
+    character(len=:), allocatable :: Sout !< String converted
+    character(len=21) :: S_
+    write (S_, '(g0)') rin
+    Sout = str_rstrip(S_, '0 ')
+  end function r2str
 
 end module strings

@@ -6,19 +6,17 @@ program test
   integer :: i1
   logical :: l1
 
-  c1 = "My name is Tony Stark.  Tony Stark is Iron Man."
+  c1 = "NumFor - Library for Simple Numerical computing."
 
-  i1 = str_count(c1, "Tony")
-  if (i1 /= 2) stop 'Failed str_count 1'
-  i1 = str_count(str_upper(c1), "TONY")
-  if (i1 /= 2) stop 'Failed str_count 2'
-  i1 = str_count(c1, "tony")
-  if (i1 /= 0) stop 'Failed str_count 3'
+  i1 = str_count(c1, "Num")
+  if (i1 /= 2) print *, '-- Failed str_count (2) --'
+  i1 = str_count(c1, "num")
+  if (i1 /= 0) stop '-- Failed str_count (0) --'
 
-  print *, c1
-  c2 = str_replace(c1, "Tony Stark", "Steve Rogers")
-  print *, c2
-  c2 = str_replace(c2, "Steve Rogers", "Tony Stark")
+  print *, 'Original: ', c1
+  c2 = str_replace(c1, "Num", "Sci")
+  print *, 'Replacing (Num -> Sci): ', c2
+  c2 = str_replace(c2, "Sci", "Num")
   if (c1 /= c2) stop 'Failed str_replace'
   !print *,"MYSTRING = ",c1
   !print *,"MYSTRING = ",c1
@@ -89,4 +87,9 @@ program test
   print *, 'Original:', c1, ' --- Chars to remove:', "ire"
   print *, 'Stripped:', str_strip(c1, "ire")
 
+  print *, 'I2str: - int:', 123, '- string: |'//str(123)//'|'
+  print *, 'r2str:  - real:', 123.121000_4, '- string: |'//str(123.12100_4)//'|'
+  print *, 'dp2str: - real:', 123.1221_8, '- string: |'//str(123.1221_8)//'|'
+  print *, 'dp2str: - real:', -123.121_8, '- string: |'//str(-123.121_8)//'|'
+  print *, 'dp2str: - real:', -123.1221e-12_8, '- string: |'//str(-123.1221e-12_8)//'|'
 end program test
