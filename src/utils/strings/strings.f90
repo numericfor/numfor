@@ -1,3 +1,5 @@
+!> @file **strings.f90** String manipulation routines
+
 !> This module defines functions to manipulate strings of characters.
 !!
 !! It provides functions similar to those present in Python method strings:
@@ -10,7 +12,7 @@
 !!  + `reverse()`: Reverses a string "abc" -> "cba"
 !!  + `find()`: Finds a substring in a string
 !!  + `issub()`: Test whether a substring is in a string
-!!  + `count()`: Counts the number of occurrences of a substring in a string
+!!  + `count_sub()`: Counts the number of occurrences of a substring in a string
 !!  + `replace()`: Replaces a substring with other in a string
 !!  + `endswith()`: Test wheter a string ends with a given suffix
 !!  + `startswith()`: Test wheter a string starts with a given prefix
@@ -18,14 +20,14 @@
 !!  + `rstrip()`: Removes trailing chars in a string
 !!  + `strip()`: Removes leading and trailing chars in a string
 !!  + `zfill()`: Padds with zeroes a string
-
+!!
 module strings
 
   character(*), Parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
   character(*), Parameter :: ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
   Public
-  Private :: i2str, r2str, dp2str
+  Private :: c2str, i2str, r2str, dp2str
 
   !> `str()` converts a number (integer or real) to a string
   !!
@@ -48,7 +50,7 @@ module strings
   !! !
   !! ```
   interface str
-    module procedure i2str, r2str, dp2str
+    module procedure :: c2str, i2str, r2str, dp2str
   end interface str
 
 contains
@@ -126,12 +128,12 @@ contains
 
   !> Return True if S starts with the specified prefix, False otherwise.
   !!
-  !! @note that differs from python method in that does not accept a tuple
+  !! @note that differs from python method in that does not accept a tuple as prefix
   function startswith(S, prefix) result(y)
     implicit none
     character(len=*), intent(IN) :: S      !< Original string
     character(len=*), intent(IN) :: prefix !< substring to test
-    logical :: y                !< .True. if `S` starts with `sub`
+    logical :: y                !< True if `S` starts with `prefix`
     y = (S(:len(prefix)) == prefix)
   end function startswith
 
@@ -321,7 +323,15 @@ contains
     end do
   end function replace
 
-  !> Casts a default integer into an string
+  ! Casts a character string into an string
+  function c2str(Sin) result(Sout)
+    implicit none
+    character(len=*), intent(IN) :: Sin !< Original string
+    character(len=:), allocatable :: Sout !< String converted
+    Sout = Sin
+  end function c2str
+
+  ! Casts a default integer into an string
   function i2str(nin) result(Sout)
     implicit none
     integer, intent(IN) :: nin !< Integer to convert
@@ -331,7 +341,7 @@ contains
     Sout = strip(S_)
   end function i2str
 
-  !> Casts a real(8) into an string
+  ! Casts a real(8) into an string
   function dp2str(rin) result(Sout)
     implicit none
     real(8), intent(IN) :: rin !< number to convert
@@ -341,7 +351,7 @@ contains
     Sout = lower(rstrip(S_, '0 '))
   end function dp2str
 
-  !> Casts a real(8) into an string
+  ! Casts a real(4) into an string
   function r2str(rin) result(Sout)
     implicit none
     real(4), intent(IN) :: rin !< number to convert

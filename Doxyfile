@@ -155,14 +155,13 @@ LOOKUP_CACHE_SIZE      = 0
 # Note: This will also disable the warnings about undocumented members that are
 # normally produced when WARNINGS is set to YES.
 # The default value is: NO.
-# JF: We should document everything and use NO her.YES para API 
+# JF: We should document everything and use NO. YES only for API docs
 EXTRACT_ALL            = NO
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
 # The default value is: NO.
-# JF: YES para API 
-EXTRACT_PRIVATE        = YES
+EXTRACT_PRIVATE        = NO
 
 EXTRACT_PACKAGE        = NO
 

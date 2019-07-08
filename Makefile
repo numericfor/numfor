@@ -27,7 +27,7 @@ PRJ = "numfor"
 VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
 
 # ######################################################################
-LIB_NAMES := utils/strings/strings.f90
+LIB_NAMES := utils/strings/strings.f90 utils/strings/oopstring.f90
 XTR_NAMES = 
 
 

@@ -4,4 +4,4 @@ This library consists of several modules to ease the scientific work. It aims to
 
 It provides:
 
-- [X] String functions
+- [X] String functions, in file strings.f90
