@@ -92,4 +92,7 @@ program test
   print *, 'dp2str: - real:', 123.1221_8, '- string: |'//str(123.1221_8)//'|'
   print *, 'dp2str: - real:', -123.121_8, '- string: |'//str(-123.121_8)//'|'
   print *, 'dp2str: - real:', -123.1221e-12_8, '- string: |'//str(-123.1221e-12_8)//'|'
+  print *, multiply(c1, 2)
+  print *, multiply('hola', 3)
+  print *, multiply(3, 'hola')
 end program test

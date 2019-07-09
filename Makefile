@@ -124,7 +124,7 @@ library: $(OBJD)/strings.o $(MODD)/strings.mod
 
 #  Esta regla es para todos los tests (excepto test_FForma). Por ejemplo:
 #     make -k  exe=test_dubois11 test_dubois11
-$(test): $(LIB_OBJECTS) $(TSTD)/test_$(test).o
+$(test): $(LIB_OBJECTS) $(OBJD)/$(test).o $(TSTD)/test_$(test).o
 	$(FLINK) $^ -o $(BIND)/test_$(test)
 
 $(prog): $(LIB_OBJECTS) $(OBJD)/$(prog).o
@@ -179,3 +179,6 @@ myobjects: $(SOURCES)
 
 
 # DO NOT DELETE THIS LINE - used by make depend
+oopstring.o: strings.mod
+fstring.mod: $(top_dir)/src/utils/strings/oopstring.o
+strings.mod: $(top_dir)/src/utils/strings/strings.o
