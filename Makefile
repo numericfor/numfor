@@ -2,12 +2,13 @@
 
 SHELL = /bin/bash
 
+
 ################################################################################
 ######## TEMPORARY VARIABLES
 DEBUG=2
 ################################################################################
-
-#	Directorios	
+#	Variables defining Directory Structure
+#			
 # top_dir:=$(realpath $(dir $(PWD)))# Raíz de nuestro proyecto 
 top_dir:=$(realpath $(PWD))# Raíz de nuestro proyecto
 
@@ -20,13 +21,40 @@ PRGD:=$(SRCD)/progs
 OBJD:=$(top_dir)/lib
 MODD:=$(top_dir)/finclude
 BIND:=$(top_dir)/bin
-# Directorios para la documentación (código y teoría)
+# Directorios for documentation
 DOCDIR:=$(top_dir)/doc
+# ######################################################################
+#	Information on the project
 
 PRJ = "numfor"
 VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
 
 # ######################################################################
+
+MODULES := utils/strings
+
+# look for include files in
+# each of the modules
+CFLAGS += $(patsubst %,-I%, $(MODULES))
+
+# extra libraries if required
+LIBS :=
+# each module will add to this
+SRC :=
+# include the description for each module
+include $(patsubst %,%/module.mk,$(MODULES))
+# determine the object files
+OBJ := $(patsubst %.c,%.o,$(filter %.c,$(SRC))) 
+# $(patsubst %.y,%.o,$(filter %.y,$(SRC)))
+
+# dependencies
+include $(OBJ:.o=.d)
+# calculate C include
+# dependencies
+%.d: %.c
+	depend.sh ‘dirname $*.c‘ $(CFLAGS) $*.c > $@
+# ######################################################################
+
 LIB_NAMES := utils/strings/strings.f90 utils/strings/oopstring.f90
 XTR_NAMES = 
 
