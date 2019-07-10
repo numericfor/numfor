@@ -41,11 +41,12 @@ program test
   ! c2=uniq(c1,",")
   ! !print *,"UNIQ = ",c2
 
-  c1 = "Thor"
+  c1 = "-Thor"
   print *, "MYSTRING = ", c1
   c2 = zfill(c1, 10)
+  c1 = " -Thor"
   print *, "ZFILL = ", c2
-  c2 = zfill(c1, 2)
+  c2 = zfill(c1, 10)
   print *, "ZFILL = ", c2
 
   c1 = "Thor"

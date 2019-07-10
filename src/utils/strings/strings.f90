@@ -1,26 +1,7 @@
-!> @file **strings.f90** String manipulation routines
+!> @file strings.f90 provides routines for common string manipulation
 
 !> This module defines functions to manipulate strings of characters.
-!!
-!! It provides functions similar to those present in Python method strings:
-!!
-!!  + `str()`: cast numbers to strings
-!!  + `upper()`: Converts a string to uppercase
-!!  + `lower()`: Converts a string to lowerrcase
-!!  + `swapcase()`: Swap cases: (lower -> upper) and (upper -> lower)
-!!  + `center()`: Centers a string in a line
-!!  + `reverse()`: Reverses a string "abc" -> "cba"
-!!  + `find()`: Finds a substring in a string
-!!  + `issub()`: Test whether a substring is in a string
-!!  + `count_sub()`: Counts the number of occurrences of a substring in a string
-!!  + `replace()`: Replaces a substring with other in a string
-!!  + `endswith()`: Test wheter a string ends with a given suffix
-!!  + `startswith()`: Test wheter a string starts with a given prefix
-!!  + `lstrip()`: Removes leading chars in a string
-!!  + `rstrip()`: Removes trailing chars in a string
-!!  + `strip()`: Removes leading and trailing chars in a string
-!!  + `zfill()`: Padds with zeroes a string
-!!
+!! Documentation: @ref modstrings
 module strings
 
   character(*), Parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
@@ -53,6 +34,17 @@ module strings
     module procedure :: c2str, i2str, r2str, dp2str
   end interface str
 
+  !> Repeat string `S` a number of times
+  !!
+  !! Example:
+  !! ```
+  !! ! Define variables ...
+  !! c1 = "hola"
+  !! print *, 3 * c1
+  !! ! produces: "holaholahola"```
+  !! print *, c1 * 3
+  !! ! produces: "holaholahola"```
+  !!
   interface multiply
     module procedure :: left_multiply_int, right_multiply_int
   end interface multiply
@@ -221,19 +213,11 @@ contains
     end do
   end function count_sub
 
-  !> multiply the string `S` a number `n` of times
-  !!
-  !! Example:
-  !! ```
-  !! ! Define variables ...
-  !! c1 = "hola"
-  !! print *, 3*c1
-  !! ! produces: "holaholahola"```
-  !!
+  !> Multiply a string by an integer
   function left_multiply_int(n, S) result(Sout)
     implicit none
-    character(len=*), intent(in) :: S   !< Original string
-    integer, intent(in) :: n            !< number of repetitions
+    character(len=*), intent(in) :: S     !< Original string
+    integer, intent(in) :: n              !< number of repetitions
     character(len=:), allocatable :: Sout !< String multiplied n times
     integer :: i
     Sout = ''
@@ -242,15 +226,16 @@ contains
     end do
   end function left_multiply_int
 
+  !> Multiply a string by an integer
   function right_multiply_int(S, nr) result(Sout)
     implicit none
-    character(len=*), intent(in) :: S   !< Original string
-    integer, intent(in) :: nr !<
+    character(len=*), intent(in) :: S     !< Original string
+    integer, intent(in) :: nr             !< number of repetitions
     character(len=:), allocatable :: Sout !< String multiplied n times
     Sout = left_multiply_int(nr, S)
   end function right_multiply_int
 
-!> @brief Returns .True. if sub is present in S, .False. otherwise
+  !> @brief Returns .True. if sub is present in S, .False. otherwise
   function issub(S, sub) result(is_in)
     implicit none
     character(len=*), intent(in) :: S   !< Original string
@@ -260,9 +245,47 @@ contains
     is_in = (count_sub(S, sub) > 0)
   end function issub
 
-!> Pad a string with zeroes ("0") to specified width. If width is <= input
-!!        string width, then the original string is returned.
-!! @note The string is never truncated
+  !> Return a left-justified string of length width.
+  !! @note The string is never truncated
+  function ljust(S, width, fillchar) result(Sout)
+    implicit none
+    character(len=*), intent(in) :: S     !< Original string
+    integer, intent(in) :: width          !< width of padded string
+    character(len=1), optional, intent(in) :: fillchar !< Char used for filling
+    character(len=:), allocatable :: Sout !< 0-padded string
+    character(len=1) :: ch_
+    integer :: lS
+    ch_ = ' '; IF (present(fillchar)) ch_ = fillchar
+    lS = len_trim(S)
+    if (width <= lS) then
+      Sout = S
+    else
+      Sout = repeat(ch_, width - lS)//S
+    endif
+  end function ljust
+
+  !> Return a right-justified string of length width.
+  !! @note The string is never truncated
+  function rjust(S, width, fillchar) result(Sout)
+    implicit none
+    character(len=*), intent(in) :: S     !< Original string
+    integer, intent(in) :: width          !< width of padded string
+    character(len=1), optional, intent(in) :: fillchar !< Char used for filling
+    character(len=:), allocatable :: Sout !< 0-padded string
+    character(len=1) :: ch_
+    integer :: lS
+    ch_ = ' '; IF (present(fillchar)) ch_ = fillchar
+    lS = len_trim(S)
+    if (width <= lS) then
+      Sout = S
+    else
+      Sout = S//repeat(ch_, width - lS)
+    endif
+  end function rjust
+
+  !> Pad a string with zeroes ("0") to specified width. If width is <= input
+  !!        string width, then the original string is returned.
+  !! @note The string is never truncated
   function zfill(S, width) result(Sout)
     implicit none
     character(len=*), intent(in) :: S     !< Original string
@@ -273,35 +296,40 @@ contains
     if (width <= lS) then
       Sout = S
     else
-      Sout = repeat("0", width - lS)//S
+      if (startswith(S, '-')) then
+        Sout = "-"//repeat("0", width - lS)//S(2:)
+      else
+        Sout = repeat("0", width - lS)//S
+      end if
+
     endif
   end function zfill
 
-!> Center a string to a specified width.  The default character to fill in the
-!>        centered string is a blank character.
+  !> Center a string to a specified width.  The default character to fill in the
+  !!        centered string is a blank character.
   function center(S, width, fillchar) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     integer, intent(in) :: width      !< Total width of centered string
     character(len=1), optional, intent(in) :: fillchar !< Padding character (default to space)
     character(len=:), allocatable :: Sout !< A centered string of length width.
-    character(len=1) :: fchar_
+    character(len=1) :: ch_
     integer :: Lfill
 
-    fchar_ = " "
-    IF (present(fillchar)) fchar_ = fillchar
+    ch_ = " "
+    IF (present(fillchar)) ch_ = fillchar
 
     if (width > len_trim(S)) then
       Lfill = width - len_trim(S)
       if (mod(Lfill, 2) == 0) then
-        Sout = repeat(fchar_, Lfill / 2)//trim(S)//repeat(fchar_, Lfill / 2)
+        Sout = repeat(ch_, Lfill / 2)//trim(S)//repeat(ch_, Lfill / 2)
       else
-        Sout = repeat(fchar_, (Lfill / 2) + 1)//trim(S)//repeat(fchar_, Lfill / 2)
+        Sout = repeat(ch_, (Lfill / 2) + 1)//trim(S)//repeat(ch_, Lfill / 2)
       endif
     endif
   end function center
 
-!> Return the lowest index in S where substring sub is found
+  !> Return the lowest index in S where substring sub is found
   function find(S, sub, start, end) result(nindex)
     implicit none
     integer :: nindex !< position where found
@@ -327,7 +355,7 @@ contains
     IF (nindex /= 0) nindex = nindex + (start_ - 1)
   end function find
 
-!> Return a copy with all occurrences of substring old replaced by new
+  !> Return a copy with all occurrences of substring old replaced by new
   function replace(S, old, new, count) result(Sout)
     implicit none
     character(len=*), intent(in) :: S   !< original string
@@ -354,7 +382,7 @@ contains
     end do
   end function replace
 
-! Casts a character string into an string
+  ! Casts a character string into an string
   function c2str(Sin) result(Sout)
     implicit none
     character(len=*), intent(IN) :: Sin !< Original string
@@ -362,7 +390,7 @@ contains
     Sout = Sin
   end function c2str
 
-! Casts a default integer into an string
+  ! Casts a default integer into an string
   function i2str(nin) result(Sout)
     implicit none
     integer, intent(IN) :: nin !< Integer to convert
@@ -372,14 +400,19 @@ contains
     Sout = strip(S_)
   end function i2str
 
-! Casts a real(8) into an string
+  ! Casts a real(8) into an string
   function dp2str(rin) result(Sout)
     implicit none
     real(8), intent(IN) :: rin !< number to convert
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
-    write (S_, '(g0)') rin
-    Sout = lower(rstrip(S_, '0 '))
+    if ((rin > 1.e-6) .and. (rin < 1.e6)) then
+      write (S_, '(f18.8)') rin
+    else
+      write (S_, '(es21.8)') rin
+    end if
+
+    Sout = lower(rstrip(lstrip(S_), '0 '))
   end function dp2str
 
 ! Casts a real(4) into an string

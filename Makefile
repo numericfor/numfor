@@ -122,8 +122,7 @@ all: library
 
 library: $(OBJD)/strings.o $(MODD)/strings.mod
 
-#  Esta regla es para todos los tests (excepto test_FForma). Por ejemplo:
-#     make -k  exe=test_dubois11 test_dubois11
+# Once the library is working, we write tests, and compile them with this rule	
 $(test): $(LIB_OBJECTS) $(OBJD)/$(test).o $(TSTD)/test_$(test).o
 	$(FLINK) $^ -o $(BIND)/test_$(test)
 
