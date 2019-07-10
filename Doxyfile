@@ -1,3 +1,4 @@
+# -*- mode:conf -*-
 # Doxyfile 1.8.15
 
 # This file describes the settings to be used by the documentation system
@@ -842,9 +843,10 @@ INPUT_ENCODING         = UTF-8
 # *.f, *.for, *.tcl, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
 FILE_PATTERNS          = *.h \
-                         *.F90 \
-                         *.inc \
-                         *.md
+                         *.F90 \ 
+                         *.md \
+#                         *.inc \
+
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.

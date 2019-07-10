@@ -3,7 +3,7 @@
 !> This module defines functions to manipulate strings of characters.
 !! Documentation: @ref modstrings
 module strings
-
+  USE basic, only: dp
   character(*), Parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
   character(*), Parameter :: ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -400,10 +400,10 @@ contains
     Sout = strip(S_)
   end function i2str
 
-  ! Casts a real(8) into an string
+  ! Casts a real(dp) into an string
   function dp2str(rin) result(Sout)
     implicit none
-    real(8), intent(IN) :: rin !< number to convert
+    real(dp), intent(IN) :: rin !< number to convert
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
     if ((rin > 1.e-6) .and. (rin < 1.e6)) then

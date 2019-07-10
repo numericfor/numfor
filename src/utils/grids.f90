@@ -3,7 +3,10 @@ module grids
   implicit none
   real(8), parameter :: def_base = 10._8
 
-  public :: def_base, linspace, logspace
+  private
+  public :: linspace, logspace, arange
+
+contains
 
   !> Return evenly spaced numbers over a specified interval
   !!
@@ -18,6 +21,8 @@ module grids
   !!  linspace(2.0, 3.0, num=5, retstep=True)
   !!  ! gives: [ 2.  ,  2.25,  2.5 ,  2.75,  3.  ]
   !!  ! and retstep= 0.25
+  !!  !
+  !! ```
   !!
   function linspace(start, end, num, endpoint, retstep) result(x)
     implicit none
@@ -26,7 +31,7 @@ module grids
     integer, intent(IN) :: num !< Number of samples to generate. Must be positive.
     logical, optional, intent(IN) :: endpoint !< If True, `end` is the last sample. Otherwise, it is not included. Default is True
     real(8), optional, intent(OUT) :: retstep !< If present, return the step
-    real(8), dimension(num) :: x
+    real(8), dimension(num) :: x              !< An array of uniformly spaced numbers
     real(8) :: step
     integer(4) :: i
     x = Zero
@@ -52,8 +57,8 @@ module grids
 
   !> Makes a grid with numbers spaced evenly on a log scale
   !!
-  !! In linear space, the sequence starts at ``base ** start``
-  !! (`base` to the power of `start`) and ends with ``base ** end``
+  !! In linear space, the sequence starts at ``base**start``
+  !! (`base` to the power of `start`) and ends with ``base**end``
   !!
   !! Examples
   !!
@@ -64,14 +69,16 @@ module grids
   !! ! gives: [ 100.        ,  177.827941  ,  316.22776602,  562.34132519]
   !! logspace(2.0, 3.0, num=4, base=2.0)
   !! ! gives: array([ 4.        ,  5.0396842 ,  6.34960421,  8.        ])
+  !! !
+  !! ```
   !!
   function logspace(start, end, num, endpoint, base) result(x)
     implicit none
-    real(8), intent(IN) :: start !< ``base ** start`` is the starting value of the sequence.
-    real(8), intent(IN) :: end   !< ``base ** end`` is the final value of the sequence
+    real(8), intent(IN) :: start !< ``base**start`` is the starting value of the sequence.
+    real(8), intent(IN) :: end   !< ``base**end`` is the final value of the sequence.
     integer, optional, intent(IN) :: num !< Number of samples to generate. Must be positive.
-    logical, optional, intent(IN) :: endpoint !< If true, `end` is the last sample. Otherwise, it is not included. Default is True
-    real(8), optional, intent(IN) :: base     !< The base of the log space. Default is 10.0.
+    logical, optional, intent(IN) :: endpoint !< If True, `end` is the last sample. Otherwise, it is not included. Default is True
+    real(8), optional, intent(IN) :: base     !< The base of the log space. Default is 10.
     real(8), dimension(num) :: x              !< A sequence of numbers spaced evenly on a log scale.
 
     real(8) :: b_
@@ -95,26 +102,35 @@ module grids
     ! end do
   end function logspace
 
-  !> arange
+  !> arange: Return evenly spaced integer values within a given interval
   !!
+  !! Values are generated within the half-open interval ``[start, end)``
+  !! (in other words, the interval including `start` but excluding `end`).
   function arange(start, end, step) result(x)
     implicit none
-    real(8), intent(IN) :: start !< ``base ** start`` is the starting value of the sequence.
-    real(8), intent(IN) :: end   !< ``base ** end`` is the final value of the sequence
-    real(8), optional, intent(IN) :: step !< Number of samples to generate. Must be positive.
-    real(8), dimension(:), allocatable :: x !< A sequence of numbers spaced evenly
+    integer, intent(IN) :: start !< the starting value of the interval.
+    integer, intent(IN) :: end   !< the final value of the interval (not included)
+    integer, optional, intent(IN) :: step !< Spacing between values.
+    integer, dimension(:), allocatable :: x !< A sequence of numbers spaced evenly
     integer :: num
-
-    num = int((end - start) / step + 1)
-    x = np.linspace(start, end, num, endpoint=.True.)
+    !
+    IF (step == 0) return
+    step_ = 1; IF (present(step)) step_ = step
+    num = ceiling((end - start) / step)
+    IF (allocated(x) .and. (size(x) /= num)) deallocate (x)
+    IF (.not. allocated(x)) allocate (x(num))
+    x(1) = start
+    do i = 1, num
+      x(i + 1) = x(i) + step_
+    end do
   end function arange
 
-  !> savetxt Guarda un array 2D en un archivo de texto
-  !!
-  !! @note
-  !! Si fname es "stdout" o " ", o no están presente ni fname ni unit, usa stdout
-  !! Si se da fname el archivo se abre y cierra.
-  !! Si se da unit, el archivo queda abierto
+!> savetxt Guarda un array 2D en un archivo de texto
+!!
+!! @note
+!! Si fname es "stdout" o " ", o no están presente ni fname ni unit, usa stdout
+!! Si se da fname el archivo se abre y cierra.
+!! Si se da unit, el archivo queda abierto
   subroutine savetxt(a, fmt, fname, unit)
     implicit none
     real(8), dimension(:, :), intent(IN) :: a        !< Array a escribir a archivo de texto
@@ -139,7 +155,7 @@ module grids
         open (newunit=u, file=trim(fname))
         closef = .True.
       end if
-    else if (Present(unit)) then
+    else if (Present(unit)) then ! The file was already open before invoking the function
       IF (unit >= 0 .and. unit <= 99) u = unit
     end if
 

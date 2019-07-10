@@ -2,6 +2,7 @@
 
 !> Module defining the `fStr` object and its methods. Documentation: @ref modfstring
 module fString
+  USE basic, only: dp
   USE strings, only: str,&
     & st_upper => upper, st_lower => lower, st_swapcase => swapcase, &
     & st_startswith => startswith, st_endswith => endswith, &
@@ -17,7 +18,7 @@ module fString
 
   !> This type defines a string class, with its methods
   type :: fStr
-    character(len=:), allocatable :: val
+    character(len=:), allocatable :: val !< This holds the string of characters
 
   contains
 
@@ -44,7 +45,6 @@ module fString
     procedure :: rstrip
     procedure :: strip
 
-    ! procedure, private :: count
     procedure :: count => count_sub
 
     procedure :: center
@@ -70,15 +70,6 @@ module fString
   interface fStr
     module procedure set_anyvalue
   end interface fStr
-
-  ! interface
-  !   function reverse(S) result(Sout)
-  !     ! import fStr
-  !     ! class(fStr), intent(in) :: S
-  !     character(len=*), intent(in) :: S
-  !     character(len=:), allocatable :: Sout
-  !   end function reverse
-  ! end interface
 
 contains
 
@@ -212,7 +203,7 @@ contains
       S%val = str(value)
     type is (real)
       S%val = str(value)
-    type is (real(8))
+    type is (real(dp))
       S%val = str(value)
     end select
   end function set_anyvalue

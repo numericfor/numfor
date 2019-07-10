@@ -29,33 +29,33 @@ DOCDIR:=$(top_dir)/doc
 PRJ = "numfor"
 VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
 
-# ######################################################################
+# # ######################################################################
 
-MODULES := utils/strings
+# MODULES := utils
 
-# look for include files in
-# each of the modules
-CFLAGS += $(patsubst %,-I%, $(MODULES))
+# # look for include files in
+# # each of the modules
+# CFLAGS += $(patsubst %,-I%, $(MODULES))
 
-# extra libraries if required
-LIBS :=
-# each module will add to this
-SRC :=
-# include the description for each module
-include $(patsubst %,%/module.mk,$(MODULES))
-# determine the object files
-OBJ := $(patsubst %.c,%.o,$(filter %.c,$(SRC))) 
-# $(patsubst %.y,%.o,$(filter %.y,$(SRC)))
+# # extra libraries if required
+# LIBS :=
+# # each module will add to this
+# SRC :=
+# # include the description for each module
+# include $(patsubst %,%/module.mk,$(MODULES))
+# # determine the object files
+# OBJ := $(patsubst %.c,%.o,$(filter %.c,$(SRC))) 
+# # $(patsubst %.y,%.o,$(filter %.y,$(SRC)))
 
-# dependencies
-include $(OBJ:.o=.d)
-# calculate C include
-# dependencies
-%.d: %.c
-	depend.sh ‘dirname $*.c‘ $(CFLAGS) $*.c > $@
-# ######################################################################
+# # dependencies
+# include $(OBJ:.o=.d)
+# # calculate C include
+# # dependencies
+# %.d: %.c
+# 	depend.sh ‘dirname $*.c‘ $(CFLAGS) $*.c > $@
+# # ######################################################################
 
-LIB_NAMES := utils/strings/strings.f90 utils/strings/oopstring.f90
+LIB_NAMES := utils/strings.f90 utils/oopstring.f90
 XTR_NAMES = 
 
 
@@ -124,7 +124,7 @@ FLINK = $(F95) $(LDFLAGS)
 # ########################################################################
 # ##########################  IMPLICIT RULES  ###########################
 
-$(OBJD)/%.o : $(SRCD)/utils/strings/%.f90
+$(OBJD)/%.o : $(SRCD)/utils/%.f90
 	$(FC) -c -o $@ $<
 
 $(OBJD)/%.o : $(SRCD)/%.F90
