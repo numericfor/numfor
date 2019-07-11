@@ -4,12 +4,14 @@ SHELL = /bin/bash
 
 
 ################################################################################
-######## TEMPORARY VARIABLES
-DEBUG=2
+######                Information on the project
+#               
+PRJ = "numfor"
+VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
 ################################################################################
+
 #	Variables defining Directory Structure
 #			
-# top_dir:=$(realpath $(dir $(PWD)))# Raíz de nuestro proyecto 
 top_dir:=$(realpath $(PWD))# Raíz de nuestro proyecto
 
 # Directorios para código principal (SRCD), tests (TSTD)
@@ -21,13 +23,8 @@ PRGD:=$(SRCD)/progs
 OBJD:=$(top_dir)/lib
 MODD:=$(top_dir)/finclude
 BIND:=$(top_dir)/bin
-# Directorios for documentation
+# Folder for documentation
 DOCDIR:=$(top_dir)/doc
-# ######################################################################
-#	Information on the project
-
-PRJ = "numfor"
-VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
 
 # # ######################################################################
 
@@ -54,29 +51,35 @@ VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
 # %.d: %.c
 # 	depend.sh ‘dirname $*.c‘ $(CFLAGS) $*.c > $@
 # # ######################################################################
+# Source files	
+LIB_NAMES := utils/basic.f90 utils/strings.f90 utils/oopstring.f90
+XTR_NAMES := 
 
-LIB_NAMES := utils/strings.f90 utils/oopstring.f90
-XTR_NAMES = 
-
-
-# Por ahora nada acá		
 XTR_SOURCES := $(addprefix $(SRCD)/,$(XTR_NAMES))
 LIB_SOURCES := $(addprefix $(SRCD)/,$(LIB_NAMES))
 # ######################################################################	
 #	
-SOURCES:=  $(LIB_SOURCES)
+SOURCES:=  $(LIB_SOURCES) $(XTR_SOURCES)
 
-# Los objetos	
-LIB_OBJECTS = $(addprefix $(OBJD)/,$(notdir $(LIB_NAMES:f90=o)))
-XTR_OBJECTS = $(addprefix $(OBJD)/,$(XTR_NAMES:f90=o))
-ALL_OBJECTS =  $(XTR_OBJECTS) $(LIB_OBJECTS)
+# Objects files	
+LIB_OBJECTS := $(addprefix $(OBJD)/,$(notdir $(LIB_NAMES:f90=o)))
+XTR_OBJECTS := $(addprefix $(OBJD)/,$(XTR_NAMES:f90=o))
+ALL_OBJECTS :=  $(LIB_OBJECTS) $(XTR_OBJECTS)
 
+
+
+################################################################################
+
+######################################################################
+######                   TEMPORARY VARIABLES
+DEBUG=2
+######################################################################
 
 ######################################################################
 ############## Compiler-dependent commands and options ###############
 # Try to guess the architecture	
 arch:=-march=native
-# arch:=-march=core2
+
 ifeq ($(compiler),intel)
 # For the intel compiler
   F95:=ifort
@@ -108,17 +111,16 @@ else
   endif
   FFLAGS_EXTRA= -J $(MODD) $(FFLAGS_PAR) $(FFLAGS_PROF) $(FFLAGS_USER)
 endif
+
 ######################################################################
-# Donde buscar *.o y *.mod
-# INCLUDES= -I $(MODD) -I $(OBJD)
-INCLUDES= -I $(MODD) -I $(SRCD)
-# Donde encontrar los *.o no debería ser necesario acá		
-LDFLAGS=-L $(OBJD)
+# Path to *.mod and source files
+INCLUDES:= -I $(MODD) -I $(SRCD)
+# Path to *.o files
+LDFLAGS:=-L $(OBJD)
 
-
+# Commands for compiling and linking programs	
 FC = $(F95) $(INCLUDES) $(FFLAGS) $(FFLAGS_EXTRA)
-# FLINK = $(FC) $(LDFLAGS_EXTRA) $(LDFLAGS)
-FLINK = $(F95) $(LDFLAGS)
+FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 # 
 
 # ########################################################################
@@ -151,8 +153,8 @@ all: library
 library: $(OBJD)/strings.o $(MODD)/strings.mod
 
 # Once the library is working, we write tests, and compile them with this rule	
-$(test): $(LIB_OBJECTS) $(OBJD)/$(test).o $(TSTD)/test_$(test).o
-	$(FLINK) $^ -o $(BIND)/test_$(test)
+$(test): $(LIB_OBJECTS) $(OBJD)/$(test).o $(TSTD)/$(test).f90
+	$(FLINK) $^ -o $(BIND)/$(test)
 
 $(prog): $(LIB_OBJECTS) $(OBJD)/$(prog).o
 	$(FLINK) $^ -o $(BIND)/$@

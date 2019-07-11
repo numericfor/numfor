@@ -12,7 +12,6 @@ module basic
   use, intrinsic :: iso_fortran_env, only: stdin => input_unit, &
     stdout => output_unit, &
     stderr => error_unit
-  use strings, only: str
 
   integer, parameter :: sp = kind(1.0)
   integer, parameter :: dp = kind(1.d0)
@@ -40,21 +39,21 @@ module basic
   public :: print_msg
 
   ! Common constants
-  real(dp), public, parameter :: Zero = 0._dp
-  complex(dp), public, parameter :: C0 = (0._dp, 0._dp)
-  complex(dp), public, parameter :: C1 = (1._dp, 0._dp)
-  complex(dp), public, parameter :: CI = (0._dp, 1._dp)
+  real(dp), public, parameter :: Zero = 0._dp           !< Real cero
+  complex(dp), public, parameter :: C0 = (0._dp, 0._dp) !< Complex cero
+  complex(dp), public, parameter :: C1 = (1._dp, 0._dp) !< Complex unit
+  complex(dp), public, parameter :: CI = (0._dp, 1._dp) !< Complex imaginary unit
 
   ! Basic mathematical constants (mostly from gsl)
-  real(dp), public, parameter :: M_pi = 3.14159265358979323846264338328_dp      !<\< \f$ \pi \f$
-  real(dp), public, parameter :: M_dpi = 6.28318530717958647692528676656_dp      !< 2*pi
-  real(dp), public, parameter :: M_pi_2 = 1.57079632679489661923132169164_dp      !< pi/2
-  real(dp), public, parameter :: M_pi_4 = 0.78539816339744830966156608458_dp      !< pi/4
-  real(dp), public, parameter :: M_sqrtpi = 1.77245385090551602729816748334_dp      !< sqrt(pi)
-  real(dp), public, parameter :: M_2_sqrtpi = 1.12837916709551257389615890312_dp      !< 2/sqrt(pi)
-  real(dp), public, parameter :: M_1_pi = 0.31830988618379067153776752675_dp      !< 1/pi
-  real(dp), public, parameter :: M_2_pi = 0.63661977236758134307553505349_dp      !< 2/pi
-  real(dp), public, parameter :: M_lnpi = 1.14472988584940017414342735135_dp      !< ln(pi)
+  real(dp), public, parameter :: M_pi = 3.14159265358979323846264338328_dp !< \f$ \pi \f$
+  real(dp), public, parameter :: M_dpi = 6.28318530717958647692528676656_dp !< 2*pi
+  real(dp), public, parameter :: M_pi_2 = 1.57079632679489661923132169164_dp !< pi/2
+  real(dp), public, parameter :: M_pi_4 = 0.78539816339744830966156608458_dp !< pi/4
+  real(dp), public, parameter :: M_sqrtpi = 1.77245385090551602729816748334_dp !< sqrt(pi)
+  real(dp), public, parameter :: M_2_sqrtpi = 1.12837916709551257389615890312_dp !< 2/sqrt(pi)
+  real(dp), public, parameter :: M_1_pi = 0.31830988618379067153776752675_dp !< 1/pi
+  real(dp), public, parameter :: M_2_pi = 0.63661977236758134307553505349_dp !< 2/pi
+  real(dp), public, parameter :: M_lnpi = 1.14472988584940017414342735135_dp !< ln(pi)
   real(dp), public, parameter :: M_ln2 = 0.693147180559945309417232121458176568_dp !< ln(2)
   real(dp), public, parameter :: M_e = 2.71828182845904523536028747135_dp !< e
   real(dp), public, parameter :: M_log2e = 1.442695040888963407359924681001892137_dp !< log_2 (e)
@@ -69,12 +68,11 @@ contains
 
   ! ----------------------- Timer functions -----------------------
   !> Record date. Notice that Time difference with UTC is the last
-  function record_date(T) result(y)
+  function record_date() result(y)
     implicit none
-    class(timer), intent(in) :: T !< Timer
     integer, dimension(8) :: y !< Date in format
     integer :: d
-    call cpu_time(y)
+    call date_and_time(values=y)
     d = y(4)
     y(4:7) = y(5:8)
     y(8) = d
@@ -83,12 +81,13 @@ contains
   !< Start the timer
   subroutine start_timer(T)
     implicit none
-    class(timer), intent(in) :: T !< Timer
-    integer, dimension(8) :: d
+    class(timer), intent(out) :: T !< Timer
+    ! Set stop time and elapsed time to zero
     T%elapsed = Zero
     T%stop_cputime = Zero
     T%stop_date = 0
     T%date_elapsed = 0
+    ! Set the start time
     T%start_date = record_date()
     call cpu_time(T%start_cputime)
   end subroutine start_timer
@@ -96,15 +95,16 @@ contains
   !> stop_timer the timer and calculate time-differences
   subroutine stop_timer(T)
     implicit none
-    class(timer), intent(in) :: T !< Timer
+    class(timer), intent(inout) :: T !< Timer
     integer, dimension(4), parameter :: factors = [24, 60, 60, 1000] ! Factors to convert to higher time unit
+    integer :: i
 
     call cpu_time(T%stop_cputime)
     T%stop_date = record_date()
     T%elapsed = T%stop_cputime - T%start_cputime ! in seconds
     T%date_elapsed = T%start_date - T%stop_date
     do i = 7, 4, -1
-      if (date_elapsed(i) < 0) then
+      if (T%date_elapsed(i) < 0) then
         T%date_elapsed(i) = T%date_elapsed(i) + factors(i)
         T%date_elapsed(i - 1) = T%date_elapsed(i - 1) - 1
       end if
@@ -120,7 +120,7 @@ contains
 
     unit_ = stdout; IF (present(unit)) unit_ = unit
 
-    write (unit_, '(A,f14.2,A)') 'cpu time: ', elapsed, 's'
+    write (unit_, '(A,f14.2,A)') 'cpu time: ', T%elapsed, 's'
     write (unit_, '(A)') stamp_date_diff(T%date_elapsed)
   end subroutine print_elapsed
 
@@ -131,17 +131,18 @@ contains
     implicit none
     integer, dimension(8) :: dd !> date-format differs from usual
     character(len=:), allocatable :: output
-
+    character(len=4) :: tmp
+    !
     integer :: i, n
     character(len=3), parameter, dimension(7) :: timeunit = [' Y,', ' M,', ' d,', ' h:', ' m:', ' s.', 'ms ']
-    character(len=:), allocatable :: stamp
 
     do n = 1, 7     ! Get first non-zero value
       IF (dd(n) /= 0) exit
     end do
     output = ''
     do i = n, 7
-      output = output//dd(i)//timeunit(i)
+      write (tmp, '(I4)') dd(i)
+      output = output//trim(adjustl(tmp))//timeunit(i)
     end do
   end function stamp_date_diff
   ! ------------------End of Timer functions -----------------------
@@ -164,7 +165,7 @@ contains
     character(len=*), optional, intent(in) :: sub !< Routine name. Default = None
     integer, optional, intent(in) :: errcode !< Error code. Default = 1
     integer, optional, intent(in) :: unit    !< Unit to write. Default = stderr
-    integer, errcode_, unit_
+    integer :: errcode_, unit_
     errcode_ = 1; 
     IF (present(errcode)) errcode_ = errcode
     unit_ = stderr; IF (present(unit)) unit_ = unit
