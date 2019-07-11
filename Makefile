@@ -8,14 +8,18 @@ SHELL = /bin/bash
 #               
 PRJ = "numfor"
 VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
-################################################################################
 
-#	Variables defining Directory Structure
-#			
-top_dir:=$(realpath $(PWD))# Raíz de nuestro proyecto
+########	Variables defining Directory Structure	########################
+#	Path where make is invoked	
+# top_dir:=$(realpath $(CURDIR))# Root of the project
+#	Absolute path of this Makefile
+top_dir:=$(realpath $(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
+# #	Relative path of this Makefile
+# top_dir:=$(dir $(firstword $(MAKEFILE_LIST)))
 
-# Directorios para código principal (SRCD), tests (TSTD)
-# objetos *.obj, modulos (*.mod), ejecutables (en BIND)
+
+# Main Path of code (SRCD), tests (TSTD)
+# object files *.obj, modules (*.mod), executable files (in BIND), and documentation
 SRCD:=$(top_dir)/src
 TSTD:=$(SRCD)/tests
 PRGD:=$(SRCD)/progs
@@ -23,48 +27,70 @@ PRGD:=$(SRCD)/progs
 OBJD:=$(top_dir)/lib
 MODD:=$(top_dir)/finclude
 BIND:=$(top_dir)/bin
-# Folder for documentation
 DOCDIR:=$(top_dir)/doc
 
+################################################################################
+#	PROGRAMS
+depends=$(top_dir)/scripts/sfmakedepend
+
+######################################################################
+# Path to *.mod and source files
+# INCLUDES:= -I $(MODD) -I $(SRCD)
+INCLUDES:= -I $(MODD)
+
+# Path to *.o files
+LDFLAGS:=-L $(OBJD)
+
 # # ######################################################################
+MODULES := utils
 
-# MODULES := utils
-
-# # look for include files in
-# # each of the modules
-# CFLAGS += $(patsubst %,-I%, $(MODULES))
-
-# # extra libraries if required
-# LIBS :=
-# # each module will add to this
-# SRC :=
-# # include the description for each module
-# include $(patsubst %,%/module.mk,$(MODULES))
-# # determine the object files
-# OBJ := $(patsubst %.c,%.o,$(filter %.c,$(SRC))) 
-# # $(patsubst %.y,%.o,$(filter %.y,$(SRC)))
-
-# # dependencies
-# include $(OBJ:.o=.d)
-# # calculate C include
-# # dependencies
-# %.d: %.c
-# 	depend.sh ‘dirname $*.c‘ $(CFLAGS) $*.c > $@
 # # ######################################################################
-# Source files	
-LIB_NAMES := utils/basic.f90 utils/strings.f90 utils/oopstring.f90
-XTR_NAMES := 
+FMODULES =  $(addprefix $(SRCD)/,$(MODULES))
+# look for include files in
+# each of the modules
+INCLUDES += $(patsubst %,-I %, $(FMODULES))
 
-XTR_SOURCES := $(addprefix $(SRCD)/,$(XTR_NAMES))
-LIB_SOURCES := $(addprefix $(SRCD)/,$(LIB_NAMES))
-# ######################################################################	
-#	
-SOURCES:=  $(LIB_SOURCES) $(XTR_SOURCES)
+# extra libraries if required
+LIBS :=
+# each module will add to this
+SRC :=
 
-# Objects files	
-LIB_OBJECTS := $(addprefix $(OBJD)/,$(notdir $(LIB_NAMES:f90=o)))
-XTR_OBJECTS := $(addprefix $(OBJD)/,$(XTR_NAMES:f90=o))
-ALL_OBJECTS :=  $(LIB_OBJECTS) $(XTR_OBJECTS)
+# include the description for each module
+# include $(patsubst %,%/module.mk,$(FMODULES))
+include $(addsuffix /module.mk,$(FMODULES))
+
+# determine the object files
+# OBJ := $(patsubst %.f90,%.o,$(filter %.f90,$(SRC)))
+OBJ := $(addprefix $(OBJD)/,$(notdir $(SRC:.f90=.o)))
+
+# VPATH:= $(patsubs %,:%,)
+# dependencies
+include $(SRC:.f90=.d)
+# calculate code dependencies
+%.d: %.f90
+	$(depends) $(INCLUDES)  $< > $@
+
+tt:
+	@echo $(INCLUDES)
+	@echo 'SRC: ' $(SRC)
+	@echo 'OBJ: ' $(OBJ)
+
+
+# # # ######################################################################
+# # Source files	
+# LIB_NAMES := utils/basic.f90 utils/strings.f90 utils/oopstring.f90
+# XTR_NAMES := 
+
+# XTR_SOURCES := $(addprefix $(SRCD)/,$(XTR_NAMES))
+# LIB_SOURCES := $(addprefix $(SRCD)/,$(LIB_NAMES))
+# # ######################################################################	
+# #	
+# SOURCES:=  $(LIB_SOURCES) $(XTR_SOURCES)
+
+# # Objects files	
+# LIB_OBJECTS := $(addprefix $(OBJD)/,$(notdir $(LIB_NAMES:f90=o)))
+# XTR_OBJECTS := $(addprefix $(OBJD)/,$(XTR_NAMES:f90=o))
+# ALL_OBJECTS :=  $(LIB_OBJECTS) $(XTR_OBJECTS)
 
 
 
@@ -109,14 +135,10 @@ else
     FFLAGS_PAR:= 
     FFLAGS+= -O3 -funroll-all-loops
   endif
+
   FFLAGS_EXTRA= -J $(MODD) $(FFLAGS_PAR) $(FFLAGS_PROF) $(FFLAGS_USER)
 endif
 
-######################################################################
-# Path to *.mod and source files
-INCLUDES:= -I $(MODD) -I $(SRCD)
-# Path to *.o files
-LDFLAGS:=-L $(OBJD)
 
 # Commands for compiling and linking programs	
 FC = $(F95) $(INCLUDES) $(FFLAGS) $(FFLAGS_EXTRA)
@@ -126,20 +148,22 @@ FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 # ########################################################################
 # ##########################  IMPLICIT RULES  ###########################
 
-$(OBJD)/%.o : $(SRCD)/utils/%.f90
+%.o : %.f90
 	$(FC) -c -o $@ $<
+# $(OBJD)/%.o : $(SRCD)/utils/%.f90
+# 	$(FC) -c -o $@ $<
 
-$(OBJD)/%.o : $(SRCD)/%.F90
-	$(FC) -c -o $@ $<
+# $(OBJD)/%.o : $(SRCD)/%.F90
+# 	$(FC) -c -o $@ $<
 
-$(OBJD)/%.o : $(TSTD)/%.f90
-	$(FC) -c -o $@ $<
+# $(OBJD)/%.o : $(TSTD)/%.f90
+# 	$(FC) -c -o $@ $<
 
-$(OBJD)/%.o : $(PRGD)/%.F90
-	$(FC) -c -o $@ $<
+# $(OBJD)/%.o : $(PRGD)/%.F90
+# 	$(FC) -c -o $@ $<
 
-$(TSTD)%.o: $(TSTD)%.f90
-	$(FC) -c -o $@ $<
+# $(TSTD)%.o: $(TSTD)%.f90
+# 	$(FC) -c -o $@ $<
 
 %.f90: %.F90
 	$(FC) -E $< > $@  
