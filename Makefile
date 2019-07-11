@@ -32,6 +32,14 @@ DOCDIR:=$(top_dir)/doc
 ################################################################################
 #	PROGRAMS
 depends=$(top_dir)/scripts/sfmakedepend
+AR=ar
+
+######################################################################
+##############		     Some options               ##############
+# Decide whether the commands will be shwon or not
+VERBOSE = FALSE
+DEBUG=2
+######################################################################
 
 ######################################################################
 # Path to *.mod and source files
@@ -59,21 +67,15 @@ SRC :=
 # include $(patsubst %,%/module.mk,$(FMODULES))
 include $(addsuffix /module.mk,$(FMODULES))
 
-# determine the object files
-# OBJ := $(patsubst %.f90,%.o,$(filter %.f90,$(SRC)))
-OBJ := $(addprefix $(OBJD)/,$(notdir $(SRC:.f90=.o)))
+# determine the object files.
+# They will be in the subdictories of the code
+OBJ:= $(SRC:.f90=.o)
+#	Other alternatives	
+# OBJ:= $(patsubst %.f90,%.o,$(filter %.f90,$(SRC)))
+# OBJ := $(addprefix $(OBJD)/,$(notdir $(SRC:.f90=.o)))
 
-# VPATH:= $(patsubs %,:%,)
 # dependencies
 include $(SRC:.f90=.d)
-# calculate code dependencies
-%.d: %.f90
-	$(depends) $(INCLUDES)  $< > $@
-
-tt:
-	@echo $(INCLUDES)
-	@echo 'SRC: ' $(SRC)
-	@echo 'OBJ: ' $(OBJ)
 
 
 # # # ######################################################################
@@ -93,13 +95,19 @@ tt:
 # ALL_OBJECTS :=  $(LIB_OBJECTS) $(XTR_OBJECTS)
 
 
+# Hide or not the calls depending of VERBOSE
+ifeq ($(VERBOSE),TRUE)
+    HIDE =  
+else
+    HIDE = @
+endif
+
 
 ################################################################################
 
 ######################################################################
 ######                   TEMPORARY VARIABLES
-DEBUG=2
-######################################################################
+
 
 ######################################################################
 ############## Compiler-dependent commands and options ###############
@@ -150,8 +158,12 @@ FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 
 %.o : %.f90
 	$(FC) -c -o $@ $<
-# $(OBJD)/%.o : $(SRCD)/utils/%.f90
-# 	$(FC) -c -o $@ $<
+	# cp $@ $(OBJD)
+
+# calculate code dependencies
+%.d: %.f90
+	$(depends) $(INCLUDES)  $< > $@
+
 
 # $(OBJD)/%.o : $(SRCD)/%.F90
 # 	$(FC) -c -o $@ $<
@@ -174,7 +186,8 @@ FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 
 all: library
 
-library: $(OBJD)/strings.o $(MODD)/strings.mod
+library: $(OBJ)
+	$(HIDE)$(AR) rcs $(OBJD)/libnumfor.a $(OBJ)
 
 # Once the library is working, we write tests, and compile them with this rule	
 $(test): $(LIB_OBJECTS) $(OBJD)/$(test).o $(TSTD)/$(test).f90
