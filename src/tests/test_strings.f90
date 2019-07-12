@@ -18,43 +18,23 @@ program test
   print *, 'Replacing (Num -> Sci): ', c2
   c2 = replace(c2, "Sci", "Num")
   if (c1 /= c2) stop 'Failed replace'
-  !print *,"MYSTRING = ",c1
-  !print *,"MYSTRING = ",c1
-  c2 = upper(c1)
-  !print *,"UPPER = ",upper(c1)
-  c2 = lower(c1)
-  !print *,"LOWER = ",lower(c1)
+  print *, 'UPPER:', upper(c1)
+  print *, 'LOWER:', lower(c1)
 
-  ! c1="Ironman,Thor,Thanos,Black Panther,Winter Soldier"
-  ! !print *,"MYSTRING = ",c1
-  ! c2=split(c1,",",3)
-  ! !print *,"SPLIT = ",c2
-  ! c2=split(c1,",",4)
-  ! !print *,"SPLIT = ",c2
-  ! c2=split(c1,",",0)
-  ! !print *,"SPLIT = ",c2
-  ! c2=split(c1,",",3)
-  ! !print *,"SPLIT = ",c2
-
-  ! c1=",Ironman,Thor,,Thanos,Black Panther,Thanos,Thanos,Thor,Thor,,Winter Soldier,,,"
-  ! !print *,"MYSTRING = ",c1
-  ! c2=uniq(c1,",")
-  ! !print *,"UNIQ = ",c2
-
-  c1 = "-Thor"
+  c1 = "-One"
   print *, "MYSTRING = ", c1
   c2 = zfill(c1, 10)
-  c1 = " -Thor"
-  print *, "ZFILL = ", c2
-  c2 = zfill(c1, 10)
-  print *, "ZFILL = ", c2
+  print *, '| C1 | ZFILL(c1, 10) | = |', c1, '|', c2, '|'
 
-  c1 = "Thor"
+  c1 = "  -One"
+  c2 = zfill(c1, 10)
+  print *, '| C1 | ZFILL(c1, 10) | = |', c1, '|', c2, '|'
+
+  c1 = "Three"
   !print *,"MYSTRING = ",c1
   c2 = center(c1, 2)
-  !print *,"CENTER = ",c2
   c2 = center(c1, 5, fillchar="x")
-  !print *,"CENTER = ",c2
+
   c2 = center(c1, 7, fillchar="x")
   print *, "CENTER = ", c2
   c2 = center(c1, 20, fillchar="x")
@@ -62,38 +42,39 @@ program test
   c2 = center(c1, 20)
   print *, "CENTER = ", ":", c2, ":"
 
-  c1 = "Ironman,Thor,Thanos,Black Panther,Winter Soldier"
-  !print *,"MYSTRING = ",c1
+  c1 = "NumFor - Library for Simple Numerical computing. - NumFor"
+
   c2 = reverse(c1)
-  !print *,"REVERSE = ",":",c2,":"
+  IF (c1 /= reverse(c2)) stop "Reverse failed"
 
-  c1 = "Ironman,Thor,Thanos,Black Panther,Winter Soldier"
-  l1 = issub(c1, "Thor") ! TRUE
-  ! print *, '1.- l1', l1
-  if (.not. l1) stop 'failed issub 1'
+  l1 = issub(c1, 'for') ! TRUE
+  IF (.not. l1) stop 'failed issub 1'
+
   l1 = issub(c1, "Vision") ! FALSE
-  ! print *, '2.- l1', l1
-  if (l1) stop 'failed issub 2'
-  l1 = issub(c1, "THOR") ! False
-  ! print *, '3.- l1', l1
-  if (l1) stop 'failed issub 3'
-  l1 = issub(upper(c1), "THOR") ! True
-  ! print *, '4.- l1', l1
-  if (.not. l1) stop 'failed issub 4'
+  IF (l1) stop 'failed issub 2'
 
-  c1 = "ironman,Thor,Thanos,Black Panther,Winter Soldier"
-  if (swapcase(swapcase(c1)) .ne. c1) stop 'swapcase failed'
+  l1 = issub(c1, "FOR") ! False
+  IF (l1) stop 'failed issub 3'
+
+  l1 = issub(upper(c1), "FOR") ! True
+  IF (.not. l1) stop 'failed issub 4'
+
+  IF (swapcase(swapcase(c1)) .ne. c1) stop 'swapcase failed'
 
   ! test strip
-  print *, 'Original:', c1, ' --- Chars to remove:', "ire"
-  print *, 'Stripped:', strip(c1, "ire")
+  print *, 'Original:', c1, ' --- Chars to remove:', "Num"
+  print *, 'Stripped:', strip(c1, "Num")
+
+  ! test strip
+  print *, 'Original:', c1, ' --- Chars to remove:', "NumFor"
+  print *, 'Stripped:', strip(c1, "NumFor")
 
   print *, 'I2str: - int:', 123, '- string: |'//str(123)//'|'
   print *, 'r2str:  - real:', 123.121000_4, '- string: |'//str(123.121000_4)//'|'
   print *, 'dp2str: - real:', 123.1221_8, '- string: |'//str(123.1221_8)//'|'
   print *, 'dp2str: - real:', -123.121_8, '- string: |'//str(-123.121_8)//'|'
   print *, 'dp2str: - real:', -123.1221e-12_8, '- string: |'//str(-123.1221e-12_8)//'|'
-  print *, multiply(c1, 2)
-  print *, multiply('hola', 3)
-  print *, multiply(3, 'hola')
+  print *, c1, '* 2 =', multiply(c1, 2)
+  print *, 'hola * 3 =', multiply('hola', 3)
+  print *, '3 * hola =', multiply(3, 'hola')
 end program test
