@@ -1,0 +1,6 @@
+doc/html
+bin/
+*.d
+numfor.dox
+lib/libnumfor.a
+
