@@ -1,4 +1,4 @@
-# Module basic {#modbasic}
+# Submodule basic {#modbasic}
 
 This module provides some convenience definitions. 
 

@@ -19,8 +19,8 @@ program example_fstring1
   read (*, *) dir
   dir = dir//'/'                ! Add separator
 
-  width = 40 + len(dir)         ! Used for centering
-  title = ' These will the files created: '
+  width = 30 + len(dir)         ! Used for centering
+  title = ' These will be the files created: '
 
   ! Set some parameters
   param1 = 1.3_8

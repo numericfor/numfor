@@ -1,4 +1,4 @@
-# Module strings {#modstrings}
+# Submodule strings {#modstrings}
 
 ##  Description
 

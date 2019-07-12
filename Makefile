@@ -73,9 +73,9 @@ include $(deps)
 # ####################################################################
 # ############## Compiler-dependent commands and options #############
 ifeq ($(compiler),intel)
-  include compiler_intel.mk
+  include $(top_dir)/compiler_intel.mk
 else
-  include compiler_gnu.mk
+  include $(top_dir)/compiler_gnu.mk
 endif
 # ####################################################################
 # ############# Commands for compiling and linking programs ##########
@@ -102,10 +102,20 @@ $(OBJD)/libnumfor.a: $(OBJ)
 	$(AR) rcs $@ $<
 
 # Once the library is working, we write tests, and compile them with this rule	
-$(test): $(TSTD)/$(test).f90
-	$(FC) $(LDFLAGS)  $^ -o $(BIND)/$(test) $(LIBS)
+# Rule used to create the examples. For instance, to make test_strings:
+# make tst=strings test
+test: $(BIND)/test_$(tst)
+$(BIND)/test_$(tst): $(TSTD)/test_$(tst).f90
+	$(FC) $(LDFLAGS)  $^ -o $@ $(LIBS)
 
-$(prog): $(LIB_OBJECTS) $(OBJD)/$(prog).o
+# Once the library is working, we write examples, and compile them with this rule
+# Rule used to create the examples. For instance, to make ex_fstring:
+# make ex=fstring1 example
+example: $(BIND)/ex_$(ex)
+$(BIND)/ex_$(ex): $(top_dir)/docs/examples/ex_$(ex).f90
+	$(FC) $(LDFLAGS)  $^ -o $@ $(LIBS)
+
+$(example): $(LIB_OBJECTS) $(OBJD)/$(prog).o
 	$(FLINK) $^ -o $(BIND)/$@
 
 
@@ -114,11 +124,12 @@ $(prog): $(LIB_OBJECTS) $(OBJD)/$(prog).o
 
 doc:  $(DOCDIR)/html
 
-$(DOCDIR)/html: Doxyfile $(SRC) README.md
-	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' Doxyfile	|\
+$(DOCDIR)/html: $(top_dir)/Doxyfile $(SRC) $(top_dir)/README.md
+	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(top_dir)/Doxyfile	|\
 	sed -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 ${VERSION}|' | \
-	sed -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(PRJ).dox
-	doxygen $(PRJ).dox
+	sed -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
+	cd $(top_dir) && doxygen $(PRJ).dox && cd -
+
 
 .PHONY: library tags TAGS clean clean-all view-doc doc-api doc
 
@@ -139,10 +150,8 @@ TAGS: Makefile $(SRC)
 
 clean:
 	$(RM) -f $(top_dir)/*~
-	$(RM) -f $(SRCD)/*~
-	$(RM) -f $(SRCD)/*/*~
-	$(RM) -f $(TSTD)/*~
-	$(RM) -f $(top_dir)/docs/sources/*~
+	$(RM) -f $(top_dir)/*/*~
+	$(RM) -f $(top_dir)/*/*/*~
 
 
 clean-doc:

@@ -1,4 +1,4 @@
-# Module fString {#modfstring}
+# Submodule fString {#modfstring}
 The module fString provides the type `fStr()`, suitable for string manipulation.
 
 ##  Description 
