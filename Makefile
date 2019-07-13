@@ -34,7 +34,7 @@ compiler = gnu
 
 ################################################################################
 #	PROGRAMS
-depends:=$(top_dir)/scripts/sfmakedepend
+depends:=@$(top_dir)/scripts/sfmakedepend
 AR:=ar
 RM:=rm
 ######################################################################
