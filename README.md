@@ -1,7 +1,16 @@
 # NuMFor: Numeric Modern Fortran
 
-This library consists of several modules to ease the scientific work. It aims to provide utilities for simple computing, numerical and related.
+The goal of this project is to create a Fortran library similar to [Numpy](https://www.numpy.org)/[Scipy](https://www.scipy.org) for scientific computing.
+
+This library consists (will consist) of several modules to ease the scientific work. It aims to provide user-friendly utilities and relatively-efficient routines for scientific computing, numerical and related.
 
 It provides:
-  + A Submodule @subpage utils with basic, non-specific, functionality used in many (most?) scientific programming
+  + A Submodule @subpage utils with basic, non-specific, functionality used in many (most?) scientific programming.
+
+
+
+
+## Installation and use
+
+
 	

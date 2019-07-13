@@ -6,7 +6,7 @@ SHELL = /bin/bash
 ################################################################################
 ######                Information on the project
 #               
-PRJ = "numfor"
+PRJ = numfor
 VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
 
 ########	Definition of directory Structure	########################
@@ -18,8 +18,8 @@ top_dir:=$(realpath $(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 # executable files (BIND), and documentation (DOCDIR)
 SRCD:=$(top_dir)/src
 TSTD:=$(SRCD)/tests
-# PRGD:=$(SRCD)/progs
 
+SCRPTD:=$(top_dir)/scripts
 OBJD:=$(top_dir)/lib
 MODD:=$(top_dir)/finclude
 BIND:=$(top_dir)/bin
@@ -37,6 +37,7 @@ compiler = gnu
 depends:=@$(top_dir)/scripts/sfmakedepend
 AR:=ar
 RM:=rm
+MKDIR:=mkdir -p
 ######################################################################
 
 ######################################################################
@@ -66,19 +67,16 @@ include $(addsuffix /module.mk,$(FMODULES))
 OBJ:= $(SRC:.f90=.o)
 deps:= $(SRC:.f90=.d)
 
-# dependencies
-include $(deps)
-
 
 # ####################################################################
 # ############## Compiler-dependent commands and options #############
 ifeq ($(compiler),intel)
-  include $(top_dir)/compiler_intel.mk
+  include $(SCRPTD)/compiler_intel.mk
 else
-  include $(top_dir)/compiler_gnu.mk
+  include $(SCRPTD)/compiler_gnu.mk
 endif
 # ####################################################################
-# ############# Commands for compiling and linking programs ##########
+# ############# Commands for compiling and linking code     ##########
 FC = $(F95) $(INCLUDES) $(FFLAGS) $(FFLAGS_EXTRA)
 FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 
@@ -96,68 +94,108 @@ FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 # ####################################################################
 # ##########################  EXPLICIT RULES  ########################
 
+
 library: $(OBJD)/libnumfor.a
 
-$(OBJD)/libnumfor.a: $(OBJ) 
-	$(AR) rcs $@ $<
+$(OBJD)/libnumfor.a: $(OBJ)  | $(OBJD)
+	$(AR) rcs $@ $^
 
-# Once the library is working, we write tests, and compile them with this rule	
-# Rule used to create the examples. For instance, to make test_strings:
-# make tst=strings test
-test: $(BIND)/test_$(tst)
-$(BIND)/test_$(tst): $(TSTD)/test_$(tst).f90
-	$(FC) $(LDFLAGS)  $^ -o $@ $(LIBS)
+shared_library: $(OBJD)/libnumfor.so
 
-# Once the library is working, we write examples, and compile them with this rule
-# Rule used to create the examples. For instance, to make ex_fstring:
-# make ex=fstring1 example
-example: $(BIND)/ex_$(ex)
-$(BIND)/ex_$(ex): $(top_dir)/docs/examples/ex_$(ex).f90
-	$(FC) $(LDFLAGS)  $^ -o $@ $(LIBS)
+$(OBJD)/libnumfor.so: $(OBJ)  | $(OBJD)
+	$(FC) -shared -o $@ $^
 
-$(example): $(LIB_OBJECTS) $(OBJD)/$(prog).o
-	$(FLINK) $^ -o $(BIND)/$@
+$(OBJD) $(BIND):
+	$(MKDIR) $@
+
+# dependencies
+include $(deps)
 
 
 # ########################################################################
-# ######## DOCUMENTACIÓN
+# Once the library is working, we write and compile tests with this rule	
+# Rule used to create the examples. For instance, to make test_strings:
+# make tst=oopstring test
+# Default test will be test_strings
+tst=strings
+test: $(BIND)/test_$(tst)
+$(BIND)/test_$(tst): $(TSTD)/test_$(tst).f90 $(OBJD)/libnumfor.a | $(BIND)
+	$(FC) $(LDFLAGS)  $< -o $@ $(LIBS)
+
+# Once the library is working, we write and compile examples 
+# Rule used to create the examples. For instance, to make ex_fstring:
+# make ex=fstring1 example
+# Default example will be ex_ftring1
+ex=ftring1
+example: $(BIND)/ex_$(ex) 
+$(BIND)/ex_$(ex): $(top_dir)/docs/examples/ex_$(ex).f90 $(OBJD)/libnumfor.a | $(BIND)
+	$(FC) $(LDFLAGS)  $< -o $@ $(LIBS)
+
+# ########################################################################
+# ######## INSTALLATION
+
+# Defaul value. Could be override by command-line
+prefix=$(HOME)/.local
+INSTALL_LIB= $(prefix)/lib
+INSTALL_INCLUDE= $(prefix)/finclude/$(PRJ)
+install:
+	@echo "Installing to $(prefix)"
+	$(MKDIR) $(INSTALL_LIB) $(INSTALL_INCLUDE)
+
+
+# ########################################################################
+# ######## DOCUMENTATION
+DOXYF:=$(SCRPTD)/Doxyfile
 
 doc:  $(DOCDIR)/html
 
-$(DOCDIR)/html: $(top_dir)/Doxyfile $(SRC) $(top_dir)/README.md
-	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(top_dir)/Doxyfile	|\
+$(DOCDIR)/html: $(DOXYF) $(SRC) $(top_dir)/README.md
+	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) |\
 	sed -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 ${VERSION}|' | \
 	sed -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
 	cd $(top_dir) && doxygen $(PRJ).dox && cd -
 
 
-.PHONY: library tags TAGS clean clean-all view-doc doc-api doc
+.PHONY: library tags clean clean-backup clean-all view-doc doc-api doc
 
-doc-api: Doxyfile $(SRC) 
-	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' Doxyfile	|\
+doc-api: $(DOXYF) $(SRC)
+	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |'  $(DOXYF) |\
 	sed -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 ${VERSION}|' | \
 	sed -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|'	|\
-	sed -e 's|\(OUTPUT_DIRECTORY[ ]*=\)\(.*\)|\1 ../doc-api|' | sed -e 's|\(EXTRACT_PRIVATE[ ]*=\)\(.*\)|\1 NO|'	> $(PRJ)_api.dox
-	doxygen $(PRJ)_api.dox
+	sed -e 's|\(OUTPUT_DIRECTORY[ ]*=\)\(.*\)|\1 ../doc-api|' |\
+	sed -e 's|\(EXTRACT_PRIVATE[ ]*=\)\(.*\)|\1 NO|' > $(top_dir)/$(PRJ)_api.dox
+	cd $(top_dir) && doxygen $(PRJ)_api.dox && cd -
+
 
 view-doc: $(DOCDIR)/html
 	gio open $(DOCDIR)/html/index.html || firefox $(DOCDIR)/html/index.html
+
+# ########################################################################
+# ######## TAGS (for editing)
 
 tags: TAGS
 
 TAGS: Makefile $(SRC)
 	etags $(SRC)
 
-clean:
+# ########################################################################
+# ######## Cleaning
+
+clean: clean-backup clean-obj
+
+clean-backup:
 	$(RM) -f $(top_dir)/*~
 	$(RM) -f $(top_dir)/*/*~
 	$(RM) -f $(top_dir)/*/*/*~
 
-
-clean-doc:
-	$(RM) -f $(DOCDIR)/html
-
-clean-all: clean clean-doc
+clean-obj:
 	$(RM) $(MODD)/*.mod
+	$(RM) $(OBJD)/*.*
 	$(RM) $(OBJ)
 	$(RM) $(deps)
+
+clean-doc:
+	$(RM) -fr $(DOCDIR)/html
+	$(RM) -f $(top_dir)/$(PRJ).dox $(top_dir)/$(PRJ)_api.dox
+
+clean-all: clean-backup clean-obj clean-doc
