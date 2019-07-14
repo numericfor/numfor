@@ -59,6 +59,10 @@ program test
   l1 = issub(upper(c1), "FOR") ! True
   IF (.not. l1) stop 'failed issub 4'
 
+  c2 = '  hola    '
+  print *, '|', c2, '|'
+  print *, '|', adjustl(c2), '|'
+
   IF (swapcase(swapcase(c1)) .ne. c1) stop 'swapcase failed'
 
   ! test strip
@@ -74,7 +78,13 @@ program test
   print *, 'dp2str: - real:', 123.1221_8, '- string: |'//str(123.1221_8)//'|'
   print *, 'dp2str: - real:', -123.121_8, '- string: |'//str(-123.121_8)//'|'
   print *, 'dp2str: - real:', -123.1221e-12_8, '- string: |'//str(-123.1221e-12_8)//'|'
-  print *, c1, '* 2 =', multiply(c1, 2)
-  print *, 'hola * 3 =', multiply('hola', 3)
-  print *, '3 * hola =', multiply(3, 'hola')
+  print *, '|', '  12312 ', '|'
+  print *, 'rjust: |', rjust('  12312 ', 20), '|'
+  print *, 'ljust: |', ljust('  12312 ', 20), '|'
+
+  c1 = achar(9)//'tab-indented with 4 trailing spaces    '
+  print *, '|'//c1//'|'//rstrip(c1)//'|'
+  print *, '|'//c1//'|'//lstrip(c1)//'|'
+  print *, '|'//c1//'|'//strip(c1)//'|'
+  print *, '|'//c1//'|'//trim(adjustl(c1))//'|'
 end program test

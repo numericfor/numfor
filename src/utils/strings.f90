@@ -4,9 +4,15 @@
 !! Documentation: @ref modstrings
 module strings
   USE basic, only: dp
-  character(*), Parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
-  character(*), Parameter :: ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  character(*), parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
+  character(*), parameter :: accented_lowercase = 'áéíóúñàèìòùäëïöü'
+  character(*), parameter :: letters_lowercase = ascii_lowercase//accented_lowercase
 
+  character(*), parameter :: ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  character(*), Parameter :: accented_uppercase = 'ÁÉÍÓÚÑÀÈÌÒÙÄËÏÖÜ'
+  character(*), parameter :: letters_uppercase = ascii_uppercase//accented_uppercase
+
+  character(*), parameter :: blanks = ' '//achar(9)
   Public
   Private :: c2str, i2str, r2str, dp2str
 
@@ -34,25 +40,10 @@ module strings
     module procedure :: c2str, i2str, r2str, dp2str
   end interface str
 
-  !> Repeat string `S` a number of times
-  !!
-  !! Example:
-  !! ```
-  !! ! Define variables ...
-  !! c1 = "hola"
-  !! print *, 3 * c1
-  !! ! produces: "holaholahola"```
-  !! print *, c1 * 3
-  !! ! produces: "holaholahola"```
-  !!
-  interface multiply
-    module procedure :: left_multiply_int, right_multiply_int
-  end interface multiply
-
 contains
 
   !> @brief Returns a copy of the string converted to uppercase.
-  function upper(S) result(Sout)
+  pure function upper(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S     !< Original string
     character(len=:), allocatable :: Sout !< String converted to uppercase
@@ -60,13 +51,13 @@ contains
     integer :: n
     Sout = S
     do i = 1, len_trim(S)
-      n = INDEX(ascii_lowercase, Sout(i:i))
-      IF (n /= 0) Sout(i:i) = ascii_uppercase(n:n)
+      n = INDEX(letters_lowercase, Sout(i:i))
+      IF (n /= 0) Sout(i:i) = letters_uppercase(n:n)
     end do
   end function upper
 
   !> @brief Returns a copy of the string converted to lowercase.
-  function lower(S) result(Sout)
+  pure function lower(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     character(len=:), allocatable :: Sout !< String converted to uppercase
@@ -74,47 +65,48 @@ contains
     integer :: n
     Sout = S
     do i = 1, len_trim(S)
-      n = index(ascii_uppercase, Sout(i:i))
-      IF (n /= 0) Sout(i:i) = ascii_lowercase(n:n)
+      n = index(letters_uppercase, Sout(i:i))
+      IF (n /= 0) Sout(i:i) = letters_lowercase(n:n)
     end do
   end function lower
 
   !> @brief Return str with case of letters swapped
-  function swapcase(S) result(Sout)
+  pure function swapcase(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     character(len=:), allocatable :: Sout !< String with cases swapped
     integer :: i, nl, nu
     Sout = S
     do i = 1, len(S)
-      nu = index(ascii_uppercase, Sout(i:i))
+      nu = index(letters_uppercase, Sout(i:i))
       if (nu /= 0) then         ! if is uppercase
-        Sout(i:i) = ascii_lowercase(nu:nu)
+        Sout(i:i) = letters_lowercase(nu:nu)
       else
-        nl = index(ascii_lowercase, Sout(i:i)) ! is lower
-        IF (nl /= 0) Sout(i:i) = ascii_uppercase(nl:nl)
+        nl = index(letters_lowercase, Sout(i:i)) ! is lower
+        IF (nl /= 0) Sout(i:i) = letters_uppercase(nl:nl)
       end if
     end do
   end function swapcase
 
   !> @brief Reverse a string.
-  function reverse(S) result(Sout)
+  pure function reverse(S) result(Sout)
     implicit none
     character(len=*), intent(in) :: S !< Original string
     character(len=:), allocatable :: Sout !< Reversed string
     integer :: i, n
     Sout = S
     n = len(S)
-    do i = 1, len(S)
-      Sout(i:i) = S(n:n)
-      n = n - 1
-    end do
+    ! do i = 1, len(S)
+    !   Sout(i:i) = S(n:n)
+    !   n = n - 1
+    ! end do
+    forall (i=1:n) Sout(i:i) = S(n - i + 1:n - i + 1)
   end function reverse
 
   !> Return True if S starts with the specified prefix, False otherwise.
   !!
   !! @note that differs from python method in that does not accept a tuple
-  function endswith(S, suffix) result(y)
+  pure function endswith(S, suffix) result(y)
     implicit none
     character(len=*), intent(IN) :: S      !< Original string
     character(len=*), intent(IN) :: suffix !< substring to test
@@ -125,7 +117,7 @@ contains
   !> Return True if S starts with the specified prefix, False otherwise.
   !!
   !! @note that differs from python method in that does not accept a tuple as prefix
-  function startswith(S, prefix) result(y)
+  pure function startswith(S, prefix) result(y)
     implicit none
     character(len=*), intent(IN) :: S      !< Original string
     character(len=*), intent(IN) :: prefix !< substring to test
@@ -135,24 +127,27 @@ contains
 
   !> This function returns a copy of the string with leading chars removed
   !!
-  function lstrip(S, chars) result(Sout)
+  !! If chars is not present all blank: spaces (achar(32)) and tabs (achar(9))
+  !! are removed
+  pure function lstrip(S, chars) result(Sout)
     implicit none
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
-    character(len=:), allocatable :: Sout                        !< String with chars removed
+    character(len=:), allocatable :: Sout !< String with chars removed
     integer :: n
     character(len=:), allocatable :: ch_
 
-    ch_ = ' '
-    if (Present(chars)) ch_ = chars
+    ch_ = blanks; IF (Present(chars)) ch_ = chars
 
     n = verify(S, ch_)
     Sout = S(n:)
   end function lstrip
 
   !> This function returns a copy of the string with trailing chars removed
-  !!
-  function rstrip(S, chars) result(Sout)
+  !! @copydetails lstrip
+  !! @note that when used with no `chars` argument differs from intrinsic `trim`
+  !! in that it will also strip "tab" characters
+  pure function rstrip(S, chars) result(Sout)
     implicit none
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
@@ -160,30 +155,26 @@ contains
     integer :: n
     character(len=:), allocatable :: ch_
 
-    ch_ = ' '
-    if (Present(chars)) ch_ = chars
-
-    n = verify(S, chars, back=.True.)
+    ch_ = blanks; IF (Present(chars)) ch_ = chars
+    n = verify(S, ch_, back=.True.)
     Sout = S(:n)
   end function rstrip
 
   !> This function returns a copy of the string with leading and trailing chars removed
-  !!
-  function strip(S, chars) result(Sout)
+  !! @copydetails lstrip
+  pure function strip(S, chars) result(Sout)
     implicit none
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
     character(len=:), allocatable :: Sout !< String with chars removed
     character(len=:), allocatable :: ch_
 
-    ch_ = ' '
-    if (Present(chars)) ch_ = chars
-
+    ch_ = blanks; IF (Present(chars)) ch_ = chars
     Sout = lstrip(rstrip(S, ch_), ch_)
   end function strip
 
   !> Return the number of occurrences of substring sub in string S[start:end].
-  function count_sub(S, sub, start, end) result(cnt)
+  pure function count_sub(S, sub, start, end) result(cnt)
     implicit none
     character(len=*), intent(in) :: S   !< Original string
     character(len=*), intent(in) :: sub !< substring to count
@@ -213,30 +204,8 @@ contains
     end do
   end function count_sub
 
-  !> Multiply a string by an integer
-  function left_multiply_int(n, S) result(Sout)
-    implicit none
-    character(len=*), intent(in) :: S     !< Original string
-    integer, intent(in) :: n              !< number of repetitions
-    character(len=:), allocatable :: Sout !< String multiplied n times
-    integer :: i
-    Sout = ''
-    do i = 1, n
-      Sout = Sout//S
-    end do
-  end function left_multiply_int
-
-  !> Multiply a string by an integer
-  function right_multiply_int(S, nr) result(Sout)
-    implicit none
-    character(len=*), intent(in) :: S     !< Original string
-    integer, intent(in) :: nr             !< number of repetitions
-    character(len=:), allocatable :: Sout !< String multiplied n times
-    Sout = left_multiply_int(nr, S)
-  end function right_multiply_int
-
   !> @brief Returns .True. if sub is present in S, .False. otherwise
-  function issub(S, sub) result(is_in)
+  pure function issub(S, sub) result(is_in)
     implicit none
     character(len=*), intent(in) :: S   !< Original string
     character(len=*), intent(in) :: sub !< substring to find
@@ -245,9 +214,9 @@ contains
     is_in = (count_sub(S, sub) > 0)
   end function issub
 
-  !> Return a left-justified string of length width.
+  !> Returns a right-justified string of length width.
   !! @note The string is never truncated
-  function ljust(S, width, fillchar) result(Sout)
+  pure function rjust(S, width, fillchar) result(Sout)
     implicit none
     character(len=*), intent(in) :: S     !< Original string
     integer, intent(in) :: width          !< width of padded string
@@ -262,11 +231,11 @@ contains
     else
       Sout = repeat(ch_, width - lS)//S
     endif
-  end function ljust
+  end function rjust
 
-  !> Return a right-justified string of length width.
+  !> Returns a left-justified string of length width.
   !! @note The string is never truncated
-  function rjust(S, width, fillchar) result(Sout)
+  pure function ljust(S, width, fillchar) result(Sout)
     implicit none
     character(len=*), intent(in) :: S     !< Original string
     integer, intent(in) :: width          !< width of padded string
@@ -275,18 +244,19 @@ contains
     character(len=1) :: ch_
     integer :: lS
     ch_ = ' '; IF (present(fillchar)) ch_ = fillchar
-    lS = len_trim(S)
+    lS = len(S)
     if (width <= lS) then
       Sout = S
     else
       Sout = S//repeat(ch_, width - lS)
     endif
-  end function rjust
+
+  end function ljust
 
   !> Pad a string with zeroes ("0") to specified width. If width is <= input
   !!        string width, then the original string is returned.
   !! @note The string is never truncated
-  function zfill(S, width) result(Sout)
+  pure function zfill(S, width) result(Sout)
     implicit none
     character(len=*), intent(in) :: S     !< Original string
     integer, intent(in) :: width          !< width of padded string

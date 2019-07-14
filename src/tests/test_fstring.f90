@@ -14,20 +14,21 @@ program test
   c1 = "NumFor - Library for Simple Numerical computing."
   mystr1 = c1
   mystr2 = fStr(123123.e6)
-  mystr3 = fStr("hola")
-  print *, mystr1
+  mystr3 = fStr("hola allá")
+  print *, mystr1%upper()
   print *, mystr2
   print *, mystr3
   write (6, *) mystr3//mystr2
   write (6, *) mystr3//'chau'
   write (6, '(A)') mystr3       ! Esto no funciona
   call mystr3%writef(6, '(A)', [2], i1, iomsg)
-  print *, mystr1%startswith('Num')
-  print *, mystr1%startswith('Nume')
+  print *, "starts with 'Num'?", mystr1%startswith('Num')
+  print *, "starts with 'Nume'? ", mystr1%startswith('Nume')
   print *, reverse(mystr1)
-  print *, mystr1%reverse()
+  print *, upper(mystr1%reverse())
   print *, mystr1 == mystr2
-  print *, 3 * fStr("hola") * 3
+  print *, ' 3 * fStr("hola") * 3 :'
+  print *, '                      ', 3 * fStr("hola") * 3
   print *, len(mystr1)
 
   print *, mystr1%replace('Num', 'Sci')

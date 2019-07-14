@@ -8,9 +8,7 @@ module fString
     & st_startswith => startswith, st_endswith => endswith, &
     & st_lstrip => lstrip, st_rstrip => rstrip, st_strip => strip, &
     & st_reverse => reverse, st_count => count_sub, &
-    & st_center => center, st_find => find, st_replace => replace, &
-    & st_multiply => multiply
-
+    & st_center => center, st_find => find, st_replace => replace
   implicit none
 
   private count_sub
@@ -267,22 +265,22 @@ contains
     output = (S%val /= other%val)
   end function not_equal
 
-  !> @copydoc strings::left_multiply_int
+  !> Multiply by an integer
   function left_multiply_int(n, S) result(output)
     implicit none
-    class(fStr), intent(IN) :: S
-    integer, intent(IN) :: n
-    type(fStr) :: output
-    output%val = st_multiply(n, S%val)
+    class(fStr), intent(IN) :: S      !< Original string
+    integer, intent(IN) :: n          !< number of repetitions
+    type(fStr) :: output              !< String multiplied n times
+    output%val = repeat(S%val, n)
   end function left_multiply_int
 
-  !> @copydoc strings::right_multiply_int
+  !> @copydoc left_multiply_int
   function right_multiply_int(S, nr) result(output)
     implicit none
     class(fStr), intent(IN) :: S
     integer, intent(IN) :: nr
     type(fStr) :: output
-    output%val = st_multiply(nr, S%val)
+    output%val = repeat(S%val, nr)
   end function right_multiply_int
 
   function concat_sc(S, value) result(output)

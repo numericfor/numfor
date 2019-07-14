@@ -97,7 +97,7 @@ FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 
 library: $(OBJD)/libnumfor.a
 
-$(OBJD)/libnumfor.a: $(OBJ)  | $(OBJD)
+$(OBJD)/libnumfor.a: $(OBJ) Makefile | $(OBJD)
 	$(AR) rcs $@ $^
 
 shared_library: $(OBJD)/libnumfor.so
