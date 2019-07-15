@@ -23,7 +23,17 @@ This means (compare to documentation of `numpy.linspace`):
   * `retstep`: (optional). If present will have the value of `step` on output.
 
 
+The signature of `logspace` is:
 
+```
+logspace(start, end, num = 50[, endpoint=.True.] [, base=10._dp] )
+```
+
+where:
+  * The interval spans between `base**start` and `base**end`
+  * `endpoint` indicates if the final point `end` will be included, like in `linspace`.
+  * `base` of the log space. By default is 10.
+  
 # Examples of use
 
 ## Examples of linspace

@@ -161,15 +161,17 @@ contains
   !! ---------------
   !! ```
   !!
-  !! call print_msg("Invalid argument!") ! will stop the program
-  !! call print_msg("Invalid argument","my_sub")  ! will stop the program
-  !! call print_msg("Fishy values of argument","my_sub", errcode=0)
-  !! call print_msg("Fishy values of argument","my_sub", errcode=0, unit=13)
+  !! call print_msg("Invalid argument!") ! will stop the program with error code 1.
+  !! call print_msg("Invalid argument","my_sub")  ! will stop the program with error code 1.
+  !! call print_msg("Fishy values of argument","my_sub", errcode=3) ! will stop the program with error code 3.
+  !! call print_msg("Fishy values of argument", errcode=-3) ! will **NOT** stop the program. Show error code 3.
+  !! call print_msg("Fishy values of argument","my_sub", errcode=0) ! will **NOT** stop the program.
+  !! call print_msg("Fishy values of argument","my_sub", errcode=0, unit=13) ! will **NOT** stop the program.
   !!
   !! ```
-  !! The first two examples print the given message and stop the program.
-  !! The third will keep running after printing the message to stderr.
-  !! The fourth will keep running after printing the message to a previously open file.
+  !! The first three examples print the given message and stop the program.
+  !! The next two will keep running after printing the message to stderr.
+  !! The last will keep running after printing the message to a previously open file.
   subroutine print_msg(msg, sub, errcode, unit)
     character(len=*) :: msg     !< Message to print on stderr
     character(len=*), optional, intent(in) :: sub !< Routine name. Default = None
@@ -179,7 +181,7 @@ contains
     character(len=2) :: tmp
 
     errcode_ = 1; IF (present(errcode)) errcode_ = errcode
-    write (tmp, '(I2.2)') errcode_
+    write (tmp, '(I2.2)') abs(errcode_)
 
     unit_ = stderr; IF (present(unit)) unit_ = unit
 
@@ -188,7 +190,7 @@ contains
     else
       write (unit_, '(A)') 'Code: '//tmp//' -> '//msg
     end if
-    if (errcode_ /= 0) stop errcode_
+    if (errcode_ > 0) stop errcode_
   end subroutine print_msg
 
 end module basic
