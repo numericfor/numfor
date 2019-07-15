@@ -55,7 +55,6 @@ module fString
     generic :: Operator(/=) => not_equal
     generic :: Operator(*) => left_multiply_int, right_multiply_int
     generic :: Operator(//) => concat_ss, concat_cs, concat_sc
-    ! generic :: Operator(//) => concat_ss
     generic :: read (formatted) => readf
     generic :: write (formatted) => writef
 

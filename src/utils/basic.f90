@@ -13,8 +13,15 @@ module basic
     stdout => output_unit, &
     stderr => error_unit
 
-  integer, parameter :: sp = kind(1.0)
-  integer, parameter :: dp = kind(1.d0)
+  !> For numerical work we need to use specific minimal precision which is
+  !! machine-and-compiler-independent. The real type definitions emphatize this.
+  !! The names are `sp` and `dp` are chosen only by tradition/historic reasons.
+  !! We define types with at least 15 decimal places and exponent range of 307.
+  !! @ref http://fortranwiki.org/fortran/show/Real+precision
+  !! @note: We could use c_double from module iso_c_binding (fortran 2003)
+  integer, parameter :: dp = selected_real_kind(15, 307)
+  integer, parameter :: sp = selected_real_kind(6, 37)
+  integer, parameter :: qp = selected_real_kind(2 * precision(1.0_dp))
 
   !> Simple timer. Holds start-time, stop-time, and time-difference
   type timer
@@ -25,15 +32,13 @@ module basic
     real(dp), private :: stop_cputime     !< Stop cputime
     real(dp), public :: elapsed !< Elapsed time (in seconds)
   contains
-
-    procedure, public :: start_timer
-    procedure, public :: stop_timer
-    procedure, public :: print_elapsed
-
+    procedure :: start => start_timer
+    procedure :: finish => stop_timer
+    procedure :: show => print_elapsed
   end type timer
 
   private
-  public :: sp, dp, timer
+  public :: sp, dp, qp, timer
   public :: stdout, stdin, stderr
   public :: start_timer, stop_timer, print_elapsed
   public :: print_msg
@@ -44,7 +49,8 @@ module basic
   complex(dp), public, parameter :: C1 = (1._dp, 0._dp) !< Complex unit
   complex(dp), public, parameter :: CI = (0._dp, 1._dp) !< Complex imaginary unit
 
-  ! Basic mathematical constants (mostly from gsl)
+  ! Basic mathematical constants (mostly from gsl).
+  ! Many have more decimal places than needed/used
   real(dp), public, parameter :: M_pi = 3.14159265358979323846264338328_dp !< \f$ \pi \f$
   real(dp), public, parameter :: M_dpi = 6.28318530717958647692528676656_dp !< 2*pi
   real(dp), public, parameter :: M_pi_2 = 1.57079632679489661923132169164_dp !< pi/2
@@ -64,6 +70,7 @@ module basic
 
   real(dp), public, parameter :: deg2rad = 0.017453292519943295_dp !< pi/180
   real(dp), public, parameter :: rad2deg = 57.295779513082320876654618_dp !< 180/pi
+
 contains
 
   ! ----------------------- Timer functions -----------------------
@@ -102,7 +109,8 @@ contains
     call cpu_time(T%stop_cputime)
     T%stop_date = record_date()
     T%elapsed = T%stop_cputime - T%start_cputime ! in seconds
-    T%date_elapsed = T%start_date - T%stop_date
+    T%date_elapsed = T%stop_date - T%start_date
+
     do i = 7, 4, -1
       if (T%date_elapsed(i) < 0) then
         T%date_elapsed(i) = T%date_elapsed(i) + factors(i)
@@ -119,9 +127,9 @@ contains
     integer :: unit_
 
     unit_ = stdout; IF (present(unit)) unit_ = unit
-
+    ! write (unit_, '(8(I4,1x))') T%date_elapsed
     write (unit_, '(A,f14.2,A)') 'cpu time: ', T%elapsed, 's'
-    write (unit_, '(A)') stamp_date_diff(T%date_elapsed)
+    write (unit_, '(A)') 'Total time: '//stamp_date_diff(T%date_elapsed)
   end subroutine print_elapsed
 
   !> stamp_date Creates an string from a date
@@ -134,7 +142,7 @@ contains
     character(len=4) :: tmp
     !
     integer :: i, n
-    character(len=3), parameter, dimension(7) :: timeunit = [' Y,', ' M,', ' d,', ' h:', ' m:', ' s.', 'ms ']
+    character(len=3), parameter, dimension(7) :: timeunit = [' Y,', ' M,', ' d,', ' h:', ' m:', ' s ', 'ms ']
 
     do n = 1, 7     ! Get first non-zero value
       IF (dd(n) /= 0) exit
@@ -147,29 +155,39 @@ contains
   end function stamp_date_diff
   ! ------------------End of Timer functions -----------------------
 
-  !> Print an error, and optionally stop the program
+  !> Print a message, and optionally stop the program
   !!
   !! Examples of use:
   !! ---------------
   !! ```
   !!
-  !! call print_msg("Invalid argument!")
-  !! call print_msg("Invalid argument","my_sub")
+  !! call print_msg("Invalid argument!") ! will stop the program
+  !! call print_msg("Invalid argument","my_sub")  ! will stop the program
+  !! call print_msg("Fishy values of argument","my_sub", errcode=0)
   !! call print_msg("Fishy values of argument","my_sub", errcode=0, unit=13)
   !!
   !! ```
-  !! The first two examples print the message and stop the program.
-  !! The third will keep running after printing the message to a previously open file
+  !! The first two examples print the given message and stop the program.
+  !! The third will keep running after printing the message to stderr.
+  !! The fourth will keep running after printing the message to a previously open file.
   subroutine print_msg(msg, sub, errcode, unit)
-    character(len=*) :: msg !< Message to print on stderr
+    character(len=*) :: msg     !< Message to print on stderr
     character(len=*), optional, intent(in) :: sub !< Routine name. Default = None
     integer, optional, intent(in) :: errcode !< Error code. Default = 1
-    integer, optional, intent(in) :: unit    !< Unit to write. Default = stderr
+    integer, optional, intent(in) :: unit !< Unit to write. Default = stderr
     integer :: errcode_, unit_
-    errcode_ = 1; 
-    IF (present(errcode)) errcode_ = errcode
+    character(len=2) :: tmp
+
+    errcode_ = 1; IF (present(errcode)) errcode_ = errcode
+    write (tmp, '(I2.2)') errcode_
+
     unit_ = stderr; IF (present(unit)) unit_ = unit
-    write (unit_, '(A)') 'fatal error in sub:'//sub//':'//msg
+
+    if (present(sub)) then
+      write (unit_, '(A)') 'Code: '//tmp//' in sub '//sub//' -> '//msg
+    else
+      write (unit_, '(A)') 'Code: '//tmp//' -> '//msg
+    end if
     if (errcode_ /= 0) stop errcode_
   end subroutine print_msg
 

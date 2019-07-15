@@ -3,7 +3,7 @@
 !> This module defines functions to manipulate strings of characters.
 !! Documentation: @ref modstrings
 module strings
-  USE basic, only: dp
+  USE basic, only: sp, dp
   character(*), parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
   character(*), parameter :: accented_lowercase = 'áéíóúñàèìòùäëïöü'
   character(*), parameter :: letters_lowercase = ascii_lowercase//accented_lowercase
@@ -167,10 +167,8 @@ contains
     character(len=*), intent(IN) :: S               !< Original string
     character(len=*), optional, intent(IN) :: chars !< chars to remove from S
     character(len=:), allocatable :: Sout !< String with chars removed
-    character(len=:), allocatable :: ch_
-
-    ch_ = blanks; IF (Present(chars)) ch_ = chars
-    Sout = lstrip(rstrip(S, ch_), ch_)
+    ! If chars is absent will also be regarded as absent in (r,l)strip
+    Sout = lstrip(rstrip(S, chars), chars)
   end function strip
 
   !> Return the number of occurrences of substring sub in string S[start:end].
@@ -385,10 +383,10 @@ contains
     Sout = lower(rstrip(lstrip(S_), '0 '))
   end function dp2str
 
-! Casts a real(4) into an string
+! Casts a real(sp) into an string
   function r2str(rin) result(Sout)
     implicit none
-    real(4), intent(IN) :: rin !< number to convert
+    real(sp), intent(IN) :: rin !< number to convert
     character(len=:), allocatable :: Sout !< String converted
     character(len=21) :: S_
     write (S_, '(g0)') rin

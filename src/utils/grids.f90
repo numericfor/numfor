@@ -1,10 +1,12 @@
 !> This module provides convenience routines to work with grids and arrays
 module grids
+  use basic, only: dp, Zero, stdout, print_msg
+
   implicit none
-  real(8), parameter :: def_base = 10._8
+  real(dp), parameter :: def_base = 10._dp
 
   private
-  public :: linspace, logspace, arange
+  public :: linspace, logspace, geomspace, arange
 
 contains
 
@@ -16,9 +18,9 @@ contains
   !!  ```
   !!  linspace(2.0, 3.0, num=5)
   !!  ! gives:  [ 2.  ,  2.25,  2.5 ,  2.75,  3.  ]
-  !!  linspace(2.0, 3.0, num=5, endpoint=False)
+  !!  linspace(2.0, 3.0, num=5, endpoint=.False.)
   !!  ! gives: [ 2. ,  2.2,  2.4,  2.6,  2.8]
-  !!  linspace(2.0, 3.0, num=5, retstep=True)
+  !!  linspace(2.0, 3.0, num=5, retstep=step)
   !!  ! gives: [ 2.  ,  2.25,  2.5 ,  2.75,  3.  ]
   !!  ! and retstep= 0.25
   !!  !
@@ -26,33 +28,33 @@ contains
   !!
   function linspace(start, end, num, endpoint, retstep) result(x)
     implicit none
-    real(8), intent(IN) :: start !< The starting value of the sequence.
-    real(8), intent(IN) :: end   !< The end value of the sequence,
+    real(dp), intent(IN) :: start !< The starting value of the sequence.
+    real(dp), intent(IN) :: end   !< The end value of the sequence,
     integer, intent(IN) :: num !< Number of samples to generate. Must be positive.
     logical, optional, intent(IN) :: endpoint !< If True, `end` is the last sample. Otherwise, it is not included. Default is True
-    real(8), optional, intent(OUT) :: retstep !< If present, return the step
-    real(8), dimension(num) :: x              !< An array of uniformly spaced numbers
-    real(8) :: step
-    integer(4) :: i
+    real(dp), optional, intent(OUT) :: retstep !< If present, return the step
+    real(dp), dimension(num) :: x              !< An array of uniformly spaced numbers
+    real(dp) :: step
+    integer :: i
+    logical :: endpoint_
     x = Zero
     IF (num < 1) return
-    x(1) = start
 
-    if (present(endpoint) .and. (.not. endpoint)) then
-      step = (end - start) / real(num, kind=8)
+    x(1) = start
+    IF (num == 1) return
+
+    endpoint_ = .True.; IF (present(endpoint)) endpoint_ = endpoint
+    if (endpoint_) then
+      step = (end - start) / (num - 1._dp)
     else
-      step = (end - start) / (num - 1._8)
+      step = (end - start) / real(num, kind=dp)
     end if
 
     IF (present(retstep)) retstep = step
-    IF (num == 1) return
 
-    ! Version with forall
-    forall (i=1, num - 1) x(i + 1) = start + step * i
-    ! do i = 1, num - 1
-    !   x(i + 1) = start + step * i
-    ! end do
-
+    forall (i=1:num - 1) x(i + 1) = start + step * i
+    ! We make sure that the last point is the one desired
+    IF (endpoint_ .and. (num > 1)) x(num) = end
   end function linspace
 
   !> Makes a grid with numbers spaced evenly on a log scale
@@ -74,33 +76,59 @@ contains
   !!
   function logspace(start, end, num, endpoint, base) result(x)
     implicit none
-    real(8), intent(IN) :: start !< ``base**start`` is the starting value of the sequence.
-    real(8), intent(IN) :: end   !< ``base**end`` is the final value of the sequence.
-    integer, optional, intent(IN) :: num !< Number of samples to generate. Must be positive.
+    real(dp), intent(IN) :: start !< ``base**start`` is the starting value of the sequence.
+    real(dp), intent(IN) :: end   !< ``base**end`` is the final value of the sequence.
+    integer, intent(IN) :: num !< Number of samples to generate. Must be positive.
     logical, optional, intent(IN) :: endpoint !< If True, `end` is the last sample. Otherwise, it is not included. Default is True
-    real(8), optional, intent(IN) :: base     !< The base of the log space. Default is 10.
-    real(8), dimension(num) :: x              !< A sequence of numbers spaced evenly on a log scale.
+    real(dp), optional, intent(IN) :: base     !< The base of the log space. Default is 10.
+    real(dp), dimension(num) :: x              !< A sequence of numbers spaced evenly on a log scale.
 
-    real(8) :: b_
-    real(8) :: step
-    integer(4) :: i
+    real(dp) :: b_
 
-    x = Zero
     IF (num < 1) return
 
     b_ = def_base; IF (present(base)) b_ = base
-    x(1) = b_**start
-    IF (num == 1) return
-    if (present(endpoint) .and. (.not. endpoint)) then
-      step = (end - start) / real(num, kind=8)
-    else
-      step = (end - start) / (num - 1._8)
-    end if
-    forall (i=1, num - 1) x(i + 1) = b**(start + step * i)
-    ! do i = 1, num - 1
-    !   x(i + 1) = b**(start + step * i)
-    ! end do
+
+    x = b_**(linspace(start, end, num, endpoint))
   end function logspace
+
+  !> Makes a grid with numbers spaced evenly on a log scale
+  !!
+  !! @note: Is similar to logspace but with endpoints specified directly.
+  !! Also accepts simultaneously negative `start` **and** `end`
+  !! Examples
+  !!
+  !! ```
+  !! geomspace(1, 1000.0, num=4)
+  !! ! gives: [  1.        ,   10.0  ,   100.0,  1000.  ]
+  !! geomspace(-1000, 1.0, num=4)
+  !! ! gives: [ -1000. , -100.0  , -10.0 ,  -1.0 ]
+  !! !
+  !! ```
+  function geomspace(start, end, num, endpoint) result(x)
+    implicit none
+    real(dp), intent(IN) :: start !< ``start`` is the starting value of the sequence.
+    real(dp), intent(IN) :: end   !< ``end`` is the final value of the sequence.
+    integer, intent(IN) :: num !< Number of samples to generate. Must be positive.
+    logical, optional, intent(IN) :: endpoint !< If True, `end` is the last sample. Otherwise, it is not included. Default is True
+    real(dp), dimension(num) :: x              !< A sequence of numbers spaced evenly on a log scale.
+    real(dp) :: sgout
+    real(dp) :: lstart, lstop
+
+    IF (num < 1) return
+
+    IF ((start * end <= Zero)) &
+      &  call print_msg('Geometric sequence cannot include zero', 'geomspace')
+
+    x(1) = start
+    IF (num == 1) return
+
+    lstart = log10(abs(start)); lstop = log10(abs(end))
+    sgout = 1._dp; IF ((start < Zero) .and. (end < Zero)) sgout = -1._dp
+
+    x = sgout * logspace(lstart, lstop, num=num, endpoint=endpoint, base=10._dp)
+
+  end function geomspace
 
   !> arange: Return evenly spaced integer values within a given interval
   !!
@@ -112,11 +140,11 @@ contains
     integer, intent(IN) :: end   !< the final value of the interval (not included)
     integer, optional, intent(IN) :: step !< Spacing between values.
     integer, dimension(:), allocatable :: x !< A sequence of numbers spaced evenly
-    integer :: num
+    integer :: num, i, step_
     !
     IF (step == 0) return
     step_ = 1; IF (present(step)) step_ = step
-    num = ceiling((end - start) / step)
+    num = ceiling((end - start) / real(step, kind=dp))
     IF (allocated(x) .and. (size(x) /= num)) deallocate (x)
     IF (.not. allocated(x)) allocate (x(num))
     x(1) = start
@@ -133,12 +161,12 @@ contains
 !! Si se da unit, el archivo queda abierto
   subroutine savetxt(a, fmt, fname, unit)
     implicit none
-    real(8), dimension(:, :), intent(IN) :: a        !< Array a escribir a archivo de texto
+    real(dp), dimension(:, :), intent(IN) :: a        !< Array a escribir a archivo de texto
     character(len=*), optional, intent(in) :: fmt    !< formato a usar para los datos. Default 'g0.5'
     character(len=*), optional, intent(in) :: fname  !< Nombre del archivo de salida
     integer, optional, intent(in) :: unit            !< Unidad a escribir si el archivo está abierto
 
-    real(8), dimension(ubound(a, 2), ubound(a, 1)) :: b
+    real(dp), dimension(ubound(a, 2), ubound(a, 1)) :: b
     integer, dimension(2) :: sh
     integer :: i
     integer :: u

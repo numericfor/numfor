@@ -39,5 +39,5 @@ The Object Oriented version of examples presented in `strings` (@ref ex_strings1
 
 \include ex_fstring1.f90
 
-which, after compiling and executing, gives exactly the same result that \ref ex_strings1
+which, after compiling and executing, gives exactly the same result that \ref ex_strings1 from module `strings`
 
