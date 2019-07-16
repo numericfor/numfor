@@ -1,4 +1,7 @@
 !> This module provides convenience routines to work with grids and arrays
+!! Ver si otras funciones pueden ser útiles:
+!! sort
+!! compress, nonzero, clip (no es claro que valga la pena)
 module grids
   use basic, only: dp, Zero, stdout, print_msg
 
