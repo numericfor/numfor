@@ -32,6 +32,9 @@ module basic
     real(dp), private :: stop_cputime     !< Stop cputime
     real(dp), public :: elapsed !< Elapsed time (in seconds)
   contains
+    ! procedure :: start => start_timer
+    ! procedure :: finish => stop_timer
+    ! procedure :: show => print_elapsed
     procedure :: start => start_timer
     procedure :: finish => stop_timer
     procedure :: show => print_elapsed
@@ -41,6 +44,7 @@ module basic
   public :: sp, dp, qp, timer
   public :: stdout, stdin, stderr
   public :: start_timer, stop_timer, print_elapsed
+  ! public :: start, finish, show
   public :: print_msg
 
   ! Common constants
@@ -99,11 +103,11 @@ contains
     call cpu_time(T%start_cputime)
   end subroutine start_timer
 
-  !> stop_timer the timer and calculate time-differences
+  !> stop the timer and calculate time-differences
   subroutine stop_timer(T)
     implicit none
     class(timer), intent(inout) :: T !< Timer
-    integer, dimension(4), parameter :: factors = [24, 60, 60, 1000] ! Factors to convert to higher time unit
+    integer, dimension(4), parameter :: factors = [24, 60, 60, 1000] ! Factors to convert to higher time-unit
     integer :: i
 
     call cpu_time(T%stop_cputime)

@@ -88,18 +88,12 @@ contains
   !!
   function logspace(start, end, num, endpoint, base) result(x)
     implicit none
-    real(dp), intent(IN) :: start !< ``base**start`` is the starting
-    !value of the sequence.
-    real(dp), intent(IN) :: end   !< ``base**end`` is the final value
-    !of the sequence.
-    integer, intent(IN) :: num !< Number of samples to generate. Must
-    !be positive.
-    logical, optional, intent(IN) :: endpoint !< If True, `end` is
-    !the last sample. Otherwise, it is not included. Default is True
-    real(dp), optional, intent(IN) :: base     !< The base of the log
-    !space. Default is 10.
-    real(dp), dimension(num) :: x              !< A sequence of
-    !numbers spaced evenly on a log scale.
+    real(dp), intent(IN) :: start !< ``base**start`` is the starting value of the sequence.
+    real(dp), intent(IN) :: end   !< ``base**end`` is the final value of the sequence.
+    integer, intent(IN) :: num !< Number of samples to generate. Must be positive.
+    logical, optional, intent(IN) :: endpoint !< If True, `end` is the last sample. Otherwise, it is not included. Default is True
+    real(dp), optional, intent(IN) :: base    !< The base of the log space. Default is 10.
+    real(dp), dimension(num) :: x             !< A sequence of numbers spaced evenly on a log scale.
 
     real(dp) :: b_
 
@@ -141,18 +135,16 @@ contains
 
     IF (num < 1) return
 
-    IF (start * end <= Zero) call print_msg('Geometric sequence cannot include&
-      & zero', 'geomspace')
+    IF (start * end <= Zero)&
+      & call print_msg('Geometric sequence cannot include zero', 'geomspace')
 
     x(1) = start
     IF (num == 1) return
 
     lstart = log10(abs(start)); lstop = log10(abs(end))
-    sgout = 1._dp; IF ((start < Zero) .and. (end < Zero)) sgout = &
- &-1._dp
+    sgout = 1._dp; IF ((start < Zero) .and. (end < Zero)) sgout = -1._dp
 
-    x = sgout * logspace(lstart, lstop, num=num, endpoint=endpoint,&
-      & base=10._dp)
+    x = sgout * logspace(lstart, lstop, num=num, endpoint=endpoint, base=10._dp)
 
   end function geomspace
 

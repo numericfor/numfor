@@ -34,7 +34,7 @@ compiler = gnu
 
 ################################################################################
 #	PROGRAMS
-depends:=@$(top_dir)/scripts/sfmakedepend
+depends:=$(top_dir)/scripts/sfmakedepend
 AR:=ar
 RM:=rm
 MKDIR:=mkdir -p
@@ -57,8 +57,10 @@ INCLUDES += $(patsubst %,-I %, $(FMODULES))
 
 # extra libraries if required
 LIBS := -lnumfor
+
+# This is the main point-of-entry to the library.
 # each module will add to this
-SRC :=
+SRC := $(SRCD)/numfor.f90
 
 # include the description for each module
 include $(addsuffix /module.mk,$(FMODULES))
