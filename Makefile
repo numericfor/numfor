@@ -36,7 +36,7 @@ compiler = gnu
 #	PROGRAMS
 depends:=$(top_dir)/scripts/sfmakedepend
 AR:=ar
-RM:=rm
+RM:=rm -f
 MKDIR:=mkdir -p
 ######################################################################
 
@@ -60,10 +60,12 @@ LIBS := -lnumfor
 
 # This is the main point-of-entry to the library.
 # each module will add to this
-SRC := $(SRCD)/numfor.f90
+SRC := 
 
 # include the description for each module
 include $(addsuffix /module.mk,$(FMODULES))
+
+SRC += $(SRCD)/numfor.f90
 
 # The object files will be in the same places that the code
 OBJ:= $(SRC:.f90=.o)
@@ -186,9 +188,9 @@ TAGS: Makefile $(SRC)
 clean: clean-backup clean-obj
 
 clean-backup:
-	$(RM) -f $(top_dir)/*~
-	$(RM) -f $(top_dir)/*/*~
-	$(RM) -f $(top_dir)/*/*/*~
+	$(RM) $(top_dir)/*~
+	$(RM) $(top_dir)/*/*~
+	$(RM) $(top_dir)/*/*/*~
 
 clean-obj:
 	$(RM) $(MODD)/*.mod
@@ -197,7 +199,7 @@ clean-obj:
 	$(RM) $(deps)
 
 clean-doc:
-	$(RM) -fr $(DOCDIR)/html
-	$(RM) -f $(top_dir)/$(PRJ).dox $(top_dir)/$(PRJ)_api.dox
+	$(RM) -r $(DOCDIR)/html
+	$(RM) $(top_dir)/$(PRJ).dox $(top_dir)/$(PRJ)_api.dox
 
 clean-all: clean-backup clean-obj clean-doc

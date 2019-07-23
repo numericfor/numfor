@@ -49,6 +49,7 @@ module basic
 
   ! Common constants
   real(dp), public, parameter :: Zero = 0._dp           !< Real cero
+  real(dp), public, parameter :: Tiny = 1.e-16_dp       !< Real cero
   complex(dp), public, parameter :: C0 = (0._dp, 0._dp) !< Complex cero
   complex(dp), public, parameter :: C1 = (1._dp, 0._dp) !< Complex unit
   complex(dp), public, parameter :: CI = (0._dp, 1._dp) !< Complex imaginary unit

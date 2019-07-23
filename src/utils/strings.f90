@@ -96,11 +96,10 @@ contains
     integer :: i, n
     Sout = S
     n = len(S)
-    ! do i = 1, len(S)
-    !   Sout(i:i) = S(n:n)
-    !   n = n - 1
-    ! end do
-    forall (i=1:n) Sout(i:i) = S(n - i + 1:n - i + 1)
+    do i = 1, n
+      Sout(i:i) = S(n - i + 1:n - i + 1)
+    end do
+    ! forall (i=1:n) Sout(i:i) = S(n - i + 1:n - i + 1)
   end function reverse
 
   !> Return True if S starts with the specified prefix, False otherwise.

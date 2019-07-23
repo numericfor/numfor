@@ -1,25 +1,26 @@
 module histograms
 
-  USE basic, only: dp, Zero, print_msg
+  USE basic, only: dp, Zero, Tiny, print_msg
   USE grids, only: linspace, searchsorted, mean, std
 
   !> type histogram holds the data from an histogram
   type, public :: histog
     integer :: n = 0            !< Total number of values parsed
     real(dp), dimension(:), pointer :: hist !< Values of the histogram
-    real(dp), dimension(:, :), pointer :: bin_edges !< Array (2xlen(hist)) the edges
+    real(dp), dimension(:), pointer :: bin_edges !< Array (2xlen(hist)) the edges
   end type histog
 
   public :: histogram
 
 contains
-  !> histogram
+  !> Calculates an histogram of an array of data
   !!
   function histogram(a, Nbins, bins, range, density) result(h)
-    type(histog) :: h !<
-    real(dp), dimension(:), target, intent(IN) :: a !<
-    integer, optional, intent(IN) :: Nbins !<
-    real(dp), dimension(:), optional, intent(IN) :: bins !<
+    USE basic, only: timer
+    type(histog) :: h !< The histogram construct
+    real(dp), dimension(:), target, intent(IN) :: a !< Input data
+    integer, optional, intent(IN) :: Nbins !< Number of equal-width bins to use
+    real(dp), dimension(:), optional, intent(IN) :: bins  !<
     real(dp), dimension(2), optional, intent(IN) :: range !<
     logical, optional, intent(IN) :: density !<
     real(dp), dimension(:), pointer :: p
@@ -30,39 +31,47 @@ contains
     integer :: i, j, k
     integer :: status
     integer, parameter :: BLOCK = 65536
-    ! integer, parameter :: BLOCK = 20000000
+    ! integer, parameter :: BLOCK = huge(1)
+    real(dp), parameter :: weight = 1.0_dp
+    type(timer) :: T
 
     d_ = .FALSE.; IF (Present(density)) d_ = density
 
     h%n = size(a)
     call get_bins(a, Nbins, bins, range, h)
-    Nbins_ = size(h%bin_edges(1, :))
+    Nbins_ = size(h%bin_edges) - 1
+
     allocate (h%hist(Nbins_), stat=status)
     IF (status /= 0) call print_msg('Error allocating hist', 'histogram')
 
-    fb => h%bin_edges(1, :)
-    lb => h%bin_edges(2, :)
+    fb => h%bin_edges(1:)
+    lb => h%bin_edges(2:)
     h%hist = Zero
 
+    call T%start()
     nn = 0
-    do k = 1, size(a), BLOCK
+    ! The use of the BLOCK does not appear to be very important for speed
+    do concurrent(k=1:size(a):BLOCK)
       p => a(k:)
       N = min(h%n - k + 1, BLOCK) ! Number of elements in block
 
-      do j = 1, N
-        do i = 1, Nbins_
+      do concurrent(j=1:N)
+        find_bin: do i = 1, Nbins_
           if ((p(j) >= fb(i)) .and. (p(j) < lb(i))) then
-            h%hist(i) = h%hist(i) + 1._dp
+            h%hist(i) = h%hist(i) + weight
             nn = nn + 1
-            cycle
+            exit find_bin
           end if
-        end do
+        end do find_bin
       end do
 
     end do
     h%n = nn
 
     IF (d_) h%hist = h%hist / (lb - fb) / h%n
+    call T%stop()
+    call T%show()
+
   end function histogram
 
   ! TODO: We need to test which automatic method works best
@@ -79,36 +88,37 @@ contains
     integer :: i, j
     type(histog), intent(INOUT) :: h
 
-    if (Present(range)) then
+    if (Present(range)) then     ! Clip to range if present
       IF (range(1) > range(2)) call print_msg('Max must be larger than min', 'histogram')
       first_edge = range(1)
       last_edge = range(2)
-    else
+    else                        ! Otherwise use extreme values
       first_edge = minval(a)
       last_edge = maxval(a)
     end if
-    ! and correct the limits if they are equal
+    ! finally, correct the limits if they are equal
     if (first_edge == last_edge) then
       first_edge = first_edge - 0.5_dp
       last_edge = last_edge + 0.5_dp
     end if
 
     if (Present(bins)) then
-      if (size(shape(bins)) == 1) then ! Si tiene rango 1:
-        IF (any((bins(:size(bins) - 1) > bins(1:)))) &
-          & call print_msg('bins must increase monotonically', 'histogram')
+      ! Check that they are ordered
+      IF (any((bins(:size(bins) - 1) > bins(1:)))) &
+        & call print_msg('bins must increase monotonically', 'histogram')
 
-        ! We clip bins if needed
-        i = searchsorted(bins, first_edge)
-        j = searchsorted(bins, last_edge)
+      ! We clip bins if needed
+      i = searchsorted(bins, first_edge)
+      j = searchsorted(bins, last_edge)
+      IF (bins(i) - first_edge < -Tiny) i = i + 1
 
-        allocate (h%bin_edges(2, j - i), stat=status)
-        IF (status /= 0) call print_msg('Error allocation bin_edges', 'histogram')
+      allocate (h%bin_edges(j - i + 1), stat=status)
+      IF (status /= 0) call print_msg('Error allocation bin_edges', 'histogram')
 
-        h%bin_edges(1, :) = bins(i:j - 1)
-        h%bin_edges(2, :) = bins(1 + i:j)
-        return
-      end if
+      h%bin_edges = bins(i:j)
+      print *, 'first', range(1), bins(i)
+      print *, 'last', range(2), bins(j)
+      return
 
     else if (Present(Nbins)) then
       Nbins_ = Nbins + 1
@@ -121,11 +131,8 @@ contains
       Nbins_ = ceiling(abs((last_edge - first_edge)) / width)
     end if
 
-    allocate (h%bin_edges(2, Nbins_ - 1))
-    h%bin_edges(1, :) = linspace(first_edge, last_edge, Nbins_ - 1, endpoint=.False.)
-    h%bin_edges(2, :Nbins_ - 2) = h%bin_edges(1, 2:)
-    h%bin_edges(2, Nbins_ - 1) = last_edge
-
+    allocate (h%bin_edges(Nbins_))
+    h%bin_edges = linspace(first_edge, last_edge, Nbins_, endpoint=.True.)
   end subroutine get_bins
 
 !> width_sturges

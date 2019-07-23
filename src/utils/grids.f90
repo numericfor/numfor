@@ -61,7 +61,10 @@ contains
 
     IF (present(retstep)) retstep = step
 
-    forall (i=1:num - 1) x(i + 1) = start + step * i
+    do concurrent(i=1:num - 1)
+      x(i + 1) = start + step * i
+    end do
+
     ! We make sure that the last point is the one desired
     IF (endpoint_ .and. (num > 1)) x(num) = end
   end function linspace
@@ -169,8 +172,8 @@ contains
     IF (allocated(x) .and. (size(x) /= num)) deallocate (x)
     IF (.not. allocated(x)) allocate (x(num))
     x(1) = start
-    do i = 1, num
-      x(i + 1) = x(i) + step_
+    do concurrent(i=1:num)
+      x(i + 1) = start + i * step_
     end do
   end function arange
 

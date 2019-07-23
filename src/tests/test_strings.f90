@@ -52,6 +52,10 @@ program test
 
   st2 = reverse(st1)
   IF (st1 /= reverse(st2)) stop "Reverse failed"
+  print *, center(' Original ', 20, '-')
+  print *, st1
+  print *, center(' Reversed ', 20, '-')
+  print *, st2
 
   l1 = issub(st1, 'for') ! TRUE
   IF (.not. l1) stop 'failed issub 1'
