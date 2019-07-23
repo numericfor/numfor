@@ -36,14 +36,14 @@ module basic
     ! procedure :: finish => stop_timer
     ! procedure :: show => print_elapsed
     procedure :: start => start_timer
-    procedure :: finish => stop_timer
+    procedure :: stop => stop_timer
     procedure :: show => print_elapsed
   end type timer
 
   private
   public :: sp, dp, qp, timer
   public :: stdout, stdin, stderr
-  public :: start_timer, stop_timer, print_elapsed
+  private :: start_timer, stop_timer, print_elapsed
   ! public :: start, finish, show
   public :: print_msg
 

@@ -1,5 +1,5 @@
 program test
-  use basic
+  use utils
   implicit none
 
   integer, parameter :: N = 100000
@@ -8,7 +8,7 @@ program test
   type(timer) T1
 
   ! Test timer
-  call T1%start()               ! equivalently:   call T1%start()
+  call T1%start
 
   a = 1._dp
   c = 0
@@ -22,9 +22,8 @@ program test
     c = -c
   end do
 
-  call T1%stop()              ! equivalently: call stop_timer(T1)
+  call T1%finish()
 
-  ! call print_elapsed(T1)
   call T1%show()
 
 end program test

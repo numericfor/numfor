@@ -287,12 +287,12 @@ contains
     ch_ = " "
     IF (present(fillchar)) ch_ = fillchar
 
-    if (width > len_trim(S)) then
-      Lfill = width - len_trim(S)
+    if (width > len(S)) then
+      Lfill = width - len(S)
       if (mod(Lfill, 2) == 0) then
-        Sout = repeat(ch_, Lfill / 2)//trim(S)//repeat(ch_, Lfill / 2)
+        Sout = repeat(ch_, Lfill / 2)//S//repeat(ch_, Lfill / 2)
       else
-        Sout = repeat(ch_, (Lfill / 2) + 1)//trim(S)//repeat(ch_, Lfill / 2)
+        Sout = repeat(ch_, (Lfill / 2) + 1)//S//repeat(ch_, Lfill / 2)
       endif
     endif
   end function center

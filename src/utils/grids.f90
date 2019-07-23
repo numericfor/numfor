@@ -9,7 +9,7 @@ module grids
   real(dp), parameter :: def_base = 10._dp
 
   private
-  public :: linspace, logspace, geomspace, arange, searchsorted
+  public :: linspace, logspace, geomspace, arange, searchsorted, mean, std
 
 contains
 
@@ -174,12 +174,37 @@ contains
     end do
   end function arange
 
+  !> std Computes the standard deviation of the array.
+  !!
+  !! @note : Basically: `sqrt(mean(x - mean(x))* alfa )` with `alfa= (N/(N-1))`
+  function std(x) result(y)
+    implicit none
+    real(dp) :: y !< Standard deviation
+    real(dp), dimension(:), intent(IN) :: x !< Input array of real values
+    integer :: N
+    N = size(x)
+    ! y = sqrt((sum(x**2) - sum(x)**2 / real(N, kind=dp)) / real(N - 1, kind=dp))
+    y = sqrt(mean((x - mean(x))**2) * (N / real(N - 1, kind=dp)))
+  end function std
+
+  !> mean Computes the arithmetic mean of the array.
+  !!
+  !! @note the mean is basically: `sum(x)/size(x)`
+  function mean(x) result(y)
+    implicit none
+    real(dp) :: y !< Mean value
+    real(dp), dimension(:), intent(IN) :: x !< Input array of real values
+    y = sum(x) / size(x)
+  end function mean
+
   !> searchsorted: Find index where an element should be inserted to maintain order.
   !!
   !! Find the index into an ascending sorted array `x` such that, if `elem` was inserted
   !! after the index, the order of `x` would be preserved.
   !!
   !! @note Bisection is used to find the required insertion point
+  !!
+  !! @note If `elem` is outside the limits of `x` the first or last index is returned.
   function searchsorted(x, elem) result(n)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Array sorted in ascending order
@@ -189,8 +214,15 @@ contains
 
     lower = 1
     upper = size(x)
-    IF (elem < x(lower)) call print_msg('Element below array', sub='searchsorted')
-    IF (elem > x(upper)) call print_msg('Element above array', 'searchsorted')
+    if (elem < x(lower)) then
+      call print_msg('Element below array', sub='searchsorted', errcode=-1)
+      n = 1
+    end if
+
+    if (elem > x(upper)) then
+      call print_msg('Element above array', 'searchsorted', errcode=-2)
+      n = upper
+    end if
 
     ! Instead of starting on (1, upper//2 , upper) we start with a linear guess
     n = nint(((elem - x(lower)) / (x(upper) - x(lower))) * upper)
