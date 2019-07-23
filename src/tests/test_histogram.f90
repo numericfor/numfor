@@ -7,30 +7,33 @@ program test
 
   real(dp), dimension(:), allocatable :: b
   type(histog) :: hist
-  real(dp), dimension(50) :: bins
+  integer, parameter ::   Nbins = 1000
+  real(dp), dimension(Nbins) :: bins
   integer :: Ndat
-  integer :: Nbins
+
   integer :: u
   integer :: j
   type(timer) :: T
 
-  Nbins = 50
-  bins = linspace(Zero, 2.5_dp, Nbins)
-
   Ndat = 1000 * 100000
+
   print *, Ndat < huge(1), huge(1) / Ndat
+
   allocate (b(Ndat))
   b = geomspace(1.e-30_dp, 1.0_dp, num=Ndat)
   b = b + linspace(0._dp, 1.0_dp, num=Ndat)
 
+  bins = linspace(minval(b), maxval(b), Nbins)
+
   call T%start()
-  hist = histogram(b, bins=bins, range=[0.15_dp, 1.85_dp], density=.True.)
+  ! hist = histogram(b, Nbins=Nbins, range=[0.15_dp, 1.85_dp], density=.True.)
+  hist = histogram(b, bins=bins, density=.True.)
   call T%stop()
 
   Ndat = size(hist%hist)
 
   ! Print the bins
-  print '(4(g0.5,1x))', hist%bin_edges
+  ! print '(4(g0.5,1x))', hist%bin_edges
 
   open (newunit=u, file='data/histog1.dat')
   write (u, '(2(g0.5,1x))') (0.5_dp * (hist%bin_edges(j) + hist%bin_edges(j + 1)), hist%hist(j), j=1, Ndat)

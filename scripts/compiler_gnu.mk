@@ -20,7 +20,6 @@ else
   runprofile:=
 endif
 
-
 ifdef DEBUG
   FFLAGS_PAR:= 
   FFLAGS+= -g -ffpe-trap=invalid -fbounds-check

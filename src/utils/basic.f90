@@ -44,8 +44,7 @@ module basic
   public :: sp, dp, qp, timer
   public :: stdout, stdin, stderr
   private :: start_timer, stop_timer, print_elapsed
-  ! public :: start, finish, show
-  public :: print_msg
+  public :: print_msg, print_warning
 
   ! Common constants
   real(dp), public, parameter :: Zero = 0._dp           !< Real cero
