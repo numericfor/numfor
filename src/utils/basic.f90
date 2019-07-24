@@ -7,7 +7,6 @@
 !!  - Some sys functionality (stdin, stdout, stderr)
 !!  - Timers, timestamp (?)
 !!
-
 module basic
   use, intrinsic :: iso_fortran_env, only: stdin => input_unit, &
     stdout => output_unit, &
@@ -42,11 +41,11 @@ module basic
   public :: sp, dp, qp, timer
   public :: stdout, stdin, stderr
   private :: start_timer, stop_timer, print_elapsed
-  ! public :: start, finish, show
-  public :: print_msg
+  public :: print_msg, print_warning
 
   ! Common constants
   real(dp), public, parameter :: Zero = 0._dp           !< Real cero
+  real(dp), public, parameter :: Small = 0.8 * tiny(1._dp) !< Real small number
   complex(dp), public, parameter :: C0 = (0._dp, 0._dp) !< Complex cero
   complex(dp), public, parameter :: C1 = (1._dp, 0._dp) !< Complex unit
   complex(dp), public, parameter :: CI = (0._dp, 1._dp) !< Complex imaginary unit
@@ -81,6 +80,7 @@ contains
     implicit none
     integer, dimension(8) :: y !< Date in format
     integer :: d
+    y = 0                       ! JF: Not sure if it is necessary
     call date_and_time(values=y)
     d = y(4)
     y(4:7) = y(5:8)
@@ -110,6 +110,7 @@ contains
 
     call cpu_time(T%stop_cputime)
     T%stop_date = record_date()
+
     T%elapsed = T%stop_cputime - T%start_cputime ! in seconds
     T%date_elapsed = T%stop_date - T%start_date
 
@@ -129,7 +130,6 @@ contains
     integer :: unit_
 
     unit_ = stdout; IF (present(unit)) unit_ = unit
-    ! write (unit_, '(8(I4,1x))') T%date_elapsed
     write (unit_, '(A,f14.2,A)') 'cpu time: ', T%elapsed, 's'
     write (unit_, '(A)') 'Total time: '//stamp_date_diff(T%date_elapsed)
   end subroutine print_elapsed

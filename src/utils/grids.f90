@@ -3,7 +3,7 @@
 !! sort
 !! compress, nonzero, clip (no es claro que valga la pena)
 module grids
-  use basic, only: dp, Zero, stdout, print_msg
+  use basic, only: dp, Zero, Small, stdout, print_msg
 
   implicit none
   real(dp), parameter :: def_base = 10._dp
@@ -61,7 +61,10 @@ contains
 
     IF (present(retstep)) retstep = step
 
-    forall (i=1:num - 1) x(i + 1) = start + step * i
+    do concurrent(i=1:num - 1)
+      x(i + 1) = start + step * i
+    end do
+
     ! We make sure that the last point is the one desired
     IF (endpoint_ .and. (num > 1)) x(num) = end
   end function linspace
@@ -169,8 +172,8 @@ contains
     IF (allocated(x) .and. (size(x) /= num)) deallocate (x)
     IF (.not. allocated(x)) allocate (x(num))
     x(1) = start
-    do i = 1, num
-      x(i + 1) = x(i) + step_
+    do concurrent(i=1:num)
+      x(i + 1) = start + i * step_
     end do
   end function arange
 
@@ -205,50 +208,55 @@ contains
   !! @note Bisection is used to find the required insertion point
   !!
   !! @note If `elem` is outside the limits of `x` the first or last index is returned.
-  function searchsorted(x, elem) result(n)
+  pure function searchsorted(x, elem) result(n)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Array sorted in ascending order
-    real(dp), intent(IN) :: elem !< element to insert
-    integer :: n                 !< index of left
-    integer :: upper, lower, mid
+    real(dp), intent(IN) :: elem            !< element to insert
+    integer :: n                            !< index of closest edge to the left of elem
+    integer :: up, lo, mid
 
-    lower = 1
-    upper = size(x)
-    if (elem < x(lower)) then
-      call print_msg('Element below array', sub='searchsorted', errcode=-1)
-      n = 1
+    lo = 1
+    up = size(x)
+    if (elem < x(lo) - Small) then ! elem below the array
+      n = lo - 1                   ! Outside the array!!
+      return
     end if
 
-    if (elem > x(upper)) then
-      call print_msg('Element above array', 'searchsorted', errcode=-2)
-      n = upper
+    if (elem >= x(up) - Small) then ! elem above the array
+      n = up
+      return
     end if
 
-    ! Instead of starting on (1, upper//2 , upper) we start with a linear guess
-    n = nint(((elem - x(lower)) / (x(upper) - x(lower))) * upper)
+    ! Instead of starting on (1, up//2 , up) we start with a linear guess
+    n = int(((elem - x(lo)) / (x(up) - x(lo))) * up)
+
     IF (n < 1) n = 1
-    IF (n > size(x)) n = size(x)
+    ! Case where elem is higher or equal to the last element
+    if (n > size(x)) then
+      n = up
+      IF (elem >= x(n) - Small) return
+    end if
 
-    if ((x(n) == elem) .or. ((x(n) <= elem) .and. (x(n + 1) > elem))) then
+    IF ((x(n) == elem) .or. ((elem > x(n)) .and. (elem < x(n + 1)))) then
       return                    ! Found the index
     else if (x(n + 1) == elem) then
       n = n + 1
       return
     else if (x(n) < elem) then
-      lower = n
+      lo = n
     else
-      upper = n
+      up = n
     end if
 
-    do while ((upper - lower > 1))
-      mid = (upper + lower) / 2 ! integer arithmetic
+    do while ((up - lo > 1))
+      mid = (up + lo) / 2 ! integer arithmetic
       if (elem >= x(mid)) then
-        lower = mid
+        lo = mid
       else
-        upper = mid
+        up = mid
       endif
     enddo
-    n = lower
+    n = lo
 
   end function searchsorted
 
