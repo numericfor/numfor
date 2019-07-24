@@ -32,7 +32,7 @@ contains
     integer, parameter :: BLOCK = 65536
     ! integer, parameter :: BLOCK = 20000000
 
-    d_ = .FALSE.; IF (Present(density)) d_ = density
+    d_ = .FALSE.; IF (present(density)) d_ = density
 
     h%n = size(a)
     call get_bins(a, Nbins, bins, range, h)
@@ -79,7 +79,7 @@ contains
     integer :: i, j
     type(histog), intent(INOUT) :: h
 
-    if (Present(range)) then
+    if (present(range)) then
       IF (range(1) > range(2)) call print_msg('Max must be larger than min', 'histogram')
       first_edge = range(1)
       last_edge = range(2)
@@ -93,7 +93,7 @@ contains
       last_edge = last_edge + 0.5_dp
     end if
 
-    if (Present(bins)) then
+    if (present(bins)) then
       if (size(shape(bins)) == 1) then ! Si tiene rango 1:
         IF (any((bins(:size(bins) - 1) > bins(1:)))) &
           & call print_msg('bins must increase monotonically', 'histogram')
@@ -110,7 +110,7 @@ contains
         return
       end if
 
-    else if (Present(Nbins)) then
+    else if (present(Nbins)) then
       Nbins_ = Nbins + 1
     else
       ! We try to guess the "optimal bin edges"

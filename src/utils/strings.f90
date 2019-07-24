@@ -137,7 +137,7 @@ contains
     integer :: n
     character(len=:), allocatable :: ch_
 
-    ch_ = blanks; IF (Present(chars)) ch_ = chars
+    ch_ = blanks; IF (present(chars)) ch_ = chars
 
     n = verify(S, ch_)
     Sout = S(n:)
@@ -155,7 +155,7 @@ contains
     integer :: n
     character(len=:), allocatable :: ch_
 
-    ch_ = blanks; IF (Present(chars)) ch_ = chars
+    ch_ = blanks; IF (present(chars)) ch_ = chars
     n = verify(S, ch_, back=.True.)
     Sout = S(:n)
   end function rstrip
@@ -185,10 +185,10 @@ contains
     start_ = 1
     end_ = len(trim(S))
 
-    if (Present(start)) then
+    if (present(start)) then
       IF (start >= 1) start_ = start
     end if
-    if (Present(end)) then
+    if (present(end)) then
       IF (end <= end_) end_ = end
     end if
     IF (start_ > end_) return
@@ -209,7 +209,8 @@ contains
     character(len=*), intent(in) :: sub !< substring to find
     logical :: is_in                    !< True if `sub` is present in `S`
 
-    is_in = (count_sub(S, sub) > 0)
+    ! is_in = (count_sub(S, sub) > 0)
+    is_in = (index(S, sub) /= 0)
   end function issub
 
   !> Returns a right-justified string of length width.
@@ -311,10 +312,10 @@ contains
     start_ = 1
     end_ = len(S)
 
-    if (Present(start)) then
+    if (present(start)) then
       IF (start >= 1) start_ = start
     end if
-    if (Present(end)) then
+    if (present(end)) then
       IF (end <= end_) end_ = end
     end if
     IF (start_ > end_) return
@@ -338,7 +339,7 @@ contains
     Sout = S
     nold = len(old)
 
-    count_ = -1; IF (Present(count)) count_ = count
+    count_ = -1; IF (present(count)) count_ = count
 
     c = 0
     do

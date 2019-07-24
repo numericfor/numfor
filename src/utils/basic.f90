@@ -32,9 +32,7 @@ module basic
     real(dp), private :: stop_cputime     !< Stop cputime
     real(dp), public :: elapsed !< Elapsed time (in seconds)
   contains
-    ! procedure :: start => start_timer
-    ! procedure :: finish => stop_timer
-    ! procedure :: show => print_elapsed
+
     procedure :: start => start_timer
     procedure :: stop => stop_timer
     procedure :: show => print_elapsed

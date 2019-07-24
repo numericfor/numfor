@@ -283,12 +283,12 @@ contains
     ! ninguna está usa stdout
     closef = .False.
     u = stdout
-    if (Present(fname)) then
+    if (present(fname)) then
       if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
         open (newunit=u, file=trim(fname))
         closef = .True.
       end if
-    else if (Present(unit)) then ! The file was already open before
+    else if (present(unit)) then ! The file was already open before
       ! invoking the function
       IF (unit >= 0 .and. unit <= 99) u = unit
     end if
@@ -296,7 +296,7 @@ contains
     b = transpose(a)
     sh = shape(b)
 
-    if (Present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
+    if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
       if (index('(', fmt) == 0) then
         write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(fmt), '&
           &,1x))'
