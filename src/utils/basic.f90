@@ -44,8 +44,8 @@ module basic
   public :: print_msg, print_warning
 
   ! Common constants
-  real(dp), public, parameter :: Zero = 0._dp           !< Real cero
-  real(dp), public, parameter :: Small = 0.8 * tiny(1._dp) !< Real small number
+  real(dp), public, parameter :: Zero = 0._dp          !< Real cero
+  real(dp), public, parameter :: Small = epsilon(1._dp) !< Real small number
   complex(dp), public, parameter :: C0 = (0._dp, 0._dp) !< Complex cero
   complex(dp), public, parameter :: C1 = (1._dp, 0._dp) !< Complex unit
   complex(dp), public, parameter :: CI = (0._dp, 1._dp) !< Complex imaginary unit

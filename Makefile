@@ -31,7 +31,6 @@ DOCDIR:=$(top_dir)/doc
 
 # Choose the compiler. Default is gnu
 compiler = gnu
-
 # DEBUG=YES
 
 ################################################################################

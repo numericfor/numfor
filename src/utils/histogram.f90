@@ -18,6 +18,21 @@ module histograms
 contains
   !> Calculates an histogram of an array of data
   !!
+  !! @note It counts the number of occurrences in the interval [bins(i), bins(i+1) )
+  !! which is closed on the left and open on the right (does not include the upper limit)
+  !! except for the last one which includes both limits
+  !!
+  !! Example:
+  !! ```
+  !! h = histogram([1, 2, 1], bins=[0, 1, 2, 3])
+  !! h%bin_edges = [0,1,2,3]
+  !! h%hist = [1, 2, 1]
+  !! ```
+  !! Or
+  !! ```
+  !! hist = histogram(, bins=bins, density=.True.)
+  !! hist = histogram(a, bins=bins, density=.False.)
+
   function histogram(a, Nbins, bins, range, density) result(h)
     type(histog) :: h !< The histogram construct
     real(dp), dimension(:), target, intent(IN) :: a !< Input data
@@ -45,6 +60,7 @@ contains
     call get_bins(a, Nbins, bins, range, h)
     Nbins_ = size(h%bin_edges) - 1
 
+    ! Allocate memory for hist component
     allocate (h%hist(Nbins_), stat=status)
     IF (status /= 0) call print_msg('Error allocating hist', 'histogram')
 
@@ -55,13 +71,15 @@ contains
 
     nn = 0
     ! The use of the BLOCK does not appear to be very important for speed
-    blocks: do concurrent(k=1:size(a):BLOCK)
+    ! blocks: do concurrent(k=1:size(a):BLOCK)
+    blocks: do k = 1, size(a), BLOCK
       p => a(k:)
       N = min(h%n - k + 1, BLOCK) ! Number of elements in block
 
       ! For a small number of bins it seems more efficient to just look sequencially
       if (Nbins_ <= 100) then
-        do concurrent(j=1:N)
+        ! do concurrent(j=1:N)
+        do j = 1, N
           find_bin: do i = 1, Nbins_
             if ((p(j) >= fb(i)) .and. (p(j) < lb(i))) then
               h%hist(i) = h%hist(i) + weight
@@ -69,6 +87,7 @@ contains
               exit find_bin
             end if
           end do find_bin
+
         end do
       else
         do concurrent(j=1:N)
@@ -89,6 +108,11 @@ contains
   end function histogram
 
   ! TODO: We need to test which automatic method works best
+  ! Discussion. In order to make the last bin a closed-interval on both sides:
+  ! [bins(N-2), bins(N-1)] which included both limits
+  ! as opposed to [bins(N-2), bins(N-1)], which is closed on the left and open on the right
+  ! we add a small quantity to the right edge (2*epsilon)
+  ! where epsilon is the smallest difference between two real(dp) numbers
   subroutine get_bins(a, Nbins, bins, range, h)
     implicit none
 
@@ -110,6 +134,7 @@ contains
       first_edge = minval(a)
       last_edge = maxval(a)
     end if
+
     ! Then, we correct the limits if they are equal
     if (first_edge == last_edge) then
       first_edge = first_edge - 0.5_dp
@@ -128,11 +153,14 @@ contains
       ! We clip bins if needed
       i = searchsorted(bins, first_edge)
       j = searchsorted(bins, last_edge)
-      IF (bins(i) - first_edge < -Small) i = i + 1
+
+      IF (i < 1) i = 1          ! Correct if inferior limit in range smaller than first edge
 
       allocate (h%bin_edges(i:j), stat=status)
       IF (status /= 0) call print_msg('Error allocation bin_edges', 'histogram')
       h%bin_edges = bins(i:j)
+      ! We extend the last one in epsilon to make it inclusive
+      h%bin_edges(j) = h%bin_edges(j) + 1.5_dp * epsilon(1._dp)
       return
 
     else if (present(Nbins)) then

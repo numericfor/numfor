@@ -217,12 +217,12 @@ contains
 
     lo = 1
     up = size(x)
-    if (elem < x(lo) - Small) then ! elem below the array
+    if (Small < x(lo) - elem) then ! elem below the array
       n = lo - 1                   ! Outside the array!!
       return
     end if
 
-    if (elem >= x(up) - Small) then ! elem above the array
+    if (elem - x(up) > Zero) then ! elem above the array
       n = up
       return
     end if
