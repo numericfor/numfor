@@ -23,12 +23,12 @@ module fString
     procedure, private, pass(S) :: init
     procedure, private, pass(S) :: equal
     procedure, private, pass(S) :: not_equal
-    procedure, pass(S) :: readf
-    procedure, pass(S) :: writef
+    procedure :: readf
+    procedure :: writef
     procedure, private, pass(S) :: left_multiply_int
-    procedure, private, pass(S) :: right_multiply_int
-    procedure, private, pass(S) :: concat_ss
-    procedure, private, pass(S) :: concat_sc
+    procedure, private :: right_multiply_int
+    procedure, private :: concat_ss
+    procedure, private :: concat_sc
     procedure, private, pass(S) :: concat_cs
 
     procedure :: upper
