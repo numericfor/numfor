@@ -179,18 +179,6 @@ contains
       IF (any((bins(:size(bins) - 1) > bins(2:)))) &
         & call print_msg('Bins must increase monotonically', 'histogram')
 
-      !------  We decided not to clip it. Numpy does not  ------------
-      !
-      ! ! We clip bins if needed
-      ! i = searchsorted(bins, first_edge)
-      ! j = searchsorted(bins, last_edge)
-
-      ! IF (i < 1) i = 1          ! Correct if inferior limit in range smaller than first edge
-      ! allocate (h%bin_edges(i:j), stat=status, errmsg=msg)
-      ! IF (status /= 0) call print_msg('Error allocation bin_edges: '//msg, 'histogram')
-      ! h%bin_edges = bins(i:j)
-      !---------------------------------------------------------------
-
       Nbins_ = size(bins)
       h%bin_edges = bins
       ! We extend the last one in epsilon to make it inclusive
@@ -211,8 +199,7 @@ contains
     allocate (h%bin_edges(Nbins_), stat=status, errmsg=msg)
     IF (status /= 0) call print_msg('Error allocation bin_edges: '//msg, 'histogram')
     h%bin_edges = linspace(first_edge, last_edge, Nbins_, endpoint=.True.)
-    h%bin_edges(1) = h%bin_edges(1) - Small
-    h%bin_edges(Nbins_) = h%bin_edges(Nbins_) + Small
+    h%bin_edges(Nbins_) = h%bin_edges(Nbins_) + 1.5_dp * Small
   end subroutine get_bins
 
   !> width_sturges
