@@ -49,7 +49,7 @@ INCLUDES:= -I $(MODD)
 LDFLAGS:=-L $(OBJD)
 
 # # ######################################################################
-MODULES := utils
+MODULES := utils arrays
 
 # # ######################################################################
 FMODULES =  $(addprefix $(SRCD)/,$(MODULES))
