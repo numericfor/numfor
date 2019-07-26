@@ -4,7 +4,8 @@
 module histograms
 
   USE basic, only: dp, Zero, Small, print_msg
-  USE grids, only: linspace, searchsorted, mean, std
+  USE grids, only: linspace, mean, std
+  USE sort, only: searchsorted
 
   !> type histogram holds the data from an histogram
   type, public :: histog
@@ -100,36 +101,20 @@ contains
     h%hist = Zero
 
     nn = 0
-    ! The use of the BLOCK does not appear to be very important for speed
-    ! blocks: do concurrent(k=1:size(a):BLOCK)
-    blocks: do k = 1, size(a), BLOCK
+    ! The use of a BLOCK does not appear to be very important for speed. May be for memory use.
+    blocks: do concurrent(k=1:size(a):BLOCK)
+      ! blocks: do k = 1, size(a), BLOCK
       p => a(k:)
       N = min(h%n - k + 1, BLOCK) ! Number of elements in block
 
-      ! For a small number of bins it seems more efficient to just look sequencially
-      if (Nbins_ <= 100) then
-        do concurrent(j=1:N)
-          find_bin: do i = 1, Nbins_
-            if ((p(j) >= h%bin_edges(i)) .and. (p(j) < h%bin_edges(i + 1))) then
-              IF (present(weights)) weight = weights(j)
-              h%hist(i) = h%hist(i) + weight
-              nn = nn + 1
-              exit find_bin
-            end if
-          end do find_bin
-
-        end do
-      else
-        do concurrent(j=1:N)
-          i = searchsorted(h%bin_edges, p(j))
-          if ((i > 0) .and. (i <= Nbins_)) then
-            IF (present(weights)) weight = weights(j)
-            h%hist(i) = h%hist(i) + weight
-            nn = nn + 1
-          end if
-        end do
-      end if
-
+      do concurrent(j=1:N)
+        i = searchsorted(h%bin_edges, p(j))
+        if ((i > 0) .and. (i <= Nbins_)) then
+          IF (present(weights)) weight = weights(j)
+          h%hist(i) = h%hist(i) + weight
+          nn = nn + 1
+        end if
+      end do
     end do blocks
 
     h%n = nn

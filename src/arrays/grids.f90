@@ -9,7 +9,7 @@ module grids
   real(dp), parameter :: def_base = 10._dp
 
   private
-  public :: linspace, logspace, geomspace, arange, searchsorted, mean, std
+  public :: linspace, logspace, geomspace, arange, mean, std
 
 contains
 
@@ -199,66 +199,6 @@ contains
     real(dp), dimension(:), intent(IN) :: x !< Input array of real values
     y = sum(x) / size(x)
   end function mean
-
-  !> searchsorted: Find index where an element should be inserted to maintain order.
-  !!
-  !! Find the index into an ascending sorted array `x` such that, if `elem` was inserted
-  !! after the index, the order of `x` would be preserved.
-  !!
-  !! @note Bisection is used to find the required insertion point
-  !!
-  !! @note If `elem` is outside the limits of `x` the first or last index is returned.
-  pure function searchsorted(x, elem) result(n)
-    implicit none
-    real(dp), dimension(:), intent(IN) :: x !< Array sorted in ascending order
-    real(dp), intent(IN) :: elem            !< element to insert
-    integer :: n                            !< index of closest edge to the left of elem
-    integer :: up, lo, mid
-
-    lo = 1
-    up = size(x)
-    if (Small < x(lo) - elem) then ! elem below the array
-      n = lo - 1                   ! Outside the array!!
-      return
-    end if
-
-    if (elem - x(up) > Zero) then ! elem above the array
-      n = up
-      return
-    end if
-
-    ! Instead of starting on (1, up//2 , up) we start with a linear guess
-    n = int(((elem - x(lo)) / (x(up) - x(lo))) * up)
-
-    IF (n < 1) n = 1
-    ! Case where elem is higher or equal to the last element
-    if (n > size(x)) then
-      n = up
-      IF (elem >= x(n) - Small) return
-    end if
-
-    IF ((x(n) == elem) .or. ((elem > x(n)) .and. (elem < x(n + 1)))) then
-      return                    ! Found the index
-    else if (x(n + 1) == elem) then
-      n = n + 1
-      return
-    else if (x(n) < elem) then
-      lo = n
-    else
-      up = n
-    end if
-
-    do while ((up - lo > 1))
-      mid = (up + lo) / 2 ! integer arithmetic
-      if (elem >= x(mid)) then
-        lo = mid
-      else
-        up = mid
-      endif
-    enddo
-    n = lo
-
-  end function searchsorted
 
   !> savetxt Guarda un array 2D en un archivo de texto
   !!
