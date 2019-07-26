@@ -1,5 +1,5 @@
 program test
-  use basic, only: dp, Zero, Small, timer
+  use basic, only: dp, Zero, timer
   use strings, only: center
   use grids, only: linspace, geomspace, mean, std
   USE histograms
@@ -8,7 +8,7 @@ program test
   real(dp), dimension(:), allocatable :: b
   real(dp), dimension(:), allocatable :: w
   type(histog) :: hist, h
-  integer, parameter ::   Nbins = 99
+  integer, parameter ::   Nbins = 500
   real(dp), dimension(Nbins) :: bins
   integer :: Ndat
 

@@ -62,6 +62,7 @@ contains
   !! ```
   !!
   function histogram(a, Nbins, bins, range, weights, density) result(h)
+    implicit none
     type(histog) :: h !< The histogram construct.
     real(dp), dimension(:), target, intent(IN) :: a !< Input data
     integer, optional, intent(IN) :: Nbins !< Number of equal-width bins to use
@@ -77,7 +78,7 @@ contains
     real(dp), dimension(:), pointer :: p
     logical :: d_
     integer :: Nbins_
-    integer :: nn
+    integer :: N, nn
     integer :: i, j, k
     integer :: status
     integer, parameter :: BLOCK = 65536
