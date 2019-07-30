@@ -364,7 +364,8 @@ contains
     integer, intent(IN) :: nin !< Integer to convert
     character(len=:), allocatable :: Sout !< String converted
     character(len=10) :: S_
-    write (S_, '(i8)') nin
+    ! Format long enough for all default integer
+    write (S_, '(i10)') nin
     Sout = strip(S_)
   end function i2str
 

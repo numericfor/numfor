@@ -1,5 +1,4 @@
-  contains
-
+! From https://github.com/jacobwilliams/fortran-search-and-sort.git
   recursive subroutine quicksort(ilow, ihigh)
 
     !! Sort the array (ascending order).
@@ -13,7 +12,8 @@
     integer :: i      !! counter
     integer :: j      !! counter
 
-    if (ihigh - ilow <= max_size_for_insertion_sort .and. ihigh > ilow) then
+    IF (ihigh <= ilow) return   ! Nothing to do
+    if (ihigh - ilow <= max_size_for_insertion_sort) then
 
       ! do insertion sort:
       do i = ilow + 1, ihigh
@@ -21,12 +21,12 @@
           if (vec(j) < vec(j - 1)) then
             call swap(vec(j), vec(j - 1))
           else
-            exit
+            exit                ! j-loop
           end if
         end do
       end do
 
-    else if (ihigh - ilow > max_size_for_insertion_sort) then
+    else
 
       ! do the normal quicksort:
       call partition(ilow, ihigh, ipivot)

@@ -4,9 +4,6 @@ module sorting
   USE basic, only: dp, Small
   integer, parameter :: minval_bisection = 100 !< Minimum value of elements for using bisection
   integer, parameter :: max_size_for_insertion_sort = 20 !! max size for using insertion sort.
-  !! (otherwise, use quicksort)
-
-  !! Otherwise, will use simple sequential lookup
 
   !> searchsorted: Find index where an element should be inserted in an array to maintain order.
   !!
@@ -46,13 +43,12 @@ module sorting
   !! will give `n = 6`
   !!
   interface searchsorted
-    module procedure :: searchsorted_dp, searchsorted_i, &
-      &                 searchsorted_idp, searchsorted_dpi
+    module procedure :: searchsorted_dp, searchsorted_i, searchsorted_idp, searchsorted_dpi
   end interface searchsorted
 
-  ! interface sort
-  !   module procedure :: sort
-  ! end interface sort
+  interface swap
+    module procedure :: swap_dp, swap_i
+  end interface swap
 
   private
   public searchsorted, sort
@@ -61,8 +57,11 @@ contains
 
   !> Routine to sort a vector
   !!
-  !! Sorting routine from:
+  !! Sorting routine, slightly modified from the original sources:
   !! @ref https://github.com/jacobwilliams/fortran-search-and-sort.git
+  !!
+  !! It uses a simple insertion point algorithm for small arrays (less than 20 elements)
+  !! and quicksort algorithm for larger arrays.
   !!
   !! Examples:
   !!```
@@ -73,6 +72,9 @@ contains
   !!  ! gives: 9 1 0.5 -2
   !!```
   !!
+  !! @note Implementation detail: Sorting in descending order is currently implemented by sorting
+  !! -vec and later multiplying by (-1) again.  From benchmark appears that there is not an
+  !! important efficiency impact. Further study would be welcome.
   subroutine sort(vec, reverse)
     implicit none
     real(dp), dimension(:), intent(inout) :: vec !< Vector to sort
@@ -84,10 +86,13 @@ contains
     IF (reverse_) vec = -vec
     call quicksort(1, size(vec))
     IF (reverse_) vec = -vec
+  contains
+
     include 'sorting.inc'
   end subroutine sort
 
-  subroutine swap(v1, v2)
+  ! Routines used by sorting routine
+  subroutine swap_dp(v1, v2)
     implicit none
     real(dp), intent(INOUT) :: v1 !<
     real(dp), intent(INOUT) :: v2 !<
@@ -95,7 +100,17 @@ contains
     tmp = v1
     v1 = v2
     v2 = tmp
-  end subroutine swap
+  end subroutine swap_dp
+
+  subroutine swap_i(v1, v2)
+    implicit none
+    integer, intent(INOUT) :: v1 !<
+    integer, intent(INOUT) :: v2 !<
+    integer :: tmp
+    tmp = v1
+    v1 = v2
+    v2 = tmp
+  end subroutine swap_i
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!             searchsorted implementation
@@ -125,10 +140,10 @@ contains
   pure function searchsorted_idp(x, elem) result(n)
     implicit none
     integer, dimension(:), intent(IN) :: x !< Array sorted in ascending order
-    real(dp), intent(IN) :: elem            !< element to insert
+    real(dp), intent(IN) :: elem           !< element to insert
     integer :: n                           !< index of closest edge to the left of elem
 
-    real(dp), parameter :: Delta = Small ! Comparing integers is exact
+    real(dp), parameter :: Delta = Small ! Comparing integers to reals is not exact
     include "bisection.inc"
   end function searchsorted_idp
 
@@ -138,7 +153,7 @@ contains
     integer, intent(IN) :: elem            !< element to insert
     integer :: n                           !< index of closest edge to the left of elem
 
-    real(dp), parameter :: Delta = Small ! Comparing integers is exact
+    real(dp), parameter :: Delta = Small ! Comparing real to integer is not exact
     include "bisection.inc"
   end function searchsorted_dpi
 
