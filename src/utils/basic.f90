@@ -22,11 +22,13 @@ module basic
   integer, parameter :: sp = selected_real_kind(6, 37)
   integer, parameter :: qp = selected_real_kind(2 * precision(1.0_dp))
 
+  integer, private, dimension(7), parameter :: time_factors = [0, 12, 30, 24, 60, 60, 1000] ! Factors to convert to higher time-unit
+
   !> Simple timer. Holds start-time, stop-time, and time-difference
   type timer
-    integer, dimension(8) :: start_date !< Start date
-    integer, dimension(8) :: stop_date !< Stop date
-    integer, dimension(8) :: date_elapsed !< Date-difference between start and stop
+    integer, dimension(7) :: start_date !< Start date
+    integer, dimension(7) :: stop_date !< Stop date
+    integer, dimension(7) :: date_elapsed !< Date-difference between start and stop
     real(dp), private :: start_cputime    !< Start cputime
     real(dp), private :: stop_cputime     !< Stop cputime
     real(dp), public :: elapsed !< Elapsed time (in seconds)
@@ -35,6 +37,15 @@ module basic
     procedure :: start => start_timer
     procedure :: stop => stop_timer
     procedure :: show => print_elapsed
+    procedure, private :: add_timers
+    procedure, private :: assign_int
+    procedure, private :: assign
+    procedure, private :: divide_T_int
+
+    generic :: Operator(+) => add_timers
+    generic :: Operator(/) => divide_T_int
+    generic :: Assignment(=) => assign_int, assign
+
   end type timer
 
   private
@@ -74,17 +85,75 @@ module basic
 
 contains
 
-  ! ----------------------- Timer functions -----------------------
+  ! ! ----------------------- Timer functions -----------------------
+  !> Reset timer
+  subroutine reset_timer(T)
+    implicit none
+    type(timer), intent(OUT) :: T !<
+    T%start_date = 0
+    T%stop_date = 0
+    T%date_elapsed = 0
+    T%start_cputime = Zero
+    T%stop_cputime = Zero
+    T%elapsed = Zero
+  end subroutine reset_timer
+
+  !> Assign an integer value to a timer
+  subroutine assign_int(T, val)
+    implicit none
+    class(timer), intent(OUT) :: T !<
+    integer, intent(IN) :: val
+    T%start_date = 0
+    T%stop_date = 0
+    T%date_elapsed = val
+    T%start_cputime = Zero
+    T%stop_cputime = Zero
+    T%elapsed = real(val, kind=dp)
+  end subroutine assign_int
+
+  !> Divide T by an integer value
+  function divide_T_int(T1, val) result(T)
+    implicit none
+    class(timer), intent(IN) :: T1 !<
+    integer, intent(IN) :: val
+    type(timer) :: T
+    integer :: i
+    integer :: n
+    T%start_date = T1%start_date
+    T%stop_date = T1%stop_date
+    T%date_elapsed = 0
+    T%start_cputime = T1%start_cputime
+    T%stop_cputime = T1%stop_cputime
+    T%elapsed = T1%elapsed / real(val, kind=dp)
+    do i = 1, 6
+      n = mod(T1%date_elapsed(i), val)
+      T%date_elapsed(i + 1) = (T1%date_elapsed(i + 1) + n * time_factors(i + 1)) / val
+    end do
+
+  end function divide_T_int
+
+  !> Assign values from a timer
+  subroutine assign(T, T1)
+    implicit none
+    class(timer), intent(OUT) :: T !<
+    type(timer), intent(IN) :: T1 !<
+    T%start_date = T1%start_date
+    T%stop_date = T1%stop_date
+    T%date_elapsed = T1%date_elapsed
+    T%start_cputime = T1%start_cputime
+    T%stop_cputime = T1%stop_cputime
+    T%elapsed = T1%elapsed
+  end subroutine assign
+
   !> Record date. Notice that Time difference with UTC is the last
   function record_date() result(y)
     implicit none
-    integer, dimension(8) :: y !< Date in format
-    integer :: d
-    y = 0                       ! JF: Not sure if it is necessary
-    call date_and_time(values=y)
-    d = y(4)
-    y(4:7) = y(5:8)
-    y(8) = d
+    integer, dimension(7) :: y !< Date in format
+    integer, dimension(8) :: tmp !< Date in format
+    tmp = 0                      ! JF: It should not be necessary
+    call date_and_time(values=tmp)
+    y(1:3) = tmp(1:3)
+    y(4:7) = tmp(5:8)
   end function record_date
 
   !< Start the timer
@@ -105,22 +174,55 @@ contains
   subroutine stop_timer(T)
     implicit none
     class(timer), intent(inout) :: T !< Timer
-    integer, dimension(4), parameter :: factors = [24, 60, 60, 1000] ! Factors to convert to higher time-unit
-    integer :: i
 
     call cpu_time(T%stop_cputime)
     T%stop_date = record_date()
+    call diff_timer(T)
+
+  end subroutine stop_timer
+
+  !> add_timers Computes
+  !!
+  !! Examples:
+  !!
+  function add_timers(T1, T2) result(T)
+    implicit none
+    class(timer), intent(IN) :: T1 !<
+    class(timer), intent(IN) :: T2 !<
+    type(timer) :: T !<
+    integer :: i
+
+    T%elapsed = T1%elapsed + T2%elapsed
+    T%date_elapsed = 0
+    T%date_elapsed(4:) = T1%date_elapsed(4:) + T2%date_elapsed(4:)
+    ! Convert to the higher unit (e.g: 61 s -> 1m 1s)
+    do i = 7, 4, -1
+      if (T%date_elapsed(i) > time_factors(i)) then
+        T%date_elapsed(i) = T%date_elapsed(i) - time_factors(i)
+        T%date_elapsed(i - 1) = T%date_elapsed(i - 1) + 1
+      end if
+    end do
+  end function add_timers
+
+  !> diff_timer
+  !!
+  !! Examples:
+  !!
+  subroutine diff_timer(T)
+    implicit none
+    type(timer), intent(INOUT) :: T !<
+    integer :: i
 
     T%elapsed = T%stop_cputime - T%start_cputime ! in seconds
     T%date_elapsed = T%stop_date - T%start_date
 
     do i = 7, 4, -1
       if (T%date_elapsed(i) < 0) then
-        T%date_elapsed(i) = T%date_elapsed(i) + factors(i)
+        T%date_elapsed(i) = T%date_elapsed(i) + time_factors(i)
         T%date_elapsed(i - 1) = T%date_elapsed(i - 1) - 1
       end if
     end do
-  end subroutine stop_timer
+  end subroutine diff_timer
 
   !> print_elapsed time to unit or stdout
   subroutine print_elapsed(T, unit)
@@ -139,7 +241,7 @@ contains
   !! @note that date format differs from the output of intrinsic date_and_time
   function stamp_date_diff(dd) result(output)
     implicit none
-    integer, dimension(8) :: dd !> date-format differs from usual
+    integer, dimension(7) :: dd !> date-format differs from usual
     character(len=:), allocatable :: output
     character(len=4) :: tmp
     !

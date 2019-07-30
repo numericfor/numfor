@@ -5,7 +5,7 @@ module histograms
 
   USE basic, only: dp, Zero, Small, print_msg
   USE grids, only: linspace, mean, std
-  USE sort, only: searchsorted
+  USE sorting, only: searchsorted
 
   !> type histogram holds the data from an histogram
   type, public :: histog

@@ -1,5 +1,5 @@
 module arrays
   USE grids
-  USE sort
+  USE sorting
   USE histograms
 end module arrays
