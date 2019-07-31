@@ -88,6 +88,7 @@ program test
   print *, 'dp2str: - real:', 123.1221_dp, '- string: |'//str(123.1221_dp)//'|'
   print *, 'dp2str: - real:', -123.121_dp, '- string: |'//str(-123.121_dp)//'|'
   print *, 'dp2str: - real:', -123.1221e-12_dp, '- string: |'//str(-123.1221e-12_dp)//'|'
+  print *, 'dp2str: - real:', M_PI, '- string: |'//str(M_PI)//'|'
   print *, '|', '  12312 ', '|'
   print *, 'rjust: |', rjust('  12312 ', 20), '|'
   print *, 'ljust: |', ljust('  12312 ', 20), '|'

@@ -12,7 +12,7 @@ module strings
   character(*), Parameter :: accented_uppercase = 'ÁÉÍÓÚÑÀÈÌÒÙÄËÏÖÜ'
   character(*), parameter :: letters_uppercase = ascii_uppercase//accented_uppercase
 
-  character(*), parameter :: blanks = ' '//achar(9)
+  character(*), private, parameter :: blanks = ' '//achar(9)
   Public
   Private :: c2str, i2str, r2str, dp2str
 
@@ -375,13 +375,14 @@ contains
     real(dp), intent(IN) :: rin !< number to convert
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
-    if ((rin > 1.e-6) .and. (rin < 1.e6)) then
-      write (S_, '(f18.8)') rin
+    if ((abs(rin) > 1.e-6) .and. (abs(rin) < 1.e6)) then
+      write (S_, '(f0.15)') rin
+      Sout = lower(rstrip(lstrip(S_), '0 '))
     else
-      write (S_, '(es21.8)') rin
+      write (S_, '(es23.15)') rin
+      Sout = lower(rstrip(lstrip(S_), ' '))
     end if
 
-    Sout = lower(rstrip(lstrip(S_), '0 '))
   end function dp2str
 
 ! Casts a real(sp) into an string

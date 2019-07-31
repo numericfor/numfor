@@ -22,7 +22,7 @@ contains
 
     call splrep(x, y, Zero, Zero, tck)
     ynew = splev(xnew, tck)
-    write (*, "(A)") repeat("*", 65)
+    write (*, "(A)") repeat("*-*", 65)
     write (*, '(A)') '# Test 1 of splines module'
     write (*, '(A)') ' function: y= sin(x) '
     write (*, "(A)") repeat("*", 65)

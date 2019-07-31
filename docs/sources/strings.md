@@ -4,36 +4,32 @@
 
 The module strings provides routines for string manipulation. It provides some functionality similar to that available to Python strings:
 
-  + `str()`: Cast numbers to strings
-  + Multiplication by integers produce repetition
-      + `left_multiply_int()`: Multiply an integer by a string 
-      + `right_multiply_int()`: Multiply a string by an integer
-
+  + `strings::str()`: Cast numbers to strings
   
 There are functions that act similarly to Python string methods:
   
-  + `upper()`: Converts a string to uppercase
-  + `lower()`: Converts a string to lowercase
-  + `swapcase()`: Swap cases: (lower -> upper) and (upper -> lower)
-  + `reverse()`: Reverses a string "abc" -> "cba"
-  + `endswith()`: Test wheter a string ends with a given suffix
-  + `startswith()`: Test wheter a string starts with a given prefix
-  + `lstrip()`: Removes leading characters of a string
-  + `rstrip()`: Removes trailing characters of a string
-  + `strip()`: Removes leading and trailing characters of a string
-  + `count_sub()` Counts how many times a substring is in a string
-  + `find()`: Finds a substring in a string
-  + `issub()`: Test whether a substring is in a string
-  + `count_sub()`: Counts the number of occurrences of a substring in a string
-  + `lstrip()`: Removes leading chars in a string
-  + `rstrip()`: Removes trailing chars in a string
-  + `strip()`: Removes leading and trailing chars in a string
-  + `ljust()`: Left-padds a string with a char
-  + `rjust()`: Right-padds a string with a char
-  + `zfill()`: Padds with zeroes a string
-  + `center()`: Centers a string in a line
-  + `find()`: Finds a substring in a string
-  + `replace()`: Replaces a substring with other in a string
+  + `strings::upper()`: Converts a string to uppercase
+  + `strings::lower()`: Converts a string to lowercase
+  + `strings::swapcase()`: Swap cases: (lower -> upper) and (upper -> lower)
+  + `strings::reverse()`: Reverses a string "abc" -> "cba"
+  + `strings::endswith()`: Test wheter a string ends with a given suffix
+  + `strings::startswith()`: Test wheter a string starts with a given prefix
+  + `strings::lstrip()`: Removes leading characters of a string
+  + `strings::rstrip()`: Removes trailing characters of a string
+  + `strings::strip()`: Removes leading and trailing characters of a string
+  + `strings::count_sub()` Counts how many times a substring is in a string
+  + `strings::find()`: Finds a substring in a string
+  + `strings::issub()`: Test whether a substring is in a string
+  + `strings::count_sub()`: Counts the number of occurrences of a substring in a string
+  + `strings::lstrip()`: Removes leading chars in a string
+  + `strings::rstrip()`: Removes trailing chars in a string
+  + `strings::strip()`: Removes leading and trailing chars in a string
+  + `strings::ljust()`: Left-padds a string with a char
+  + `strings::rjust()`: Right-padds a string with a char
+  + `strings::zfill()`: Padds with zeroes a string
+  + `strings::center()`: Centers a string in a line
+  + `strings::find()`: Finds a substring in a string
+  + `strings::replace()`: Replaces a substring with other in a string
 
 # Examples of use {#examplestrings}
 
