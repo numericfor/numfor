@@ -13,10 +13,9 @@
     integer :: j      !! counter
 
     IF (ihigh <= ilow) return   ! Nothing to do
-    if (ihigh - ilow <= max_size_for_insertion_sort) then
-
+    if (ihigh - ilow <= maxsize_insertion) then
       ! do insertion sort:
-      do i = ilow + 1, ihigh
+      insert: do i = ilow + 1, ihigh
         do j = i, ilow + 1, -1
           if (vec(j) < vec(j - 1)) then
             call swap(vec(j), vec(j - 1))
@@ -24,15 +23,11 @@
             exit                ! j-loop
           end if
         end do
-      end do
-
-    else
-
-      ! do the normal quicksort:
+      end do insert
+    else      ! do normal quicksort
       call partition(ilow, ihigh, ipivot)
       call quicksort(ilow, ipivot - 1)
       call quicksort(ipivot + 1, ihigh)
-
     end if
 
   end subroutine quicksort

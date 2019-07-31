@@ -14,7 +14,7 @@
     end if
 
     ! If there are only a few elements just use a simple lookup and return -----
-    if (up < minval_bisection) then
+    if (up < minsize_bisection) then
       do j = lo, up
         IF (x(j) - elem > Delta) exit
       end do

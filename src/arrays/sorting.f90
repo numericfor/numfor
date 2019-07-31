@@ -2,8 +2,8 @@
 !!
 module sorting
   USE basic, only: dp, Small
-  integer, parameter :: minval_bisection = 100 !< Minimum value of elements for using bisection
-  integer, parameter :: max_size_for_insertion_sort = 20 !! max size for using insertion sort.
+  integer, parameter :: minsize_bisection = 100 !< Minimum value of elements for using bisection
+  integer, parameter :: maxsize_insertion = 20 !! max size for using insertion sort.
 
   !> searchsorted: Find index where an element should be inserted in an array to maintain order.
   !!
