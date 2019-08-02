@@ -1,4 +1,4 @@
-!> This module provides convenience routines to work with grids and arrays
+q!> This module provides convenience routines to work with grids and arrays
 !! Ver si otras funciones pueden ser útiles:
 !! sort
 !! compress, nonzero, clip (no es claro que valga la pena)
@@ -41,8 +41,7 @@ contains
     !the last sample. Otherwise, it is not included. Default is True
     real(dp), optional, intent(OUT) :: retstep !< If present, return
     !the step
-    real(dp), dimension(num) :: x              !< An array of
-    !uniformly spaced numbers
+    real(dp), dimension(num) :: x !< An array of uniformly spaced numbers
     real(dp) :: step
     integer :: i
     logical :: endpoint_
@@ -150,6 +149,74 @@ contains
     x = sgout * logspace(lstart, lstop, num=num, endpoint=endpoint, base=10._dp)
 
   end function geomspace
+
+  !> loglinspace Computes a grid that may behave as linearly or logarithmically spaced
+  !!
+  !! @details From package RADIAL by Salvat et al 1995 Computer Physics Communications.
+  !! The grid is such that:
+  !!   -# R(1)=0, R(NP)=RN,
+  !!   -# A*R(I)+B*DLOG(R(I))-C= I  (I > 0),
+  !!    with  A=1.0/STEP  and   B=1.0/DLOG(RATIO).
+  !!
+  !! @return The grid of dimension NP
+  !!
+  !! Examples:
+  !!
+  function loglinspace(start, end, num, step, ratio) result(x)
+    implicit none
+    real(dp), intent(IN) :: start !< Starting value
+    real(dp), intent(IN) :: end !< Final value of the sequence
+    real(dp), intent(IN) :: num !< Number of points
+    real(dp), optional, intent(IN) :: step !< Approximated step in the linear region
+    real(dp), optional, intent(IN) :: ratio !< quotient between consecutive points in the logarithmic region
+    real(dp), dimension(num) :: x !< Array of points
+
+    real(dp) :: a, b, c
+    real(dp) :: rr, ru, rl, r_N, c_i, fu
+    real(dp) :: step_, ratio_
+    integer :: i
+    real(dp), parameer :: accuracy = 1.e-10_dp
+
+    r_N = end - start           ! Define the interval
+
+    ! Default values
+    step_ = r_N / (5 * num / 6._dp); IF (present(step)) step_ = step
+    ratio_ = 1.15; IF (present(ratio)) ratio_ = ratio
+
+    a = 1.0_dp / step_
+    b = 1.0_dp / log(ratio_)
+    c = num - a * r_N - b * log(r_N)
+    x(1) = Zero
+
+    rr = Small                  ! Initial guess for x(2)
+    ! Solve the equation a*x(i) +b* ln(x(i)) + c - i = 0 (the root) by bisection
+    do i = 2, num
+      c_i = c - i
+      rl = rr
+      ru = rl
+      search: do                     ! Search a point on the right of the root
+        ru = 2 * ru
+        fu = a * ru + b * log(ru) + c_i
+        if (fu >= zero) exit search
+      enddo search
+
+      bisection: do
+        rr = 0.5d0 * (ru + rl)
+        fr = a * rr + b * log(rr) + c_i
+        if (fr > zero) then
+          ru = rr
+        else
+          rl = rr
+        endif
+        if ((ru - rl) <= accuracy * rr) exit bisection
+      end do bisection
+
+      x(i) = rr
+    end do
+
+    x = x + start               ! Add the offset
+
+  end function loglinspace
 
   !> arange: Return evenly spaced integer values within a given interval
   !!
