@@ -2,27 +2,27 @@
 !! @author Juan Fiol <juanfiol@gmail.com>
 !! @date   Mon Jul 20 01:53:48 2009
 !!
-!! @brief implements several functions for simple use of splines. Several sources were
-!! reused.
+!! @brief implements several functions for simple use of cubic splines.
+!! Several sources were reused.
 !!
-!! Most (all) of the routines were modified from the original. See below for authors of
-!! original versions
+!! Most (all) of the routines were modified from the original.
+!! See below for authors of original versions
 
 !> @package splines
 !! @brief implementation of interpolation using splines
 !!
 !! @note
 !! It is recommended to use it through the standard interfaces
-!! splrep and splev
+!! csplrep and splev
 !!
 !! Examples of use
 !! @code
-!! USE splines, only: spl_rep, splrep, splev
+!! USE splines, only: spl_rep, csplrep, splev
 !! type(spl_rep) :: tck
 !! integer, parameter :: N = 500
 !! real(8), dimension(N) :: x, y, xnew, ynew
 !! ! fill x,y and xnew ...
-!! call splrep(x, y, Zero, Zero, tck)
+!! call csplrep(x, y, Zero, Zero, tck)
 !! ynew= splev(xnew, tck)
 module splines
   USE basic, only: dp, Zero, Small, print_msg
@@ -40,24 +40,24 @@ module splines
 
   integer, parameter :: NMAX = 800
 
-  !> splev Performs a spline interpolation in a point or in a table
+  !> csplev Performs a spline interpolation in a point or in a table
   !! \see interp_spl and interp_spl_tab
-  interface splev
+  interface csplev
     module procedure interp_spl
     module procedure interp_spl_tab
   end interface
 
   private
-  public :: spl_rep, splev, splrep, spl_clean_rep, splint, splint_square, spleps
+  public :: spl_rep, csplev, csplrep, spl_clean_rep, splint, splint_square, spleps
   public :: spline_coeff, INTEG2
 contains
 
   !> cubic spline interpolation between tabulated data
   !! After calling this function the result may be used to evaluate the function as:
-  !! `ynew= splev(xnew, tck)`
+  !! `ynew= csplev(xnew, tck)`
   !!
   !! REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
-  subroutine splrep(x, y, s1, sn, r)
+  subroutine csplrep(x, y, s1, sn, r)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< independent grid points
     real(dp), dimension(:), intent(IN) :: y !< corresponding function values
@@ -70,12 +70,12 @@ contains
     IF (allocated(r%x) .AND. size(r%x) /= Nd) deallocate (r%x, r%A, r%B, r%C, r%D)
     if (.NOT. allocated(r%x)) then
       allocate (r%x(Nd), r%A(Nd), r%B(Nd), r%C(Nd), r%D(Nd), STAT=ierr)
-      IF (ierr /= 0) call print_msg('Allocation error in splrep', errcode=ierr)
+      IF (ierr /= 0) call print_msg('Allocation error in csplrep', errcode=ierr)
     end if
     r%x = x
     ierr = spline_coeff(x, y, r%A, r%B, r%C, r%D, s1, sn, Nd)
-    IF (ierr /= 0) call print_msg('Calculation error in splrep', 'splrep', ierr)
-  end subroutine splrep
+    IF (ierr /= 0) call print_msg('Calculation error in csplrep', 'csplrep', ierr)
+  end subroutine csplrep
 
   subroutine spl_clean_rep(r)
     implicit none
@@ -84,14 +84,14 @@ contains
     integer :: ierr
     if (allocated(r%x)) then
       deallocate (r%x, r%A, r%B, r%C, r%D, STAT=ierr)
-      IF (ierr /= 0) call print_msg('Deallocation error in splrep')
+      IF (ierr /= 0) call print_msg('Deallocation error in csplrep')
     end if
 
   end subroutine spl_clean_rep
 
   !> Interpolates a function using previously calculated representation of splines
   !!
-  !! @note Before calling this function, must be called `splrep()`
+  !! @note Before calling this function, must be called `csplrep()`
   function interp_spl(xc, tck) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
     type(spl_rep), intent(IN) :: tck !<  spline coefficients
@@ -237,7 +237,7 @@ contains
       F(1:i - 1) = y(1:i - 1); F(i:) = y(i + 1:)
       ierr = spline_coeff(R, F, A, B, C, D, Zero, Zero, n1)
       RC = x(i)
-      YI = A(i - 1) + RC * (B(i - 1) + RC * (C(i - 1) + RC * D(i - 1))) ! splev
+      YI = A(i - 1) + RC * (B(i - 1) + RC * (C(i - 1) + RC * D(i - 1))) ! csplev
       if (abs(y(i)) > Epsilon) then
         Err(i) = 1.0_dp - YI / y(i)
       else
@@ -247,18 +247,15 @@ contains
   end subroutine spleps
 
   !> Integral of a cubic spline function.
-  !! @param xL  Lower limit in the integral.
-  !! @param xU  Upper limit in the integral.
-  !! @param tck spline Coefficients
   !! @remarks (slightly modified) From RADIAL package
-  !! @return error code (0 in success)
   function splint(xL, xU, tck) result(suma)
-    real(dp), intent(IN) :: xL
-    real(dp), intent(IN) :: xU
-    type(spl_rep), intent(IN) :: tck
-    real(dp) :: suma
-    real(dp) :: xll, xuu, x1, x2, sumaP, sign
-    integer :: N, iL, iU, i
+    real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
+    real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
+    type(spl_rep), intent(IN) :: tck !< Interpolating object
+    real(dp) :: suma                 !<  Value of integral
+
+    real(dp) :: xll, xuu, x1, x2, sign
+    integer :: iL, iU, i
 
     if (xU > xL) then            ! Set integration limits in increasing order.
       XLL = xL; XUU = xU; sign = 1._dp
@@ -266,9 +263,7 @@ contains
       XLL = xU; XUU = xL; sign = -1._dp
     endif
 
-    N = size(tck%x)
-
-    x1 = tck%x(1); x2 = tck%x(N)
+    x1 = tck%x(1); x2 = tck%x(size(tck%x))
     IF (XLL < x1) XLL = x1 + Small ! Check integral limits.
     IF (XUU > x2) XUU = x2 - Small
 
@@ -276,62 +271,51 @@ contains
     iL = searchsorted(tck%x, XLL)
     iU = searchsorted(tck%x, XUU)
 
+    i = iL                    ! Just to use the same expression always
     suma = Zero
-    if (iL == iU) then    ! Only a single interval involved.
-      x1 = XLL
-      x2 = XUU
-      suma = x2 * (tck%A(iL) + x2 * ((tck%B(iL) / 2) + x2 * ((tck%C(iL) / 3) + x2 * tck%D(iL) / 4))) - &
-        & x1 * (tck%A(iL) + x1 * ((tck%B(iL) / 2) + x1 * ((tck%C(iL) / 3) + x1 * tck%D(iL) / 4)))
-    else      ! Contributions from different intervals.
-      x1 = XLL
-      x2 = tck%x(iL + 1)
-      suma = x2 * (tck%A(iL) + x2 * ((tck%B(iL) / 2) + x2 * ((tck%C(iL) / 3) + x2 * tck%D(iL) / 4)))&
-        & - x1 * (tck%A(iL) + x1 * ((tck%B(iL) / 2) + x1 * ((tck%C(iL) / 3) + x1 * tck%D(iL) / 4)))
-      iL = iL + 1
-      do i = iL, iU
-        x1 = tck%x(i)
-        x2 = tck%x(i + 1)
-        if (i == iU) x2 = XUU
-        sumaP = x2 * (tck%A(i) + x2 * ((tck%B(i) / 2) + x2 * ((tck%C(i) / 3) + x2 * tck%D(i) / 4))) - &
-          &  x1 * (tck%A(i) + x1 * ((tck%B(i) / 2) + x1 * ((tck%C(i) / 3) + x1 * tck%D(i) / 4)))
-        suma = suma + sumaP
-      enddo
-    endif
+
+    ! First interval
+    x1 = XLL; x2 = min(tck%x(i + 1), XUU)
+    suma = int_single()
+    if (iL == iU) then ! Both limits belong to the same interval
+      suma = sign * suma
+      return
+    end if
+
+    ! Add intermediate intervals
+    do i = iL + 1, iU - 1
+      x1 = tck%x(i)
+      x2 = tck%x(i + 1)
+      suma = suma + int_single()
+    end do
+
+    ! Last interval
+    x1 = x2
+    x2 = XUU
+    suma = suma + int_single()
+
+    ! Consider the limits of integration
     suma = sign * suma
+  contains
+    function int_single() result(y)
+      real(dp) :: y
+      associate (A=>tck%A, B=>tck%B, C=>tck%C, D=>tck%D)
+        y = x2 * (A(i) + x2 * (B(i) / 2 + x2 * (C(i) / 3 + x2 * D(i) / 4)))&
+          &  - x1 * (A(i) + x1 * (B(i) / 2 + x1 * (C(i) / 3 + x1 * D(i) / 4)))
+      end associate
+    end function int_single
+
   end function splint
 
-  !! @param XL  Lower limit in the integral.
-  !! @param XU  Upper limit in the integral.
-  !! @param[out] SUM value of integral
-  !! @param N Number of grid points.
-  !! @remarks (slightly modified) From RADIAL package
-  !! @return error code (0 in success)
-  !! @remarks We should convert it to work with splrep and splev
-
-  !> Integral of the square of a cubic spline function.
-  !! @param xL  Lower limit in the integral.
-  !! @param xU  Upper limit in the integral.
-  !! @param tck spline Coefficients
-  !! @return
+  !> Integral of the square of a function expressed as a cubic spline.
   function splint_square(xL, xU, tck) result(suma)
-    !     INTEGRAL OF A SQUARED CUBIC SPLINE FUNCTION.
-    !     INPUT:
-    !     X(I) (I=1, ...,N) ........ GRID POINTS.
-    !                    (THE X VALUES MUST BE IN INCREASING ORDER).
-    !     A(I),B(I),C(I),D(I) ...... SPLINE COEFFICIENTS.
-    !     N ........................ NUMBER OF GRID POINTS.
-    !     XL ....................... LOWER LIMIT IN THE INTEGRAL.
-    !     XU ....................... UPPER LIMIT IN THE INTEGRAL.
-    !     OUTPUT:
-    !     SUM ...................... VALUE OF THE INTEGRAL.
-    !     -----------------------------------------------------------------
-    real(dp), intent(IN) :: xL
-    real(dp), intent(IN) :: xU
-    type(spl_rep), intent(IN) :: tck
-    real(dp) :: suma
-    real(dp) :: SUMP
-    real(dp) :: x1, x2, xll, xuu, sign
-    integer :: i, IL, IU, N
+    real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
+    real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
+    type(spl_rep), intent(IN) :: tck !< Interpolating object
+    real(dp) :: suma                 !<  Value of integral
+
+    real(dp) :: xll, xuu, x1, x2, sign
+    integer :: iL, iU, i
 
     if (xU > xL) then            ! Set integration limits in increasing order.
       XLL = xL; XUU = xU; sign = 1._dp
@@ -339,9 +323,7 @@ contains
       XLL = xU; XUU = xL; sign = -1._dp
     endif
 
-    N = size(tck%x)
-
-    x1 = tck%x(1); x2 = tck%x(N)
+    x1 = tck%x(1); x2 = tck%x(size(tck%x))
     IF (XLL < x1) XLL = x1 + Small ! Check integral limits.
     IF (XUU > x2) XUU = x2 - Small
 
@@ -349,69 +331,179 @@ contains
     iL = searchsorted(tck%x, XLL)
     iU = searchsorted(tck%x, XUU)
 
+    i = iL                    ! Just to use the same expression always
     suma = Zero
-    if (IL == IU) then     ! Only a single interval involved.
-      x1 = xLL
-      x2 = xUU
-      suma = x2 * (tck%A(IL) * (tck%A(IL) + x2 * tck%B(IL))                            &
-        &     + x2 * x2 * (((2 * tck%A(IL) * tck%C(IL) + tck%B(IL)**2) / 3._dp)          &
-        &     + x2 * (((tck%B(IL) * tck%C(IL) + tck%A(IL) * tck%D(IL)) / 2._dp)        &
-        &     + x2 * (((2 * tck%B(IL) * tck%D(IL) + tck%C(IL)**2) / 5._dp)             &
-        &     + x2 * tck%D(IL) * ((tck%C(IL) / 3._dp) + x2 * tck%D(IL) / 7._dp)))))      &
-        & - x1 * (tck%A(IL) * (tck%A(IL) + x1 * tck%B(IL))                            &
-        &     + x1 * x1 * (((2 * tck%A(IL) * tck%C(IL) + tck%B(IL)**2) / 3._dp)          &
-        &     + x1 * (((tck%B(IL) * tck%C(IL) + tck%A(IL) * tck%D(IL)) / 2._dp)        &
-        &     + x1 * (((2 * tck%B(IL) * tck%D(IL) + tck%C(IL)**2) / 5._dp)             &
-        &     + x1 * tck%D(IL) * ((tck%C(IL) / 3._dp) + x1 * tck%D(IL) / 7._dp)))))
-    else             ! Contributions from different intervals.
-      x1 = xLL
-      x2 = tck%x(IL + 1)
-      suma = x2 * (tck%A(IL) * (tck%A(IL) + x2 * tck%B(IL))                          &
-        &     + x2 * x2 * (((2 * tck%A(IL) * tck%C(IL) + tck%B(IL)**2) / 3._dp)          &
-        &     + x2 * (((tck%B(IL) * tck%C(IL) + tck%A(IL) * tck%D(IL)) / 2._dp)        &
-        &     + x2 * (((2 * tck%B(IL) * tck%D(IL) + tck%C(IL)**2) / 5._dp)             &
-        &     + x2 * tck%D(IL) * ((tck%C(IL) / 3._dp) + x2 * tck%D(IL) / 7._dp)))))      &
-        &  - x1 * (tck%A(IL) * (tck%A(IL) + x1 * tck%B(IL))                          &
-        &     + x1 * x1 * (((2 * tck%A(IL) * tck%C(IL) + tck%B(IL)**2) / 3._dp)          &
-        &     + x1 * (((tck%B(IL) * tck%C(IL) + tck%A(IL) * tck%D(IL)) / 2._dp)        &
-        &     + x1 * (((2 * tck%B(IL) * tck%D(IL) + tck%C(IL)**2) / 5._dp)             &
-        &     + x1 * tck%D(IL) * ((tck%C(IL) / 3._dp) + x1 * tck%D(IL) / 7._dp)))))
-      IL = IL + 1
-      do i = IL, IU
-        x1 = tck%x(i)
-        x2 = tck%x(i + 1)
-        if (i == IU) x2 = xUU
-        SUMP = x2 * (tck%A(i) * (tck%A(i) + x2 * tck%B(i))                          &
-          &      + x2 * x2 * (((2 * tck%A(i) * tck%C(i) + tck%B(i)**2) / 3._dp)         &
-          &      + x2 * (((tck%B(i) * tck%C(i) + tck%A(i) * tck%D(i)) / 2._dp)        &
-          &      + x2 * (((2 * tck%B(i) * tck%D(i) + tck%C(i)**2) / 5._dp)            &
-          &      + x2 * tck%D(i) * ((tck%C(i) / 3._dp) + x2 * tck%D(i) / 7._dp)))))     &
-          &  - x1 * (tck%A(i) * (tck%A(i) + x1 * tck%B(i))                          &
-          &      + x1 * x1 * (((2 * tck%A(i) * tck%C(i) + tck%B(i)**2) / 3._dp)         &
-          &      + x1 * (((tck%B(i) * tck%C(i) + tck%A(i) * tck%D(i)) / 2._dp)        &
-          &      + x1 * (((2 * tck%B(i) * tck%D(i) + tck%C(i)**2) / 5._dp)            &
-          &      + x1 * tck%D(i) * ((tck%C(i) / 3._dp) + x1 * tck%D(i) / 7._dp)))))
-        if (SUMP < Zero) SUMP = Zero ! if negative comes from numerical error
-        suma = suma + SUMP
-      enddo
-    endif
-    suma = SIGN * suma
+
+    ! First interval
+    x1 = XLL; x2 = min(tck%x(i + 1), XUU)
+    suma = int_single()
+    if (iL == iU) then ! Both limits belong to the same interval
+      suma = sign * suma
+      return
+    end if
+
+    ! Add intermediate intervals
+    do i = iL + 1, iU - 1
+      x1 = tck%x(i)
+      x2 = tck%x(i + 1)
+      suma = suma + int_single()
+    end do
+
+    ! Last interval
+    x1 = x2
+    x2 = XUU
+    suma = suma + int_single()
+
+    ! Consider the limits of integration
+    suma = sign * suma
+  contains
+    function int_single() result(y)
+      real(dp) :: y
+      associate (A=>tck%A, B=>tck%B, C=>tck%C, D=>tck%D)
+        y = x2 * (A(i) * (A(i) + x2 * B(i)) + &
+        & x2**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp + &
+        & x2 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp + &
+        & x2 * ((2 * B(i) * D(i) + C(i)**2) / 5._dp + &
+        & x2 * D(i) * (C(i) / 3._dp) + x2 * D(i) / 7._dp)))) - &
+        & x1 * (A(i) * (A(i) + x1 * B(i)) + &
+        & x1**2 * (((2 * A(i) * C(i) + B(i)**2) / 3._dp) + &
+        & x1 * (((B(i) * C(i) + A(i) * D(i)) / 2._dp) + &
+        & x1 * (((2 * B(i) * D(i) + C(i)**2) / 5._dp) + &
+        & x1 * D(i) * ((C(i) / 3._dp) + x1 * D(i) / 7._dp)))))
+      end associate
+    end function int_single
+
   end function splint_square
 
+  ! !> Integral of the square of a cubic spline function.
+  ! !! @param xL  Lower limit in the integral.
+  ! !! @param xU  Upper limit in the integral.
+  ! !! @param tck spline Coefficients
+  ! !!  @remarks (slightly modified) From RADIAL package
+  ! !! @remarks We should convert it to work with csplrep and csplev
+  ! function splint_square(xL, xU, tck) result(suma)
+  !   !     INTEGRAL OF A SQUARED CUBIC SPLINE FUNCTION.
+  !   !     INPUT:
+  !   !     X(I) (I=1, ...,N) ........ GRID POINTS.
+  !   !                    (THE X VALUES MUST BE IN INCREASING ORDER).
+  !   !     A(I),B(I),C(I),D(I) ...... SPLINE COEFFICIENTS.
+  !   !     N ........................ NUMBER OF GRID POINTS.
+  !   !     XL ....................... LOWER LIMIT IN THE INTEGRAL.
+  !   !     XU ....................... UPPER LIMIT IN THE INTEGRAL.
+  !   !     OUTPUT:
+  !   !     SUM ...................... VALUE OF THE INTEGRAL.
+  !   !     -----------------------------------------------------------------
+  !   real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
+  !   real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
+  !   type(spl_rep), intent(IN) :: tck !< Interpolating object
+  !   real(dp) :: suma            !<  Value of integral
+  !   real(dp) :: x1, x2, xll, xuu, sign
+  !   integer :: i, IL, IU, N
+
+  !   if (xU > xL) then            ! Set integration limits in increasing order.
+  !     XLL = xL; XUU = xU; sign = 1._dp
+  !   else
+  !     XLL = xU; XUU = xL; sign = -1._dp
+  !   endif
+
+  !   N = size(tck%x)
+
+  !   x1 = tck%x(1); x2 = tck%x(N)
+  !   IF (XLL < x1) XLL = x1 + Small ! Check integral limits.
+  !   IF (XUU > x2) XUU = x2 - Small
+
+  !   ! Find involved intervals.
+  !   iL = searchsorted(tck%x, XLL)
+  !   iU = searchsorted(tck%x, XUU)
+
+  !   suma = Zero
+  !   associate (A=>tck%A, B=>tck%B, C=>tck%C, D=>tck%D)
+  !     i = iL                    ! Just to use the same expression
+  !     suma = Zero
+
+  !     ! First interval
+  !     x1 = XLL; x2 = min(tck%x(i + 1), XUU)
+
+  !     suma = x2 * (A(i) * (A(i) + x2 * B(i)) + &
+  !       & x2**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp + &
+  !       & x2 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp + &
+  !       & x2 * ((2 * B(i) * D(i) + C(i)**2) / 5._dp + &
+  !       & x2 * D(i) * (C(i) / 3._dp) + x2 * D(i) / 7._dp)))) - &
+  !       & x1 * (A(i) * (A(i) + x1 * B(i)) + &
+  !       & x1**2 * (((2 * A(i) * C(i) + B(i)**2) / 3._dp) + &
+  !       & x1 * (((B(i) * C(i) + A(i) * D(i)) / 2._dp) + &
+  !       & x1 * (((2 * B(i) * D(i) + C(i)**2) / 5._dp) + &
+  !       & x1 * D(i) * ((C(i) / 3._dp) + x1 * D(i) / 7._dp)))))
+  !     IF (iL == iU) return      ! Both limits belong to the same interval
+
+  !     ! Add intermediate intervals
+  !     do i = iL + 1, iU - 1
+  !       x1 = tck%x(i)
+  !       x2 = tck%x(i + 1)
+  !       suma = suma + x2 * (A(i) * (A(i) + x2 * B(i)) + &
+  !       & x2**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp + &
+  !       & x2 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp + &
+  !       & x2 * ((2 * B(i) * D(i) + C(i)**2) / 5._dp + &
+  !       & x2 * D(i) * (C(i) / 3._dp) + x2 * D(i) / 7._dp)))) - &
+  !       & x1 * (A(i) * (A(i) + x1 * B(i)) + &
+  !       & x1**2 * (((2 * A(i) * C(i) + B(i)**2) / 3._dp) + &
+  !       & x1 * (((B(i) * C(i) + A(i) * D(i)) / 2._dp) + &
+  !       & x1 * (((2 * B(i) * D(i) + C(i)**2) / 5._dp) + &
+  !       & x1 * D(i) * ((C(i) / 3._dp) + x1 * D(i) / 7._dp)))))
+  !     end do
+
+  !     ! Last interval
+  !     x1 = x2
+  !     x2 = XUU
+  !     suma = suma + x2 * (A(i) * (A(i) + x2 * B(i)) + &
+  !     & x2**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp + &
+  !     & x2 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp + &
+  !     & x2 * ((2 * B(i) * D(i) + C(i)**2) / 5._dp + &
+  !     & x2 * D(i) * (C(i) / 3._dp) + x2 * D(i) / 7._dp)))) - &
+  !     & x1 * (A(i) * (A(i) + x1 * B(i)) + &
+  !     & x1**2 * (((2 * A(i) * C(i) + B(i)**2) / 3._dp) + &
+  !     & x1 * (((B(i) * C(i) + A(i) * D(i)) / 2._dp) + &
+  !     & x1 * (((2 * B(i) * D(i) + C(i)**2) / 5._dp) + &
+  !     & x1 * D(i) * ((C(i) / 3._dp) + x1 * D(i) / 7._dp)))))
+  !   end associate
+
+  !   !   if (IL == IU) then     ! Only a single interval involved.
+  !   !     x1 = xLL
+  !   !     x2 = xUU
+  !   !     suma = y
+  !   !   else             ! Contributions from different intervals.
+  !   !     x1 = xLL
+  !   !     x2 = tck%x(IL + 1)
+  !   !     suma = y
+  !   !     IL = IL + 1
+  !   !     do i = IL, IU
+  !   !       x1 = tck%x(i)
+  !   !       x2 = tck%x(i + 1)
+  !   !       if (i == IU) x2 = xUU
+  !   !       SUMP = y
+  !   !       if (SUMP < Zero) SUMP = Zero ! if negative comes from numerical error
+  !   !       suma = suma + SUMP
+  !   !     enddo
+  !   !   endif
+
+  !   suma = SIGN * suma
+
+  ! end function splint_square
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  !> Integral of a squared cubic spline function.
-  !! @param[in] X grid points (must be in increasing order). Dimension N
-  !! @param[in] A Spline Coefficients
-  !! @param[in] B Spline Coefficients
-  !! @param[in] C Spline Coefficients
-  !! @param[in] D Spline Coefficients
-  !! @param[in] XL  Lower limit in the integral.
-  !! @param[in] XU  Upper limit in the integral.
-  !! @param[out] SUM value of integral
-  !! @param N Number of grid points.
-  !! @remarks (slightly modified) From RADIAL package
-  !! @remarks It is still needed by the subroutine Sch_Bound for Normalization
-  !! @return error code (0 in success)
+!> Integral of a squared cubic spline function.
+!! @param[in] X grid points (must be in increasing order). Dimension N
+!! @param[in] A Spline Coefficients
+!! @param[in] B Spline Coefficients
+!! @param[in] C Spline Coefficients
+!! @param[in] D Spline Coefficients
+!! @param[in] XL  Lower limit in the integral.
+!! @param[in] XU  Upper limit in the integral.
+!! @param[out] SUM value of integral
+!! @param N Number of grid points.
+!! @remarks (slightly modified) From RADIAL package
+!! @remarks It is still needed by the subroutine Sch_Bound for Normalization
+!! @return error code (0 in success)
   integer function INTEG2(X, A, B, C, D, XL, XU, SUM, N)
     integer :: N
     real(dp), dimension(N) :: X, A, B, C, D

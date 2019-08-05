@@ -1,6 +1,6 @@
 !> test_interpolate
 program test_interpolate
-  USE utils, only: dp, Zero
+  USE utils, only: dp, Zero, M_PI
   USE arrays, only: linspace
   USE interpolate
   implicit none
@@ -14,15 +14,14 @@ contains
     real(dp), dimension(Ndim) :: x, y, Err
     real(dp), dimension(Ndimnew) :: xnew, ynew, yint
     integer :: i1
-    ! real(dp) :: Dx, Dxn
 
     x = linspace(Zero, 20._dp, Ndim)
     y = sin(x)
     xnew = linspace(1.e-6_dp, 19.99_dp, Ndimnew)
 
-    call splrep(x, y, Zero, Zero, tck)
-    ynew = splev(xnew, tck)
-    write (*, "(A)") repeat("*-*", 65)
+    call csplrep(x, y, Zero, Zero, tck)
+    ynew = csplev(xnew, tck)
+    write (*, "(A)") ' '//repeat("*-*", 21)
     write (*, '(A)') '# Test 1 of splines module'
     write (*, '(A)') ' function: y= sin(x) '
     write (*, "(A)") repeat("*", 65)
@@ -34,6 +33,7 @@ contains
     end do
     close (9)
 
+    write (*, "((f0.5,1x))") splint_square(Zero, M_PI, tck)
     call spleps(x, y, Err)
     open (UNIT=9, file='error_splines1.dat')
     write (9, '(2(1PE13.5,1x))') (x(i1), abs(Err(i1)), i1=2, Ndim - 1)
@@ -72,10 +72,10 @@ contains
       xnew(i1) = Dxn * (i1 - 1) + 0.015_8
     end do
 
-    call splrep(x, y, Zero, Zero, tck)
-    ynew = splev(xnew, tck)
-    call splrep(x, ylog, Zero, Zero, tck)
-    ylognew = splev(xnew, tck)
+    call csplrep(x, y, Zero, Zero, tck)
+    ynew = csplev(xnew, tck)
+    call csplrep(x, ylog, Zero, Zero, tck)
+    ylognew = csplev(xnew, tck)
 
     write (*, "(A)") repeat("*", 65)
     write (*, '(A)') '# Test 2 of splines module'
