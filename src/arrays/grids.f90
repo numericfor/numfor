@@ -1,4 +1,4 @@
-q!> This module provides convenience routines to work with grids and arrays
+!> This module provides convenience routines to work with grids and arrays
 !! Ver si otras funciones pueden ser útiles:
 !! sort
 !! compress, nonzero, clip (no es claro que valga la pena)
@@ -166,16 +166,16 @@ contains
     implicit none
     real(dp), intent(IN) :: start !< Starting value
     real(dp), intent(IN) :: end !< Final value of the sequence
-    real(dp), intent(IN) :: num !< Number of points
+    integer, intent(IN) :: num !< Number of points
     real(dp), optional, intent(IN) :: step !< Approximated step in the linear region
     real(dp), optional, intent(IN) :: ratio !< quotient between consecutive points in the logarithmic region
     real(dp), dimension(num) :: x !< Array of points
 
     real(dp) :: a, b, c
-    real(dp) :: rr, ru, rl, r_N, c_i, fu
+    real(dp) :: rr, ru, rl, r_N, c_i, fu, fr
     real(dp) :: step_, ratio_
     integer :: i
-    real(dp), parameer :: accuracy = 1.e-10_dp
+    real(dp), parameter :: accuracy = 1.e-10_dp
 
     r_N = end - start           ! Define the interval
 
@@ -197,13 +197,13 @@ contains
       search: do                     ! Search a point on the right of the root
         ru = 2 * ru
         fu = a * ru + b * log(ru) + c_i
-        if (fu >= zero) exit search
+        if (fu >= Zero) exit search
       enddo search
 
       bisection: do
         rr = 0.5d0 * (ru + rl)
         fr = a * rr + b * log(rr) + c_i
-        if (fr > zero) then
+        if (fr > Zero) then
           ru = rr
         else
           rl = rr
