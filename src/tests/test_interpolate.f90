@@ -10,7 +10,7 @@ program test_interpolate
 contains
   subroutine test_splines_1()
     integer, parameter :: Ndim = 20, Ndimnew = 4 * Ndim
-    type(spl_rep) :: tck
+    type(cspl_rep) :: tck
     real(dp), dimension(Ndim) :: x, y, Err
     real(dp), dimension(Ndimnew) :: xnew, ynew, yint
     integer :: i1
@@ -36,13 +36,13 @@ contains
     write (*, "((f0.5,1x))") splint_square(Zero, M_PI, tck)
     call spleps(x, y, Err)
     open (UNIT=9, file='error_splines1.dat')
-    write (9, '(2(1PE13.5,1x))') (x(i1), abs(Err(i1)), i1=2, Ndim - 1)
+    write (9, '(3(f10.5,1x))') (x(i1), y(i1), abs(Err(i1)), i1=2, Ndim - 1)
     close (9)
   end subroutine test_splines_1
 
   subroutine test_splines_2()
     integer, parameter :: Ndim = 250, Ndimnew = 2 * Ndim
-    type(spl_rep) :: tck
+    type(cspl_rep) :: tck
     real(dp), dimension(Ndim) :: x, y
     real(dp), dimension(Ndim) :: ylog
     real(dp), dimension(Ndim) :: Err

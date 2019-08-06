@@ -230,14 +230,19 @@ contains
     integer, optional, intent(IN) :: step !< Spacing between values.
     integer, dimension(:), allocatable :: x !< A sequence of numbers spaced evenly
     integer :: num, i, step_
+
     !
     step_ = 1; IF (present(step)) step_ = step
     IF (step_ == 0) call print_msg('Step must be nonzero', 'arange')
 
-    num = ceiling((end - start) / real(step, kind=dp))
+    if (end == start) then
+      allocate (x(1))
+      x = start
+      return
+    end if
 
-    IF (allocated(x) .and. (size(x) /= num)) deallocate (x)
-    IF (.not. allocated(x)) allocate (x(num))
+    num = ceiling(abs((end - start) / real(step_, kind=dp)))
+    allocate (x(1:num))
     x(1) = start
     do concurrent(i=1:num)
       x(i + 1) = start + i * step_

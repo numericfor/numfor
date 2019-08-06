@@ -17,28 +17,27 @@
 !!
 !! Examples of use
 !! @code
-!! USE splines, only: spl_rep, csplrep, splev
-!! type(spl_rep) :: tck
+!! USE splines, only: cspl_rep, csplrep, splev
+!! type(cspl_rep) :: tck
 !! integer, parameter :: N = 500
 !! real(8), dimension(N) :: x, y, xnew, ynew
 !! ! fill x,y and xnew ...
 !! call csplrep(x, y, Zero, Zero, tck)
-!! ynew= splev(xnew, tck)
-module interpolate
+!! ynew= csplev(xnew, tck)
+module csplines
   USE basic, only: dp, Zero, Small, print_msg
   USE sorting, only: searchsorted
   implicit none
 
   !> Type used to keep all information on splines
-  type spl_rep
-    real(dp), allocatable :: A(:)
-    real(dp), allocatable :: B(:)
-    real(dp), allocatable :: C(:)
-    real(dp), allocatable :: D(:)
-    real(dp), allocatable :: x(:)
-  end type spl_rep
+  !!
+  !! For each interval, the value will be \f$f(t) \approx S(1) t^3 + S(2) t^2 + S(3) t + S(4)\f$
+  type cspl_rep
+    real(dp), dimension(:, :), allocatable :: S
+    real(dp), dimension(:), allocatable :: x
+  end type cspl_rep
 
-  integer, parameter :: NMAX = 800
+  ! integer, parameter :: NMAX = 800
 
   !> csplev Performs a spline interpolation in a point or in a table
   !! \see interp_spl and interp_spl_tab
@@ -48,7 +47,7 @@ module interpolate
   end interface csplev
 
   private
-  public :: spl_rep, csplev, csplrep, spl_clean_rep, splint, splint_square, spleps
+  public :: cspl_rep, csplev, csplrep, spl_clean_rep, splint, splint_square, spleps
   public :: spline_coeff
 contains
 
@@ -63,30 +62,26 @@ contains
     real(dp), dimension(:), intent(IN) :: y !< corresponding function values
     real(dp), intent(IN) :: s1              !< second derivative at x(1)
     real(dp), intent(IN) :: sn              !< second derivative at x(n) (Natural spline: s1=sn=0)
-    type(spl_rep), intent(OUT) :: r         !< Coefficients stored in type(spl_rep)
-    real(dp), dimension(:, :), allocatable :: S
+    type(cspl_rep), intent(OUT) :: r         !< Coefficients stored in type(cspl_rep)
     integer :: ierr
     integer :: Nd
     Nd = size(x)
-    IF (allocated(r%x) .AND. size(r%x) /= Nd) deallocate (r%x, r%A, r%B, r%C, r%D)
+    IF (allocated(r%x) .AND. size(r%x) /= Nd) deallocate (r%x, r%S)
     if (.NOT. allocated(r%x)) then
-      allocate (r%x(Nd), r%A(Nd), r%B(Nd), r%C(Nd), r%D(Nd), STAT=ierr)
+      allocate (r%x(Nd), r%S(4, Nd), STAT=ierr)
       IF (ierr /= 0) call print_msg('Allocation error', sub='csplrep', errcode=ierr)
     end if
-    allocate (S(4, Nd))
     r%x = x
-    ierr = spline_coeff(x, y, S, s1, sn, Nd)
-    r%A = S(1, :); r%B = S(2, :); r%C = S(3, :); r%D = S(4, :)
-    IF (ierr /= 0) call print_msg('Calculation error', 'csplrep', ierr)
+    r%S = spline_coeff(x, y, s1, sn, Nd)
   end subroutine csplrep
 
   subroutine spl_clean_rep(r)
     implicit none
-    type(spl_rep), intent(INOUT) :: r
+    type(cspl_rep), intent(INOUT) :: r
 
     integer :: ierr
     if (allocated(r%x)) then
-      deallocate (r%x, r%A, r%B, r%C, r%D, STAT=ierr)
+      deallocate (r%x, r%S, STAT=ierr)
       IF (ierr /= 0) call print_msg('Deallocation error', sub='csplrep')
     end if
 
@@ -97,17 +92,17 @@ contains
   !! @note Before calling this function, must be called `csplrep()`
   function interp_spl(xc, tck) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
-    type(spl_rep), intent(IN) :: tck !<  spline coefficients
-    real(dp) :: y                    !< the interpolated value
+    type(cspl_rep), intent(IN) :: tck !<  spline coefficients
+    real(dp) :: y                     !< the interpolated value
     integer :: ix
     ix = searchsorted(tck%x, xc)
-    y = tck%A(ix) + (tck%B(ix) + (tck%C(ix) + tck%D(ix) * xc) * xc) * xc
+    y = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
   end function interp_spl
 
   !> \copybrief interp_spl
   !! Works over an array of x values and returns an array of interpolated values
   function interp_spl_tab(xnew, tck) result(y)
-    type(spl_rep), intent(IN) :: tck           !< spline coefficients
+    type(cspl_rep), intent(IN) :: tck           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
     real(dp), dimension(size(xnew)) :: y
     real(dp) :: xc
@@ -116,7 +111,7 @@ contains
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
       ix = searchsorted(tck%x, xc)
-      y(i1) = tck%A(ix) + (tck%B(ix) + (tck%C(ix) + tck%D(ix) * xc) * xc) * xc
+      y = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
     end do
   end function interp_spl_tab
 
@@ -138,78 +133,66 @@ contains
   !! @param[out] D Spline Coefficients
   !!
   !!  REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
-  function spline_coeff(X, Y, S, s1, sN, nn) result(spl)
-    integer, intent(IN) :: nn
-    real(dp), dimension(nn), intent(IN) :: X
-    real(dp), dimension(nn), intent(IN) :: Y
-    real(dp), dimension(4, nn), intent(OUT) :: S
-    real(dp), dimension(nn) :: A
-    real(dp), dimension(nn) :: B
-    real(dp), dimension(nn) :: C
-    real(dp), dimension(nn) :: D
-    real(dp), intent(IN) :: s1
-    real(dp), intent(IN) :: sN
+  function spline_coeff(X, Y, s1, sN, nn) result(S)
+    integer, intent(IN) :: nn                !< dimension of x, y
+    real(dp), dimension(nn), intent(IN) :: X !< grid points
+    real(dp), dimension(nn), intent(IN) :: Y !< values of the function at grid points x
+    real(dp), dimension(4, nn) :: S !< Coefficients, starting with the highest degree
+    real(dp), intent(IN) :: s1                   !< second derivative at x(1)
+    real(dp), intent(IN) :: sN                   !< second derivative at x(N)
     real(dp) :: R, SI1, SI, H, HI
     integer :: i, k
     integer :: n1, n2
-    integer :: spl
 
-    spl = 1
     IF (nn < 4) return
     n1 = nn - 1
     n2 = nn - 2
 
     ! Check that the points of the grid are all different and ascending. Else abort
-    A = X(2:) - X(:n1)
-    IF (any(A(:n1) < Small)) call print_msg('Points not in strict ascending order',&
-      & sub='spline_coeff', errcode=1)
+    associate (A=>S(4, :), B=>S(3, :), C=>S(2, :), D=>S(1, :))
+      A = X(2:) - X(:n1)
+      IF (any(A(:n1) < Small)) call print_msg('Points not in strict ascending order',&
+        & sub='spline_coeff', errcode=1)
 
-    ! associate (A=>S(1, :), B=>S(2, :), C=>S(1, :), D=>S(1, :))
-    D(:n1) = (Y(2:) - Y(:nn - 1)) / A(:n1)
+      D(:n1) = (Y(2:) - Y(:nn - 1)) / A(:n1)
 
-    do i = 1, n2   ! Symmetric Coefficient Matrix (augmented).
-      B(i) = 2._dp * (A(i) + A(i + 1))
-      k = nn - i
-      D(k) = 6._dp * (D(k) - D(k - 1))
-    enddo
-    D(2) = D(2) - A(1) * s1
-    D(n1) = D(n1) - A(n1) * sN
+      do i = 1, n2   ! Symmetric Coefficient Matrix (augmented).
+        B(i) = 2._dp * (A(i) + A(i + 1))
+        k = nn - i
+        D(k) = 6._dp * (D(k) - D(k - 1))
+      enddo
+      D(2) = D(2) - A(1) * s1
+      D(n1) = D(n1) - A(n1) * sN
 
-    do i = 2, n2   ! Gauss solution of the tridiagonal SYSTEM.
-      R = A(i) / B(i - 1)
-      B(i) = B(i) - R * A(i)
-      D(i + 1) = D(i + 1) - R * D(i)
-    enddo
-    D(n1) = D(n1) / B(n2)  ! The Sigma Coefficients are stored in array D.
+      do i = 2, n2   ! Gauss solution of the tridiagonal SYSTEM.
+        R = A(i) / B(i - 1)
+        B(i) = B(i) - R * A(i)
+        D(i + 1) = D(i + 1) - R * D(i)
+      enddo
+      D(n1) = D(n1) / B(n2)  ! The Sigma Coefficients are stored in array D.
 
-    do i = 2, n2
-      k = nn - i
-      D(k) = (D(k) - A(k) * D(k + 1)) / B(k - 1)
-    enddo
-    D(nn) = sN
+      do i = 2, n2
+        k = nn - i
+        D(k) = (D(k) - A(k) * D(k + 1)) / B(k - 1)
+      enddo
+      D(nn) = sN
 
-    !   Spline_coeff Coefficients.
-    SI1 = s1
-    do i = 1, n1
-      SI = SI1
-      SI1 = D(i + 1)
-      H = A(i)
-      HI = 1._dp / H
-      A(i) = (HI / 6._dp) * (SI * X(i + 1)**3 - SI1 * X(i)**3)       &
-        &      + HI * (Y(i) * X(i + 1) - Y(i + 1) * X(i))            &
-        &      + (H / 6._dp) * (SI1 * X(i) - SI * X(i + 1))
-      B(i) = (HI / 2._dp) * (SI1 * X(i)**2 - SI * X(i + 1)**2)       &
-        &      + HI * (Y(i + 1) - Y(i)) + (H / 6._dp) * (SI - SI1)
-      C(i) = (HI / 2._dp) * (SI * X(i + 1) - SI1 * X(i))
-      D(i) = (HI / 6._dp) * (SI1 - SI)
-    enddo
-    ! end associate
-    S(1, :) = A
-    S(2, :) = B
-    S(3, :) = C
-    S(4, :) = D
-
-    spl = 0
+      !   Spline_coeff Coefficients.
+      SI1 = s1
+      do i = 1, n1
+        SI = SI1
+        SI1 = D(i + 1)
+        H = A(i)
+        HI = 1._dp / H
+        A(i) = (HI / 6._dp) * (SI * X(i + 1)**3 - SI1 * X(i)**3)       &
+          &      + HI * (Y(i) * X(i + 1) - Y(i + 1) * X(i))            &
+          &      + (H / 6._dp) * (SI1 * X(i) - SI * X(i + 1))
+        B(i) = (HI / 2._dp) * (SI1 * X(i)**2 - SI * X(i + 1)**2)       &
+          &      + HI * (Y(i + 1) - Y(i)) + (H / 6._dp) * (SI - SI1)
+        C(i) = (HI / 2._dp) * (SI * X(i + 1) - SI1 * X(i))
+        D(i) = (HI / 6._dp) * (SI1 - SI)
+      enddo
+    end associate
   end function spline_coeff
 
   !> Estimates the error produced by using a spline approximation
@@ -231,19 +214,19 @@ contains
     real(dp), dimension(size(x)), intent(IN) :: y !< value of function at grid points
     real(dp), dimension(size(x)), intent(OUT):: Err !< Vector with error estimates
     real(dp), parameter :: Eps = 1.e-4_dp
-    integer :: i, n1, ierr
+    integer :: i, n1
     real(dp) :: YI, RC
     real(dp), dimension(size(x) - 1) :: R, F
     real(dp), dimension(4, size(x) - 1) :: S
 
     Err = Zero
     n1 = size(x) - 1
-    associate (A=>S(1, :), B=>S(2, :), C=>S(1, :), D=>S(1, :))
+    associate (A=>S(4, :), B=>S(3, :), C=>S(2, :), D=>S(1, :))
       do i = 2, n1                   ! Loop over skipped x-values
         R(1:i - 1) = x(1:i - 1); R(i:) = x(i + 1:)
         F(1:i - 1) = y(1:i - 1); F(i:) = y(i + 1:)
 
-        ierr = spline_coeff(R, F, S, Zero, Zero, n1)
+        S = spline_coeff(R, F, Zero, Zero, n1)
         RC = x(i)
         YI = A(i - 1) + RC * (B(i - 1) + RC * (C(i - 1) + RC * D(i - 1))) ! csplev
         if (abs(y(i)) > Eps) then
@@ -260,7 +243,7 @@ contains
   function splint(xL, xU, tck) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
-    type(spl_rep), intent(IN) :: tck !< Interpolating object
+    type(cspl_rep), intent(IN) :: tck !< Interpolating object
     real(dp) :: suma                 !<  Value of integral
 
     real(dp) :: xll, xuu, x1, x2, sign
@@ -308,7 +291,7 @@ contains
   contains
     function int_single() result(y)
       real(dp) :: y
-      associate (A=>tck%A, B=>tck%B, C=>tck%C, D=>tck%D)
+      associate (A=>tck%S(4, :), B=>tck%S(3, :), C=>tck%S(2, :), D=>tck%S(1, :))
         y = x2 * (A(i) + x2 * (B(i) / 2 + x2 * (C(i) / 3 + x2 * D(i) / 4)))&
           &  - x1 * (A(i) + x1 * (B(i) / 2 + x1 * (C(i) / 3 + x1 * D(i) / 4)))
       end associate
@@ -320,7 +303,7 @@ contains
   function splint_square(xL, xU, tck) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
-    type(spl_rep), intent(IN) :: tck !< Interpolating object
+    type(cspl_rep), intent(IN) :: tck !< Interpolating object
     real(dp) :: suma                 !<  Value of integral
 
     real(dp) :: xll, xuu, x1, x2, sign
@@ -368,7 +351,7 @@ contains
   contains
     function int_single() result(y)
       real(dp) :: y
-      associate (A=>tck%A, B=>tck%B, C=>tck%C, D=>tck%D)
+      associate (A=>tck%S(4, :), B=>tck%S(3, :), C=>tck%S(2, :), D=>tck%S(1, :))
         y = x2 * (A(i) * (A(i) + x2 * B(i))                           &
           &      + x2**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp       &
           &      + x2 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp          &
@@ -385,5 +368,5 @@ contains
 
   end function splint_square
 
-end module interpolate
+end module csplines
 

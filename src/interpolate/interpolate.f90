@@ -1,3 +1,4 @@
 module interpolate
-  USE splines
+  USE csplines
+  USE polynomial
 end module interpolate
