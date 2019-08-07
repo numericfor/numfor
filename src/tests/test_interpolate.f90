@@ -1,7 +1,7 @@
 !> test_interpolate
 program test_interpolate
   USE utils, only: dp, Zero, M_PI
-  USE arrays, only: linspace
+  USE arrays, only: linspace, geomspace
   USE interpolate
   implicit none
   call test_splines_1()
@@ -15,7 +15,7 @@ contains
     real(dp), dimension(Ndimnew) :: xnew, ynew, yint
     integer :: i1
 
-    x = linspace(Zero, 20._dp, Ndim)
+    x = geomspace(1.e-6_dp, 20._dp, Ndim)
     y = sin(x)
     xnew = linspace(1.e-6_dp, 19.99_dp, Ndimnew)
 
@@ -41,7 +41,7 @@ contains
   end subroutine test_splines_1
 
   subroutine test_splines_2()
-    integer, parameter :: Ndim = 250, Ndimnew = 2 * Ndim
+    integer, parameter :: Ndim = 150, Ndimnew = 4 * Ndim
     type(cspl_rep) :: tck
     real(dp), dimension(Ndim) :: x, y
     real(dp), dimension(Ndim) :: ylog
@@ -49,31 +49,27 @@ contains
     real(dp), dimension(Ndimnew) :: xnew, ynew, ylognew
     integer :: i1
     integer ::  NN
-    real(dp) :: Dx, Dxn
-    real(dp) :: frac, xmed
+    real(dp) :: frac, xmed, last
 
     frac = 0.9_8
     NN = Ndim / 2
-    xmed = 15.65 * frac
-    Dx = (xmed - Zero) / (NN - 1)
-    do i1 = 1, NN
-      x(i1) = Dx * (i1 - 1) + 0.0001_8
-      y(i1) = f(x(i1))
-    end do
-    Dx = (15.65 - xmed) / (NN)
-    do i1 = NN, Ndim
-      x(i1) = xmed + Dx * (i1 - NN) + 0.0001_8
-      y(i1) = f(x(i1))
-    end do
+    last = 15.65_dp
+    xmed = frac * last
+    x(:NN) = linspace(1.e-4_dp, xmed, NN, endpoint=.False.)
+    ! x(:NN) = geomspace(1.e-2_dp, xmed, NN, endpoint=.False.)
+    x(NN + 1:) = linspace(xmed, last, Ndim - NN)
 
+    y = f(x)
     ylog = log(y)
-    Dxn = 15.65*.98 / (Ndimnew - 1)
-    do i1 = 1, Ndimnew
-      xnew(i1) = Dxn * (i1 - 1) + 0.015_8
-    end do
+
+    ! print "(6(g0.4,1x))", x
+    ! print "(6(g0.4,1x))", y
+
+    xnew = linspace(0.015_dp, 0.98_dp * last, Ndimnew)
 
     call csplrep(x, y, Zero, Zero, tck)
     ynew = csplev(xnew, tck)
+
     call csplrep(x, ylog, Zero, Zero, tck)
     ylognew = csplev(xnew, tck)
 
@@ -94,10 +90,11 @@ contains
     close (9)
   end subroutine test_splines_2
 
-  function f(x1) result(y1)
+  elemental function f(x1) result(y1)
     real(dp), intent(IN) :: x1
     real(dp) :: y1
-    y1 = x1**2 / sqrt(2.*(-.58 + (9._8 / x1) * (1._8 + exp(-x1 / 3.5))))
+    y1 = abs(sin(x1))
+    ! y1 = x1**2 / sqrt(2.*(-0.58 + (9._8 / x1) * (1._8 - x1 + x1**2 + x1**9)))
   end function f
 
 end program test_interpolate

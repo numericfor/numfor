@@ -27,6 +27,7 @@
 module csplines
   USE basic, only: dp, Zero, Small, print_msg
   USE sorting, only: searchsorted
+  USE polynomial, only: polyder, polyval
   implicit none
 
   !> Type used to keep all information on splines
@@ -96,7 +97,7 @@ contains
     real(dp) :: y                     !< the interpolated value
     integer :: ix
     ix = searchsorted(tck%x, xc)
-    y = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
+    y = polyval(tck%S(:, ix), xc)
   end function interp_spl
 
   !> \copybrief interp_spl
@@ -111,27 +112,16 @@ contains
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
       ix = searchsorted(tck%x, xc)
-      y = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
+      y = polyval(tck%S(:, ix), xc)
+      ! y = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
     end do
   end function interp_spl_tab
 
-  !> cubic spline interpolation between tabulated data
-  !! @param X X(I) (I=1, ...,N) grid points.
-  !!                (The X values must be in INCREASING ORDER).
-  !! @param Y Y(I) (I=1, ...,N) corresponding function values.
-  !! @param S1 second derivatives at X(1)
-  !! @param SN second derivatives at X(N)
-  !!        (THE NATURAL SPLINE CORRESPONDS TO TAKING S1=SN=0).
-  !! @param nn Number of grid points.
+  !> Coefficients for cubic spline interpolation between tabulated data
   !!
   !! The interpolating polynomial in the i-th interval, from
   !! x(i) to x(i+1), is
-  !!        P_i(X) = A(i)+x*(B(i)+x*(C(i)+x*D(i)))
-  !! @param[out] A  Spline Coefficients (constant).
-  !! @param[out] B Spline Coefficients
-  !! @param[out] C Spline Coefficients
-  !! @param[out] D Spline Coefficients
-  !!
+  !!        P_i(X) = S(1,i)+x*(S(2,i)+x*(S(3,i)+x*S(4,i)))
   !!  REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   function spline_coeff(X, Y, s1, sN, nn) result(S)
     integer, intent(IN) :: nn                !< dimension of x, y
@@ -221,21 +211,19 @@ contains
 
     Err = Zero
     n1 = size(x) - 1
-    associate (A=>S(4, :), B=>S(3, :), C=>S(2, :), D=>S(1, :))
-      do i = 2, n1                   ! Loop over skipped x-values
-        R(1:i - 1) = x(1:i - 1); R(i:) = x(i + 1:)
-        F(1:i - 1) = y(1:i - 1); F(i:) = y(i + 1:)
+    do i = 2, n1                   ! Loop over skipped x-values
+      R(1:i - 1) = x(1:i - 1); R(i:) = x(i + 1:)
+      F(1:i - 1) = y(1:i - 1); F(i:) = y(i + 1:)
 
-        S = spline_coeff(R, F, Zero, Zero, n1)
-        RC = x(i)
-        YI = A(i - 1) + RC * (B(i - 1) + RC * (C(i - 1) + RC * D(i - 1))) ! csplev
-        if (abs(y(i)) > Eps) then
-          Err(i) = 1.0_dp - YI / y(i) ! Relative error
-        else
-          Err(i) = YI - y(i)      ! Absolute error
-        endif
-      enddo
-    end associate
+      S = spline_coeff(R, F, Zero, Zero, n1)
+      RC = x(i)
+      YI = polyval(S(:, i - 1), RC)
+      if (abs(y(i)) > Eps) then
+        Err(i) = 1.0_dp - YI / y(i) ! Relative error
+      else
+        Err(i) = YI - y(i)      ! Absolute error
+      endif
+    enddo
   end subroutine spleps
 
   !> Integral of a cubic spline function.
