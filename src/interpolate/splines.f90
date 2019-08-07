@@ -112,8 +112,8 @@ contains
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
       ix = searchsorted(tck%x, xc)
-      y = polyval(tck%S(:, ix), xc)
-      ! y = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
+      ! y(i1) = polyval(tck%S(:, ix), xc)
+      y(i1) = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
     end do
   end function interp_spl_tab
 
