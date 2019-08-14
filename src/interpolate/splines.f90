@@ -145,7 +145,7 @@ contains
       IF (any(A(:n1) < Small)) call print_msg('Points not in strict ascending order',&
         & sub='spline_coeff', errcode=1)
 
-      D(:n1) = (y(2:) - y(:nn - 1)) / A(:n1)
+      D(:n1) = (y(2:) - y(:n1)) / A(:n1)
 
       ! Symmetric Coefficient Matrix (augmented).
       B(:n2) = 2._dp * (A(:n2) + A(2:n1))
@@ -153,12 +153,12 @@ contains
       D(2) = D(2) - A(1) * s1
       D(n1) = D(n1) - A(n1) * sN
 
-      do i = 2, n2   ! Gauss solution of the tridiagonal SySTEM.
+      do i = 2, n2   ! Gauss solution of the tridiagonal system.
         R = A(i) / B(i - 1)
         B(i) = B(i) - R * A(i)
         D(i + 1) = D(i + 1) - R * D(i)
       enddo
-      D(n1) = D(n1) / B(n2)  ! The Sigma Coefficients are stored in array D.
+      D(n1) = D(n1) / B(n2)  ! Sigma Coefficients
 
       do i = 2, n2
         k = nn - i
