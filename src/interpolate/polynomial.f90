@@ -76,8 +76,8 @@ contains
     order = size(p) - m_      ! Number of term of resulting polynomial
     allocate (Pd(order)); Pd = p(:order)
 
-    morder: do k = 0, m_ - 1
-      n = degree + 1 - k
+    morder: do k = 1, m_
+      n = degree + 2 - k
       do i = 1, order
         Pd(i) = (n - i) * Pd(i)
       end do
@@ -88,11 +88,13 @@ contains
   !!
   !! Examples:
   !!
-  function polyint(p, m) result(p_I)
+  function polyint(p, m, cte) result(p_I)
     implicit none
     real(dp), dimension(:), intent(IN) :: p !<
     integer, optional, intent(IN) :: m !<
+    real(dp), optional, intent(IN) :: cte !<
     real(dp), dimension(:), allocatable :: p_I !<
+    real(dp) :: cte_
     integer :: m_
     integer :: i, k, n
     integer :: order, degree
@@ -105,14 +107,15 @@ contains
       return
     end if
 
+    cte_ = 1._dp; IF (present(cte)) cte_ = cte
     degree = size(p) - 1
     order = size(p) + m_      ! Number of term of resulting polynomial
-    allocate (p_I(order)); p_I(:order) = p
+    allocate (p_I(order)); p_I(:order) = p; p_I(size(p) + 1:) = cte_
 
-    morder: do k = 0, m_ - 1
-      n = degree + 1 - k
-      do i = 1, order
-        P_I(i) = P_I(i) / (n + i)
+    morder: do k = 1, m_
+      n = degree + 1 + k
+      do i = 1, n - 1
+        P_I(i) = P_I(i) / (n - i)
       end do
     end do morder
   end function polyint

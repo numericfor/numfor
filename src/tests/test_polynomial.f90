@@ -22,8 +22,8 @@ program test_polinomial
   ! print "(1(f7.3,1x))", polyder(p1, 5)
 
   print "(A)", 'Integration'
-  print "(5(f7.3,1x))", polyint(p1, 1)
-  print "(4(f7.3,1x))", polyint(p1, 2)
+  print "(6(f7.3,1x))", polyint(p1, 1)
+  print "(7(f7.3,1x))", polyint(p1, 2)
 
 end program test_polinomial
 
