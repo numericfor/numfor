@@ -5,7 +5,7 @@ program test_interpolate
   USE interpolate
   implicit none
   call test_splines_1()
-  call test_splines_2()
+  ! call test_splines_2()
 
 contains
   subroutine test_splines_1()
@@ -15,7 +15,7 @@ contains
     real(dp), dimension(Ndimnew) :: xnew, ynew, yint
     integer :: i1
 
-    x = geomspace(1.e-6_dp, 20._dp, Ndim)
+    x = linspace(1.e-6_dp, 20._dp, Ndim)
     y = sin(x)
     xnew = linspace(1.e-6_dp, 19.99_dp, Ndimnew)
 

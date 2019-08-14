@@ -1,4 +1,5 @@
-!> polynomials provides a framework for
+!> polynomials provides a framework for simple (and quite naive) work with polynomials
+!! It allows to easily evaluate, derivate, and integrate a polynomial
 module polynomial
 
   USE basic, only: dp, Zero, print_msg
@@ -45,9 +46,15 @@ contains
     end do
   end function polyval_v
 
-  !> polyder Computes
+  !> polyder Computes the derivative of a polynomial. Returns an array with the coefficients
   !!
   !! Examples:
+  !!```
+  !! real(dp), dimension(5) :: p
+  !! p = 1._dp;  p(3) = 2._dp  ! Set a polynomial
+  !!
+  !! print *, polyval(polyder(p), 1.5_dp)     ! First derivative evaluated in x = 1.5
+  !! print *, polyval(polyder(p), 4, 0._dp)   ! Fourth derivative evaluated in x = 0
   !!
   function polyder(p, m) result(Pd)
     implicit none
@@ -56,7 +63,7 @@ contains
     real(dp), dimension(:), allocatable :: Pd !<
     integer :: m_
     integer :: i, k, n
-    integer :: order, degree
+    integer :: order
 
     m_ = 1; IF (present(m)) m_ = m
     IF (m_ < 0) call print_msg('Order of derivative must be positive', errcode=0)
@@ -72,12 +79,11 @@ contains
       return
     end if
 
-    degree = size(p) - 1
     order = size(p) - m_      ! Number of term of resulting polynomial
     allocate (Pd(order)); Pd = p(:order)
 
     morder: do k = 0, m_ - 1
-      n = degree + 1 - k
+      n = size(p) - k
       do i = 1, order
         Pd(i) = (n - i) * Pd(i)
       end do
@@ -88,29 +94,32 @@ contains
   !!
   !! Examples:
   !!
-  function polyint(p, m) result(p_I)
+  function polyint(p, m, k) result(p_I)
     implicit none
     real(dp), dimension(:), intent(IN) :: p !<
     integer, optional, intent(IN) :: m !<
+    real(dp), optional, intent(IN) :: k !<
     real(dp), dimension(:), allocatable :: p_I !<
     integer :: m_
-    integer :: i, k, n
-    integer :: order, degree
+    real(dp) :: k_
+    integer :: i, j, n
+    integer :: order
 
     m_ = 1; IF (present(m)) m_ = m
     IF (m_ < 0) call print_msg('Order of derivative must be positive', errcode=0)
+
+    k_ = Zero; IF (present(k)) k_ = k
 
     if (m_ == 0) then           ! Return the original polynomial
       p_I = p
       return
     end if
 
-    degree = size(p) - 1
     order = size(p) + m_      ! Number of term of resulting polynomial
-    allocate (p_I(order)); p_I(:order) = p
+    allocate (p_I(order)); p_I(:order) = p; p_I(order + 1:) = k_
 
-    morder: do k = 0, m_ - 1
-      n = degree + 1 - k
+    morder: do j = 0, m_ - 1
+      n = size(p) - j
       do i = 1, order
         P_I(i) = P_I(i) / (n + i)
       end do

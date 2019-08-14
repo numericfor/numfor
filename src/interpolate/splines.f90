@@ -17,7 +17,7 @@
 !!
 !! Examples of use
 !! @code
-!! USE splines, only: cspl_rep, csplrep, splev
+!! USE csplines, only: cspl_rep, csplrep, splev
 !! type(cspl_rep) :: tck
 !! integer, parameter :: N = 500
 !! real(8), dimension(N) :: x, y, xnew, ynew
@@ -112,8 +112,7 @@ contains
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
       ix = searchsorted(tck%x, xc)
-      y = polyval(tck%S(:, ix), xc)
-      ! y = tck%S(4, ix) + (tck%S(3, ix) + (tck%S(2, ix) + tck%S(1, ix) * xc) * xc) * xc
+      y(i1) = polyval(tck%S(:, ix), xc)
     end do
   end function interp_spl_tab
 
@@ -123,13 +122,13 @@ contains
   !! x(i) to x(i+1), is
   !!        P_i(X) = S(1,i)+x*(S(2,i)+x*(S(3,i)+x*S(4,i)))
   !!  REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
-  function spline_coeff(X, Y, s1, sN, nn) result(S)
+  function spline_coeff(x, y, s1, sN, nn) result(S)
     integer, intent(IN) :: nn                !< dimension of x, y
-    real(dp), dimension(nn), intent(IN) :: X !< grid points
-    real(dp), dimension(nn), intent(IN) :: Y !< values of the function at grid points x
+    real(dp), dimension(nn), intent(IN) :: x !< grid points
+    real(dp), dimension(nn), intent(IN) :: y !< values of the function at grid points x
     real(dp), dimension(4, nn) :: S !< Coefficients, starting with the highest degree
-    real(dp), intent(IN) :: s1                   !< second derivative at x(1)
-    real(dp), intent(IN) :: sN                   !< second derivative at x(N)
+    real(dp), intent(IN) :: s1      !< second derivative at x(1)
+    real(dp), intent(IN) :: sN      !< second derivative at x(N)
     real(dp) :: R, SI1, SI, H, HI
     integer :: i, k
     integer :: n1, n2
@@ -138,23 +137,23 @@ contains
     n1 = nn - 1
     n2 = nn - 2
 
-    ! Check that the points of the grid are all different and ascending. Else abort
     associate (A=>S(4, :), B=>S(3, :), C=>S(2, :), D=>S(1, :))
-      A = X(2:) - X(:n1)
+
+      A = x(2:) - x(:n1)
+      ! Check that the points of the grid are all different and ascending. Else abort
+      ! Scipy leave that to the user (too expensive?)
       IF (any(A(:n1) < Small)) call print_msg('Points not in strict ascending order',&
         & sub='spline_coeff', errcode=1)
 
-      D(:n1) = (Y(2:) - Y(:nn - 1)) / A(:n1)
+      D(:n1) = (y(2:) - y(:nn - 1)) / A(:n1)
 
-      do i = 1, n2   ! Symmetric Coefficient Matrix (augmented).
-        B(i) = 2._dp * (A(i) + A(i + 1))
-        k = nn - i
-        D(k) = 6._dp * (D(k) - D(k - 1))
-      enddo
+      ! Symmetric Coefficient Matrix (augmented).
+      B(:n2) = 2._dp * (A(:n2) + A(2:n1))
+      D(2:n1) = 6._dp * (D(2:n1) - D(1:n2))
       D(2) = D(2) - A(1) * s1
       D(n1) = D(n1) - A(n1) * sN
 
-      do i = 2, n2   ! Gauss solution of the tridiagonal SYSTEM.
+      do i = 2, n2   ! Gauss solution of the tridiagonal SySTEM.
         R = A(i) / B(i - 1)
         B(i) = B(i) - R * A(i)
         D(i + 1) = D(i + 1) - R * D(i)
@@ -167,19 +166,19 @@ contains
       enddo
       D(nn) = sN
 
-      !   Spline_coeff Coefficients.
+      !   Spline Coefficients.
       SI1 = s1
       do i = 1, n1
         SI = SI1
         SI1 = D(i + 1)
         H = A(i)
         HI = 1._dp / H
-        A(i) = (HI / 6._dp) * (SI * X(i + 1)**3 - SI1 * X(i)**3)       &
-          &      + HI * (Y(i) * X(i + 1) - Y(i + 1) * X(i))            &
-          &      + (H / 6._dp) * (SI1 * X(i) - SI * X(i + 1))
-        B(i) = (HI / 2._dp) * (SI1 * X(i)**2 - SI * X(i + 1)**2)       &
-          &      + HI * (Y(i + 1) - Y(i)) + (H / 6._dp) * (SI - SI1)
-        C(i) = (HI / 2._dp) * (SI * X(i + 1) - SI1 * X(i))
+        A(i) = (HI / 6._dp) * (SI * x(i + 1)**3 - SI1 * x(i)**3)       &
+          &      + HI * (y(i) * x(i + 1) - y(i + 1) * x(i))            &
+          &      + (H / 6._dp) * (SI1 * x(i) - SI * x(i + 1))
+        B(i) = (HI / 2._dp) * (SI1 * x(i)**2 - SI * x(i + 1)**2)       &
+          &      + HI * (y(i + 1) - y(i)) + (H / 6._dp) * (SI - SI1)
+        C(i) = (HI / 2._dp) * (SI * x(i + 1) - SI1 * x(i))
         D(i) = (HI / 6._dp) * (SI1 - SI)
       enddo
     end associate
@@ -254,7 +253,7 @@ contains
     i = iL                    ! Just to use the same expression always
     suma = Zero
 
-    ! First interval
+    ! First interval (i = iL)
     x1 = XLL; x2 = min(tck%x(i + 1), XUU)
     suma = int_single()
     if (iL == iU) then ! Both limits belong to the same interval
@@ -269,12 +268,12 @@ contains
       suma = suma + int_single()
     end do
 
-    ! Last interval
+    ! Last interval (i = iU)
     x1 = x2
     x2 = XUU
     suma = suma + int_single()
 
-    ! Consider the limits of integration
+    ! Consider the order of the limits of integration
     suma = sign * suma
   contains
     function int_single() result(y)
@@ -314,7 +313,7 @@ contains
     i = iL                    ! Just to use the same expression always
     suma = Zero
 
-    ! First interval
+    ! First interval (i = iL)
     x1 = XLL; x2 = min(tck%x(i + 1), XUU)
     suma = int_single()
     if (iL == iU) then ! Both limits belong to the same interval
@@ -329,7 +328,7 @@ contains
       suma = suma + int_single()
     end do
 
-    ! Last interval
+    ! Last interval (i = iU)
     x1 = x2
     x2 = XUU
     suma = suma + int_single()
