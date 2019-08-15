@@ -10,30 +10,37 @@ program test_interpolate
 contains
   subroutine test_splines_1()
     integer, parameter :: Ndim = 20, Ndimnew = 4 * Ndim
-    type(cspl_rep) :: tck
+    type(cspl_rep) :: csp
+    type(cspl_rep) :: csd
     real(dp), dimension(Ndim) :: x, y, Err
-    real(dp), dimension(Ndimnew) :: xnew, ynew, yint
+    real(dp), dimension(Ndimnew) :: xnew, ynew, yint, yder
     integer :: i1
 
     x = linspace(1.e-6_dp, 20._dp, Ndim)
     y = sin(x)
     xnew = linspace(1.e-6_dp, 19.99_dp, Ndimnew)
 
-    call csplrep(x, y, Zero, Zero, tck)
-    ynew = csplev(xnew, tck)
+    ! Notice that we know exactly the second derivative
+    call csplrep(x, y, -y(1), -y(Ndim), csp)
+    ynew = csplev(xnew, csp)
+    ! yder = csplev(xnew, csp, 1)
+    csd = csplder(csp, 1)
+    yder = csplev(xnew, csd)
+
     write (*, "(A)") ' '//repeat("*-*", 21)
     write (*, '(A)') '# Test 1 of splines module'
     write (*, '(A)') ' function: y= sin(x) '
     write (*, "(A)") repeat("*", 65)
+
     open (UNIT=9, file='test_splines1.dat')
     write (9, '(A)') '#    x          y=sin(x)        spl(y)      I=-cos(x) Integral(spl(y))'
     do i1 = 1, Ndimnew
-      yint(i1) = -1 + splint(xnew(1), xnew(i1), tck) ! Integrate
-      write (9, '(5(ES13.5,1x))') xnew(i1), sin(xnew(i1)), ynew(i1), -cos(xnew(i1)), yint(i1)
+      yint(i1) = -1 + splint(xnew(1), xnew(i1), csp) ! Integrate
+      write (9, '(6(ES13.5,1x))') xnew(i1), sin(xnew(i1)), ynew(i1), -cos(xnew(i1)), yint(i1), -yder(i1)
     end do
     close (9)
 
-    write (*, "((f0.5,1x))") splint_square(Zero, M_PI, tck)
+    write (*, "((f0.5,1x))") splint_square(Zero, M_PI, csp)
     call spleps(x, y, Err)
     open (UNIT=9, file='error_splines1.dat')
     write (9, '(3(f10.5,1x))') (x(i1), y(i1), abs(Err(i1)), i1=2, Ndim - 1)

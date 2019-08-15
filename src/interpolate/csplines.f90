@@ -8,8 +8,7 @@
 !! Most (all) of the routines were modified from the original.
 !! See below for authors of original versions
 
-!> @package splines
-!! @brief implementation of interpolation using splines
+!> csplines implements interpolation using cubic splines
 !!
 !! @note
 !! It is recommended to use it through the standard interfaces
@@ -43,13 +42,16 @@ module csplines
   !> csplev Performs a spline interpolation in a point or in a table
   !! \see interp_spl and interp_spl_tab
   interface csplev
-    module procedure interp_spl
-    module procedure interp_spl_tab
+    module procedure :: interp_spl
+    module procedure :: interp_spl_tab
+    module procedure :: interp_devspl
+    module procedure :: interp_devspl_tab
   end interface csplev
 
   private
   public :: cspl_rep, csplev, csplrep, spl_clean_rep, splint, splint_square, spleps
-  public :: spline_coeff
+  public :: spline_coeff, csplder
+
 contains
 
   !> cubic spline interpolation between tabulated data
@@ -76,6 +78,28 @@ contains
     r%S = spline_coeff(x, y, s1, sn, Nd)
   end subroutine csplrep
 
+  !> csplder Computes
+  !!
+  !! Examples:
+  !!
+  function csplder(csp, m) result(cspd)
+    implicit none
+    type(cspl_rep), intent(IN) :: csp !<
+    integer, intent(IN) :: m !< order of derivation (must be 1 or 2)
+    type(cspl_rep) :: cspd    !< Spline representation of derivative
+    integer :: Nd
+    integer :: i
+
+    if ((m < 1) .or. (m > 2)) call print_msg('Not first or second derivative from cspline')
+
+    Nd = size(csp%x)
+    allocate (cspd%x(Nd), cspd%S(4 - m, Nd))
+    cspd%x = csp%x
+    do i = 1, Nd
+      cspd%S(:, i) = polyder(csp%S(:, i), m)
+    end do
+  end function csplder
+
   subroutine spl_clean_rep(r)
     implicit none
     type(cspl_rep), intent(INOUT) :: r
@@ -100,6 +124,38 @@ contains
     y = polyval(tck%S(:, ix), xc)
   end function interp_spl
 
+  !> Interpolates the first derivative of a function
+  !!
+  !! @note Before calling this function, must be called `csplrep()`
+  function interp_devspl(xc, tck, m) result(y)
+    real(dp), intent(IN) :: xc !< value where evaluate the interpolation
+    type(cspl_rep), intent(IN) :: tck !<  spline coefficients
+    integer, intent(IN) :: m                      !< order of derivation
+    real(dp) :: y                     !< the interpolated value
+    integer :: ix
+    ix = searchsorted(tck%x, xc)
+    if (m /= 1 .or. m /= 2) call print_msg('Not first or second derivative from cspline')
+    y = polyval(polyder(tck%S(:, ix), m), xc)
+  end function interp_devspl
+
+  function interp_devspl_tab(xnew, tck, m) result(y)
+    type(cspl_rep), intent(IN) :: tck           !< spline coefficients
+    real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
+    real(dp), dimension(size(xnew)) :: y
+    integer, intent(IN) :: m    !< order of derivative
+    type(cspl_rep) :: cspd
+    real(dp) :: xc
+    integer :: ix, i1
+
+    if (m /= 1 .and. m /= 2) call print_msg('Not first or second derivative from cspline')
+    cspd = csplder(tck, m)      ! Calculate the coefficients of derivative
+    do concurrent(i1=1:size(xnew))
+      xc = xnew(i1)
+      ix = searchsorted(cspd%x, xc)
+      y(i1) = polyval(cspd%S(:, ix), xc)
+    end do
+  end function interp_devspl_tab
+
   !> \copybrief interp_spl
   !! Works over an array of x values and returns an array of interpolated values
   function interp_spl_tab(xnew, tck) result(y)
@@ -120,8 +176,8 @@ contains
   !!
   !! The interpolating polynomial in the i-th interval, from
   !! x(i) to x(i+1), is
-  !!        P_i(X) = S(1,i)+x*(S(2,i)+x*(S(3,i)+x*S(4,i)))
-  !!  REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
+  !!       \f$ P_i(X) = S(1,i)+x (S(2,i)+x (S(3,i)+x S(4,i))) \f$
+  !!  Ref: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   function spline_coeff(x, y, s1, sN, nn) result(S)
     integer, intent(IN) :: nn                !< dimension of x, y
     real(dp), dimension(nn), intent(IN) :: x !< grid points
@@ -160,10 +216,9 @@ contains
       enddo
       D(n1) = D(n1) / B(n2)  ! Sigma Coefficients
 
-      do i = 2, n2
-        k = nn - i
+      do k = n2, 2, -1
         D(k) = (D(k) - A(k) * D(k + 1)) / B(k - 1)
-      enddo
+      end do
       D(nn) = sN
 
       !   Spline Coefficients.
@@ -225,7 +280,7 @@ contains
     enddo
   end subroutine spleps
 
-  !> Integral of a cubic spline function.
+  !> Definite integral of a cubic spline function.
   !!
   function splint(xL, xU, tck) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
