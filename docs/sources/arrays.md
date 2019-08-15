@@ -1,4 +1,4 @@
-# Module arrays {#modarrays}
+# Module arrays {#arrays}
 
 This module contains routines to generate and operate on arrays
 

@@ -1,22 +1,59 @@
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
 !! It allows to easily evaluate, derivate, and integrate a polynomial
+!! Examples:
+!!
+!!```
+!! real(dp), dimension(5) :: p1
+!! p1 = arange(5, 1, -1)
+!! print "(A)", Evaluations
+!! print "(f0.0)", polyval(p1, -1._dp)  ! gives 3.
+!! print "(f0.0)", polyval(p1, 0._dp)   ! gives 1
+!! print "(f0.0)", polyval(p1, 1._dp)   ! gives 15
+!! print "(3(f0.0,1x))", polyval(p1, [-1._dp, 0._dp, 1._dp]) ! gives 3.,1.,15.
+!!
+!! print "(A)", Derivatives
+!! print "(3(f0.0,1x))", polyval(polyder(p1, 1), [-1._dp, 0._dp, 1._dp])
+!! print "(3(f0.0,1x))", polyval(polyder(p1, 2), [-1._dp, 0._dp, 1._dp])
+!! print "(3(f0.0,1x))", polyval(polyder(p1, 3), [-1._dp, 0._dp, 1._dp])
+!! ! gives as a result:
+!! !   -12. 2. 40.
+!! !    42. 6. 90.
+!! !   -96. 24. 144.
+!!
+!! print "(A)", Integrals
+!! print "(3(f0.0,1x))", polyval(polyint(p1, 1), [-1._dp, 0._dp, 1._dp])
+!! ! gives:
+!! !       -1. 0. 5.
+!! !
+!! ```
 module polynomial
 
   USE basic, only: dp, Zero, print_msg
 
-  private
-  public polyval, polyder, polyint
-
-  interface polyval
-    module procedure polyval_1
-    module procedure polyval_v
-  end interface polyval
-
-contains
-  !> polyval Computes
+  !> polyval Computes the value of the polynomial when applied to a number or list of numbers
   !!
   !! Examples:
   !!
+  !!```
+  !! real(dp), dimension(5) :: p1
+  !! p1 = arange(5, 1, -1)
+  !!
+  !! print "(f0.0)", polyval(p1, -1._dp)  ! gives 3.
+  !! print "(f0.0)", polyval(p1, 0._dp)   ! gives 1
+  !! print "(f0.0)", polyval(p1, 1._dp)   ! gives 15
+  !! print "(3(f0.0,1x))", polyval(p1, [-1._dp, 0._dp, 1._dp]) ! gives 3.,1.,15.
+  !! !
+  !! ```
+  interface polyval
+    module procedure :: polyval_1, polyval_v
+  end interface polyval
+
+  private
+  public polyval, polyder, polyint
+
+contains
+
+  !> Evaluation of a polynomial in a number
   pure function polyval_1(p, x) result(y)
     implicit none
     real(dp) :: y               !< Value of polynomial evaluated in x
@@ -31,6 +68,7 @@ contains
 
   end function polyval_1
 
+  !> Evaluation of a polynomial in an array of numbers
   pure function polyval_v(p, x) result(y)
     implicit none
     real(dp), dimension(:), intent(IN) :: p !< Array of coefficients, from highest degree to constant term
@@ -50,12 +88,18 @@ contains
   !!
   !! Examples:
   !!```
-  !! real(dp), dimension(5) :: p
-  !! p = 1._dp;  p(3) = 2._dp  ! Set a polynomial
+  !! real(dp), dimension(5) :: p1
+  !! p1 = arange(5, 1, -1)
   !!
-  !! print *, polyval(polyder(p), 1.5_dp)     ! First derivative evaluated in x = 1.5
-  !! print *, polyval(polyder(p), 4, 0._dp)   ! Fourth derivative evaluated in x = 0
-  !!
+  !! print "(3(f0.0,1x))", polyval(polyder(p1, 1), [-1._dp, 0._dp, 1._dp])
+  !! print "(3(f0.0,1x))", polyval(polyder(p1, 2), [-1._dp, 0._dp, 1._dp])
+  !! print "(3(f0.0,1x))", polyval(polyder(p1, 3), [-1._dp, 0._dp, 1._dp])
+  !! ! gives as a result:
+  !! !   -12. 2. 40.
+  !! !    42. 6. 90.
+  !! !   -96. 24. 144.
+  !! !
+  !! ```
   function polyder(p, m) result(Pd)
     implicit none
     real(dp), dimension(:), intent(IN) :: p !<
@@ -93,7 +137,16 @@ contains
   !> polyint Computes m-esima antiderivative
   !!
   !! Examples:
+  !!```
+  !! real(dp), dimension(5) :: p1
+  !! p1 = arange(5, 1, -1)
   !!
+  !! print "(3(f0.0,1x))", polyval(polyint(p1, 1), [-1._dp, 0._dp, 1._dp])
+  !! !
+  !! ! gives:
+  !! !       -1. 0. 5.
+  !! !
+  !!```
   function polyint(p, m, k) result(p_I)
     implicit none
     real(dp), dimension(:), intent(IN) :: p !<
