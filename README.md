@@ -6,7 +6,8 @@ This library consists (will consist) of several modules to ease the scientific w
 
 It provides:
   + A @subpage utils with basic, non-specific, functionality used in many (most?) scientific programming.
-  + A @subpage arrays with basic functionality to work wit arrays, including generation of grids, search of elements and sorting.
+  + A @subpage arrays with basic functionality to work with arrays, including generation of grids, search of elements and sorting.
+  + A @subpage interpolate with routines to perform interpolation, fitting of data, and some work on polynomials.
 
 
 
