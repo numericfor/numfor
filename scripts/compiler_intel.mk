@@ -1,5 +1,5 @@
 # Values for the intel compiler
-F95:=ifort
+FC:=ifort
 FFLAGS:= $(arch) -check all -warn all -std03 -fpp -warn errors -warn stderrors -fpe3
 ifdef DEBUG
   FFLAGS= -g -ftrapuv -traceback -ip -pad

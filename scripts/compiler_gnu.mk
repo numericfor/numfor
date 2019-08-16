@@ -1,7 +1,7 @@
 # For the gnu-fortran compiler
 
 # Try to guess the architecture	
-F95:= gfortran
+FC:= gfortran
 arch:=-march=native
 
 FFLAGS:= -ffree-form $(arch) -std=f2008 \

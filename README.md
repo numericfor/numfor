@@ -1,4 +1,4 @@
-# NuMFor: Numeric Modern Fortran
+# Numeric Modern Fortran #
 
 The goal of this project is to create a Fortran library similar to [Numpy](https://www.numpy.org)/[Scipy](https://www.scipy.org) for scientific computing.
 
@@ -11,8 +11,42 @@ It provides:
 
 
 
+## Installation ##
 
-## Installation and use
+The installation follow the usual steps. The simpler procedure is:
+
+  * `make`
+  Builds the module information file and static library
+
+  * `make tests` (optional, not yet fully implemented)
+  Run tests on submodules
+
+  * `make install`
+  Installs the library, modules and documentation into `<prefix>` path
 
 
-	
+## Use ##
+
+Simply compile your program with flags indicating where to find libnumfor.mod and link to libnumfor.a
+There are different ways to accomplish this:
+
+
+  1. Using `pkg-config`
+  ```bash
+  $> gfortran -o myprog $(pkg-config --cflags numfor) myprog.f90
+  $> gfortran -o myprog $(pkg-config --libs numfor) myprog.f90
+  ``` 
+  In order to work, first the environment variable PKG_CONFIG_PATH must be set. 
+  For instance, in linux you have to add to $HOME/.bashrc (or site /etc/bashrc if you install for all users) the folowing line:
+  
+  ```bash
+  export PKG_CONFIG_PATH=<prefix>/lib/pkgconfig
+  ```
+  
+  
+  2. Manually adding the information when compiling. For instance, if using `gfortran`
+  
+  ```bash
+  $> gfortran -o myprog -I <prefix>/include/numfor
+  ```
+

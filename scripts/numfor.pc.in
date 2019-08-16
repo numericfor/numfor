@@ -1,0 +1,14 @@
+prj=@PRJ@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/${prj}
+fc_compiler=@FC@
+
+Name: ${prj}
+Description: NumFor: Numerical (Modern) Fortran Library
+Version: @version@
+Requires: 
+Conflicts:
+Libs: -L${libdir} -l${prj}
+Cflags: -I${includedir}

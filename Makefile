@@ -5,9 +5,11 @@ SHELL = /bin/bash
 
 ################################################################################
 ######                Information on the project
-#               
-PRJ = numfor
-VERSION = "(Version $(shell git rev-parse --short --verify HEAD))"
+# 
+PRJ:= numfor
+# Version and date of current revision
+VERSION:=$(shell git show -s --format="%h")
+DATE:=$(shell git show -s --format="%ci"| cut -d " " -f 1)
 
 ########	Definition of directory Structure	########################
 #	Absolute path of this Makefile
@@ -29,15 +31,17 @@ DOCDIR:=$(top_dir)/doc
 ######################################################################
 ##############		     Some options               ##############
 
-# Choose the compiler. Default is gnu
+# Choose the compiler. Default is "gnu". Accepted also "intel" (untested)
 compiler = gnu
 # DEBUG=YES
 
 ################################################################################
 #	PROGRAMS
-depends:=$(top_dir)/scripts/sfmakedepend
+depends:=$(SCRPTD)/sfmakedepend
 AR:=ar
 RM:=rm -f
+CP:=cp
+LN:=ln -s
 MKDIR:=mkdir -p
 ######################################################################
 
@@ -66,7 +70,7 @@ SRC :=
 # include the description for each module
 include $(addsuffix /module.mk,$(FMODULES))
 
-SRC += $(SRCD)/numfor.f90
+SRC += $(SRCD)/$(PRJ).f90
 
 # The object files will be in the same places that the code
 OBJ:= $(SRC:.f90=.o)
@@ -82,14 +86,13 @@ else
 endif
 # ####################################################################
 # ############# Commands for compiling and linking code     ##########
-FC = $(F95) $(INCLUDES) $(FFLAGS) $(FFLAGS_EXTRA)
-FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
+FLINK = $(FC) $(LDFLAGS_EXTRA) $(LDFLAGS)
 
 
 # ####################################################################
 # ##########################  IMPLICIT RULES  ########################
 %.o : %.f90
-	$(FC) -c -o $@ $<
+	$(FC)  $(FFLAGS) $(FFLAGS_EXTRA) $(INCLUDES) -c -o $@ $<
 
 # calculate code dependencies
 %.d: %.f90
@@ -98,17 +101,17 @@ FLINK = $(F95) $(LDFLAGS_EXTRA) $(LDFLAGS)
 
 # ####################################################################
 # ##########################  EXPLICIT RULES  ########################
+numlib:= $(OBJD)/libnumfor.a
 
+library: $(numlib)
 
-library: $(OBJD)/libnumfor.a
-
-$(OBJD)/libnumfor.a: $(OBJ) Makefile | $(OBJD)
-	$(AR) rcs $@ $^
+$(numlib): $(OBJ) | $(OBJD)
+	$(AR) rcs $(OBJ) 
 
 shared_library: $(OBJD)/libnumfor.so
 
 $(OBJD)/libnumfor.so: $(OBJ)  | $(OBJD)
-	$(FC) -shared -o $@ $^
+	$(FC) $(INCLUDES)  $(FFLAGS) $(FFLAGS_EXTRA) -shared -o $@ $^
 
 $(OBJD) $(BIND):
 	$(MKDIR) $@
@@ -125,7 +128,7 @@ include $(deps)
 tst=strings
 test: $(BIND)/test_$(tst)
 $(BIND)/test_$(tst): $(TSTD)/test_$(tst).f90 $(OBJD)/libnumfor.a | $(BIND)
-	$(FC) $(LDFLAGS)  $< -o $@ $(LIBS)
+	$(FC)  $(FFLAGS) $(FFLAGS_EXTRA) $(LDFLAGS)  $< -o $@ $(LIBS)
 
 # Once the library is working, we write and compile examples 
 # Rule used to create the examples. For instance, to make ex_fstring:
@@ -134,19 +137,15 @@ $(BIND)/test_$(tst): $(TSTD)/test_$(tst).f90 $(OBJD)/libnumfor.a | $(BIND)
 ex=ftring1
 example: $(BIND)/ex_$(ex) 
 $(BIND)/ex_$(ex): $(top_dir)/docs/examples/ex_$(ex).f90 $(OBJD)/libnumfor.a | $(BIND)
-	$(FC) $(LDFLAGS)  $< -o $@ $(LIBS)
+	$(FC)  $(FFLAGS) $(FFLAGS_EXTRA) $(LDFLAGS)  $< -o $@ $(LIBS)
 
 # ########################################################################
 # ######## INSTALLATION
 
-# Defaul value. Could be override by command-line
-prefix=$(HOME)/.local
-INSTALL_LIB= $(prefix)/lib
-INSTALL_INCLUDE= $(prefix)/finclude/$(PRJ)
-install:
-	@echo "Installing to $(prefix)"
-	$(MKDIR) $(INSTALL_LIB) $(INSTALL_INCLUDE)
+# Defaul value. May be overriden by command-line
+prefix:=$(HOME)/.local
 
+include $(SCRPTD)/install.mk
 
 # ########################################################################
 # ######## DOCUMENTATION
@@ -155,9 +154,8 @@ DOXYF:=$(SCRPTD)/Doxyfile
 doc:  $(DOCDIR)/html
 
 $(DOCDIR)/html: $(DOXYF) $(SRC) $(top_dir)/README.md
-	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) |\
-	sed -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 ${VERSION}|' | \
-	sed -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
+	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 "${VERSION} ($(DATE))"|'\
+            -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
 	cd $(top_dir) && doxygen $(PRJ).dox && cd -
 
 
