@@ -76,7 +76,6 @@ SRC += $(SRCD)/$(PRJ).f90
 OBJ:= $(SRC:.f90=.o)
 deps:= $(SRC:.f90=.d)
 
-
 # ####################################################################
 # ############## Compiler-dependent commands and options #############
 ifeq ($(compiler),intel)
@@ -98,7 +97,6 @@ FLINK = $(FC) $(LDFLAGS_EXTRA) $(LDFLAGS)
 %.d: %.f90
 	$(depends) $(INCLUDES)  $< > $@
 
-
 # ####################################################################
 # ##########################  EXPLICIT RULES  ########################
 numlib:= $(OBJD)/libnumfor.a
@@ -106,7 +104,7 @@ numlib:= $(OBJD)/libnumfor.a
 library: $(numlib)
 
 $(numlib): $(OBJ) | $(OBJD)
-	$(AR) rcs $(OBJ) 
+	$(AR) rcs $@ $(OBJ) 
 
 shared_library: $(OBJD)/libnumfor.so
 
