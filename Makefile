@@ -151,7 +151,7 @@ DOXYF:=$(SCRPTD)/Doxyfile
 
 doc:  $(DOCDIR)/html
 
-$(DOCDIR)/html: $(DOXYF) $(SRC) $(top_dir)/README.md
+$(DOCDIR)/html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md
 	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 "${VERSION} ($(DATE))"|'\
             -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
 	cd $(top_dir) && doxygen $(PRJ).dox && cd -

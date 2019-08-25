@@ -33,20 +33,21 @@ There are different ways to accomplish this:
 
   1. Using `pkg-config`
   ```bash
-  $> gfortran -o myprog $(pkg-config --cflags numfor) myprog.f90
-  $> gfortran -o myprog $(pkg-config --libs numfor) myprog.f90
+  $> gfortran -c -o myprog.o $(pkg-config --cflags numfor) myprog.f90
+  $> gfortran -o myprog $(pkg-config --libs numfor) myprog.o
   ``` 
   In order to work, first the environment variable PKG_CONFIG_PATH must be set. 
   For instance, in linux you have to add to $HOME/.bashrc (or site /etc/bashrc if you install for all users) the folowing line:
   
   ```bash
-  export PKG_CONFIG_PATH=<prefix>/lib/pkgconfig
+  export PKG_CONFIG_PATH="<prefix>/lib/pkgconfig:$PKG_CONFIG_PATH"
   ```
+  You will have to open a new terminal or source the `bashrc` file before compiling your program.
   
-  
-  2. Manually adding the information when compiling. For instance, if using `gfortran`
+  2. Manually adding the information when compiling. For instance, when using `gfortran`
   
   ```bash
-  $> gfortran -o myprog -I <prefix>/include/numfor
+  $> gfortran -c -o myprog.o -I <prefix>/include/numfor myprog.f90
+  $> gfortran -o myprog -L <prefix>/lib -lnumfor myprog.o
   ```
 

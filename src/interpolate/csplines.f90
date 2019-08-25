@@ -17,12 +17,12 @@
 !! Examples of use
 !! @code
 !! USE csplines, only: cspl_rep, csplrep, splev
-!! type(cspl_rep) :: tck
+!! type(cspl_rep) :: csp
 !! integer, parameter :: N = 500
 !! real(8), dimension(N) :: x, y, xnew, ynew
 !! ! fill x,y and xnew ...
-!! call csplrep(x, y, Zero, Zero, tck)
-!! ynew= csplev(xnew, tck)
+!! call csplrep(x, y, Zero, Zero, csp)
+!! ynew= csplev(xnew, csp)
 module csplines
   USE basic, only: dp, Zero, Small, print_msg
   USE sorting, only: searchsorted
@@ -37,8 +37,6 @@ module csplines
     real(dp), dimension(:), allocatable :: x
   end type cspl_rep
 
-  ! integer, parameter :: NMAX = 800
-
   !> csplev Performs a spline interpolation in a point or in a table
   !! \see interp_spl and interp_spl_tab
   interface csplev
@@ -49,14 +47,14 @@ module csplines
   end interface csplev
 
   private
-  public :: cspl_rep, csplev, csplrep, spl_clean_rep, splint, splint_square, spleps
+  public :: cspl_rep, csplrep, csplev, spl_clean_rep, splint, splint_square, spleps
   public :: spline_coeff, csplder
 
 contains
 
   !> cubic spline interpolation between tabulated data
   !! After calling this function the result may be used to evaluate the function as:
-  !! `ynew= csplev(xnew, tck)`
+  !! `ynew= csplev(xnew, csp)`
   !!
   !! REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   subroutine csplrep(x, y, s1, sn, r)
@@ -100,6 +98,7 @@ contains
     end do
   end function csplder
 
+  !> Clean-up a spline representation
   subroutine spl_clean_rep(r)
     implicit none
     type(cspl_rep), intent(INOUT) :: r
@@ -115,31 +114,31 @@ contains
   !> Interpolates a function using previously calculated representation of splines
   !!
   !! @note Before calling this function, must be called `csplrep()`
-  function interp_spl(xc, tck) result(y)
+  function interp_spl(xc, csp) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
-    type(cspl_rep), intent(IN) :: tck !<  spline coefficients
+    type(cspl_rep), intent(IN) :: csp !<  spline coefficients
     real(dp) :: y                     !< the interpolated value
     integer :: ix
-    ix = searchsorted(tck%x, xc)
-    y = polyval(tck%S(:, ix), xc)
+    ix = searchsorted(csp%x, xc)
+    y = polyval(csp%S(:, ix), xc)
   end function interp_spl
 
   !> Interpolates the first derivative of a function
   !!
   !! @note Before calling this function, must be called `csplrep()`
-  function interp_devspl(xc, tck, m) result(y)
+  function interp_devspl(xc, csp, m) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
-    type(cspl_rep), intent(IN) :: tck !<  spline coefficients
+    type(cspl_rep), intent(IN) :: csp !<  spline coefficients
     integer, intent(IN) :: m                      !< order of derivation
     real(dp) :: y                     !< the interpolated value
     integer :: ix
-    ix = searchsorted(tck%x, xc)
+    ix = searchsorted(csp%x, xc)
     if (m /= 1 .or. m /= 2) call print_msg('Not first or second derivative from cspline')
-    y = polyval(polyder(tck%S(:, ix), m), xc)
+    y = polyval(polyder(csp%S(:, ix), m), xc)
   end function interp_devspl
 
-  function interp_devspl_tab(xnew, tck, m) result(y)
-    type(cspl_rep), intent(IN) :: tck           !< spline coefficients
+  function interp_devspl_tab(xnew, csp, m) result(y)
+    type(cspl_rep), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
     real(dp), dimension(size(xnew)) :: y
     integer, intent(IN) :: m    !< order of derivative
@@ -148,7 +147,7 @@ contains
     integer :: ix, i1
 
     if (m /= 1 .and. m /= 2) call print_msg('Not first or second derivative from cspline')
-    cspd = csplder(tck, m)      ! Calculate the coefficients of derivative
+    cspd = csplder(csp, m)      ! Calculate the coefficients of derivative
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
       ix = searchsorted(cspd%x, xc)
@@ -158,8 +157,8 @@ contains
 
   !> \copybrief interp_spl
   !! Works over an array of x values and returns an array of interpolated values
-  function interp_spl_tab(xnew, tck) result(y)
-    type(cspl_rep), intent(IN) :: tck           !< spline coefficients
+  function interp_spl_tab(xnew, csp) result(y)
+    type(cspl_rep), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
     real(dp), dimension(size(xnew)) :: y
     real(dp) :: xc
@@ -167,8 +166,8 @@ contains
 
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
-      ix = searchsorted(tck%x, xc)
-      y(i1) = polyval(tck%S(:, ix), xc)
+      ix = searchsorted(csp%x, xc)
+      y(i1) = polyval(csp%S(:, ix), xc)
     end do
   end function interp_spl_tab
 
@@ -176,7 +175,8 @@ contains
   !!
   !! The interpolating polynomial in the i-th interval, from
   !! x(i) to x(i+1), is
-  !!       \f$ P_i(X) = S(1,i)+x (S(2,i)+x (S(3,i)+x S(4,i))) \f$
+  !!       \f$ P_i(X) = S(4,i)+x (S(3,i)+x (S(2,i)+x S(1,i))) \f$
+  !!       \f$ P_i(X) = S(1,i) x^3 + S(2,i) x^2 S(3,i) x + S(4,i) \f$
   !!  Ref: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   function spline_coeff(x, y, s1, sN, nn) result(S)
     integer, intent(IN) :: nn                !< dimension of x, y
@@ -282,10 +282,10 @@ contains
 
   !> Definite integral of a cubic spline function.
   !!
-  function splint(xL, xU, tck) result(suma)
+  function splint(xL, xU, csp) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
-    type(cspl_rep), intent(IN) :: tck !< Interpolating object
+    type(cspl_rep), intent(IN) :: csp !< Interpolating object
     real(dp) :: suma                 !<  Value of integral
 
     real(dp) :: xll, xuu, x1, x2, sign
@@ -297,19 +297,19 @@ contains
       XLL = xU; XUU = xL; sign = -1._dp
     endif
 
-    x1 = tck%x(1); x2 = tck%x(size(tck%x))
+    x1 = csp%x(1); x2 = csp%x(size(csp%x))
     IF (XLL < x1) XLL = x1 + Small ! Check integral limits.
     IF (XUU > x2) XUU = x2 - Small
 
     ! Find involved intervals.
-    iL = searchsorted(tck%x, XLL)
-    iU = searchsorted(tck%x, XUU)
+    iL = searchsorted(csp%x, XLL)
+    iU = searchsorted(csp%x, XUU)
 
     i = iL                    ! Just to use the same expression always
     suma = Zero
 
     ! First interval (i = iL)
-    x1 = XLL; x2 = min(tck%x(i + 1), XUU)
+    x1 = XLL; x2 = min(csp%x(i + 1), XUU)
     suma = int_single()
     if (iL == iU) then ! Both limits belong to the same interval
       suma = sign * suma
@@ -318,8 +318,8 @@ contains
 
     ! Add intermediate intervals
     do i = iL + 1, iU - 1
-      x1 = tck%x(i)
-      x2 = tck%x(i + 1)
+      x1 = csp%x(i)
+      x2 = csp%x(i + 1)
       suma = suma + int_single()
     end do
 
@@ -333,7 +333,7 @@ contains
   contains
     function int_single() result(y)
       real(dp) :: y
-      associate (A=>tck%S(4, :), B=>tck%S(3, :), C=>tck%S(2, :), D=>tck%S(1, :))
+      associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
         y = x2 * (A(i) + x2 * (B(i) / 2 + x2 * (C(i) / 3 + x2 * D(i) / 4)))&
           &  - x1 * (A(i) + x1 * (B(i) / 2 + x1 * (C(i) / 3 + x1 * D(i) / 4)))
       end associate
@@ -342,10 +342,10 @@ contains
   end function splint
 
   !> Integral of the square of a function expressed as a cubic spline.
-  function splint_square(xL, xU, tck) result(suma)
+  function splint_square(xL, xU, csp) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
-    type(cspl_rep), intent(IN) :: tck !< Interpolating object
+    type(cspl_rep), intent(IN) :: csp !< Interpolating object
     real(dp) :: suma                 !<  Value of integral
 
     real(dp) :: xll, xuu, x1, x2, sign
@@ -357,19 +357,19 @@ contains
       XLL = xU; XUU = xL; sign = -1._dp
     endif
 
-    x1 = tck%x(1); x2 = tck%x(size(tck%x))
+    x1 = csp%x(1); x2 = csp%x(size(csp%x))
     IF (XLL < x1) XLL = x1 + Small ! Check integral limits.
     IF (XUU > x2) XUU = x2 - Small
 
     ! Find involved intervals.
-    iL = searchsorted(tck%x, XLL)
-    iU = searchsorted(tck%x, XUU)
+    iL = searchsorted(csp%x, XLL)
+    iU = searchsorted(csp%x, XUU)
 
     i = iL                    ! Just to use the same expression always
     suma = Zero
 
     ! First interval (i = iL)
-    x1 = XLL; x2 = min(tck%x(i + 1), XUU)
+    x1 = XLL; x2 = min(csp%x(i + 1), XUU)
     suma = int_single()
     if (iL == iU) then ! Both limits belong to the same interval
       suma = sign * suma
@@ -378,8 +378,8 @@ contains
 
     ! Add intermediate intervals
     do i = iL + 1, iU - 1
-      x1 = tck%x(i)
-      x2 = tck%x(i + 1)
+      x1 = csp%x(i)
+      x2 = csp%x(i + 1)
       suma = suma + int_single()
     end do
 
@@ -393,7 +393,7 @@ contains
   contains
     function int_single() result(y)
       real(dp) :: y
-      associate (A=>tck%S(4, :), B=>tck%S(3, :), C=>tck%S(2, :), D=>tck%S(1, :))
+      associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
         y = x2 * (A(i) * (A(i) + x2 * B(i))                           &
           &      + x2**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp       &
           &      + x2 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp          &

@@ -40,3 +40,4 @@ $(SCRPTD)/$(pcfile): $(SCRPTD)/$(PRJ).pc.in
 
 post-install:
 	@echo 'export PKG_CONFIG_PATH="$(prefix)/lib/pkgconfig:$${PKG_CONFIG_PATH}"' >> $(HOME)/.bashrc
+	@source ~/.bashrc
