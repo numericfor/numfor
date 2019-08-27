@@ -76,7 +76,7 @@ contains
     r%S = spline_coeff(x, y, s1, sn, Nd)
   end subroutine csplrep
 
-  !> csplder Computes
+  !> csplder Computes the derivative of the cubic spline
   !!
   !! Examples:
   !!
@@ -120,7 +120,7 @@ contains
     real(dp) :: y                     !< the interpolated value
     integer :: ix
     ix = searchsorted(csp%x, xc)
-    y = polyval(csp%S(:, ix), xc)
+    y = polyval(csp%S(:, ix), xc - csp%x(ix))
   end function interp_spl
 
   !> Interpolates the first derivative of a function
@@ -134,7 +134,7 @@ contains
     integer :: ix
     ix = searchsorted(csp%x, xc)
     if (m /= 1 .or. m /= 2) call print_msg('Not first or second derivative from cspline')
-    y = polyval(polyder(csp%S(:, ix), m), xc)
+    y = polyval(polyder(csp%S(:, ix), m), xc - csp%x(ix))
   end function interp_devspl
 
   function interp_devspl_tab(xnew, csp, m) result(y)
@@ -151,7 +151,7 @@ contains
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
       ix = searchsorted(cspd%x, xc)
-      y(i1) = polyval(cspd%S(:, ix), xc)
+      y(i1) = polyval(cspd%S(:, ix), xc - csp%x(ix))
     end do
   end function interp_devspl_tab
 
@@ -167,7 +167,7 @@ contains
     do concurrent(i1=1:size(xnew))
       xc = xnew(i1)
       ix = searchsorted(csp%x, xc)
-      y(i1) = polyval(csp%S(:, ix), xc)
+      y(i1) = polyval(csp%S(:, ix), xc - csp%x(ix))
     end do
   end function interp_spl_tab
 
@@ -175,8 +175,9 @@ contains
   !!
   !! The interpolating polynomial in the i-th interval, from
   !! x(i) to x(i+1), is
-  !!       \f$ P_i(X) = S(4,i)+x (S(3,i)+x (S(2,i)+x S(1,i))) \f$
-  !!       \f$ P_i(X) = S(1,i) x^3 + S(2,i) x^2 S(3,i) x + S(4,i) \f$
+  !!       \f$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) \f$
+  !!       \f$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) \f$
+  !!       with \f$ h = x-x(i) \f$
   !!  Ref: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   function spline_coeff(x, y, s1, sN, nn) result(S)
     integer, intent(IN) :: nn                !< dimension of x, y
@@ -185,7 +186,7 @@ contains
     real(dp), dimension(4, nn) :: S !< Coefficients, starting with the highest degree
     real(dp), intent(IN) :: s1      !< second derivative at x(1)
     real(dp), intent(IN) :: sN      !< second derivative at x(N)
-    real(dp) :: R, SI1, SI, H, HI
+    real(dp) :: R, SI1, SI, hi, ih
     integer :: i, k
     integer :: n1, n2
 
@@ -221,20 +222,24 @@ contains
       end do
       D(nn) = sN
 
-      !   Spline Coefficients.
-      SI1 = s1
+      ! Now we have:
+      ! A = x_{i+1}-x_{i}
+      ! D = sigma_{i}
+      ! ---- Spline Coefficients.-------
+      ! Bi= -(2*si/6+s1/6)*hi-(fi-f1)*ih
+      ! Di= (s1/6-si/6)*ih
+      ! Ci= 3*si/6
+      ! Ai= fi
+      SI1 = s1 / 6._dp
       do i = 1, n1
         SI = SI1
-        SI1 = D(i + 1)
-        H = A(i)
-        HI = 1._dp / H
-        A(i) = (HI / 6._dp) * (SI * x(i + 1)**3 - SI1 * x(i)**3)       &
-          &      + HI * (y(i) * x(i + 1) - y(i + 1) * x(i))            &
-          &      + (H / 6._dp) * (SI1 * x(i) - SI * x(i + 1))
-        B(i) = (HI / 2._dp) * (SI1 * x(i)**2 - SI * x(i + 1)**2)       &
-          &      + HI * (y(i + 1) - y(i)) + (H / 6._dp) * (SI - SI1)
-        C(i) = (HI / 2._dp) * (SI * x(i + 1) - SI1 * x(i))
-        D(i) = (HI / 6._dp) * (SI1 - SI)
+        SI1 = D(i + 1) / 6._dp
+        hi = A(i)
+        ih = 1._dp / hi
+        A(i) = y(i)
+        B(i) = -(SI1 + 2 * SI) * hi + (y(i + 1) - y(i)) * ih
+        C(i) = 3 * SI
+        D(i) = ih * (SI1 - SI)
       enddo
     end associate
   end function spline_coeff
@@ -270,7 +275,7 @@ contains
       F(1:i - 1) = y(1:i - 1); F(i:) = y(i + 1:)
 
       S = spline_coeff(R, F, Zero, Zero, n1)
-      RC = x(i)
+      RC = x(i) - x(i - 1)
       YI = polyval(S(:, i - 1), RC)
       if (abs(y(i)) > Eps) then
         Err(i) = 1.0_dp - YI / y(i) ! Relative error
@@ -297,20 +302,21 @@ contains
       XLL = xU; XUU = xL; sign = -1._dp
     endif
 
-    x1 = csp%x(1); x2 = csp%x(size(csp%x))
-    IF (XLL < x1) XLL = x1 + Small ! Check integral limits.
+    x2 = csp%x(size(csp%x))
+    IF (XLL < csp%x(1)) XLL = csp%x(1) + Small ! Check and correct integral limits.
     IF (XUU > x2) XUU = x2 - Small
 
     ! Find involved intervals.
     iL = searchsorted(csp%x, XLL)
     iU = searchsorted(csp%x, XUU)
 
-    i = iL                    ! Just to use the same expression always
     suma = Zero
 
     ! First interval (i = iL)
-    x1 = XLL; x2 = min(csp%x(i + 1), XUU)
-    suma = int_single()
+    i = iL                    ! Just to use always the same expression
+    x1 = XLL - csp%x(i)
+    x2 = min(csp%x(i + 1), XUU) - csp%x(i)
+    suma = int_single(x2) - int_single(x1)
     if (iL == iU) then ! Both limits belong to the same interval
       suma = sign * suma
       return
@@ -318,24 +324,22 @@ contains
 
     ! Add intermediate intervals
     do i = iL + 1, iU - 1
-      x1 = csp%x(i)
-      x2 = csp%x(i + 1)
-      suma = suma + int_single()
+      x2 = csp%x(i + 1) - csp%x(i)
+      suma = suma + int_single(x2)
     end do
 
     ! Last interval (i = iU)
-    x1 = x2
-    x2 = XUU
-    suma = suma + int_single()
+    x2 = XUU - csp%x(i)
+    suma = suma + int_single(x2)
 
     ! Consider the order of the limits of integration
     suma = sign * suma
   contains
-    function int_single() result(y)
+    function int_single(xx) result(y)
+      real(dp), intent(IN) :: xx
       real(dp) :: y
       associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
-        y = x2 * (A(i) + x2 * (B(i) / 2 + x2 * (C(i) / 3 + x2 * D(i) / 4)))&
-          &  - x1 * (A(i) + x1 * (B(i) / 2 + x1 * (C(i) / 3 + x1 * D(i) / 4)))
+        y = xx * (A(i) + xx * (B(i) / 2 + xx * (C(i) / 3 + xx * D(i) / 4)))
       end associate
     end function int_single
 
@@ -357,20 +361,21 @@ contains
       XLL = xU; XUU = xL; sign = -1._dp
     endif
 
-    x1 = csp%x(1); x2 = csp%x(size(csp%x))
-    IF (XLL < x1) XLL = x1 + Small ! Check integral limits.
+    x2 = csp%x(size(csp%x))
+    IF (XLL < csp%x(1)) XLL = csp%x(1) + Small ! Check and correct integral limits.
     IF (XUU > x2) XUU = x2 - Small
 
     ! Find involved intervals.
     iL = searchsorted(csp%x, XLL)
     iU = searchsorted(csp%x, XUU)
 
-    i = iL                    ! Just to use the same expression always
     suma = Zero
 
     ! First interval (i = iL)
-    x1 = XLL; x2 = min(csp%x(i + 1), XUU)
-    suma = int_single()
+    i = iL                    ! Just to use always the same expression
+    x1 = XLL - csp%x(i)
+    x2 = min(csp%x(i + 1), XUU) - csp%x(i)
+    suma = int_single(x2) - int_single(x1)
     if (iL == iU) then ! Both limits belong to the same interval
       suma = sign * suma
       return
@@ -378,34 +383,29 @@ contains
 
     ! Add intermediate intervals
     do i = iL + 1, iU - 1
-      x1 = csp%x(i)
-      x2 = csp%x(i + 1)
-      suma = suma + int_single()
+      x2 = csp%x(i + 1) - csp%x(i)
+      suma = suma + int_single(x2)
     end do
 
     ! Last interval (i = iU)
-    x1 = x2
-    x2 = XUU
-    suma = suma + int_single()
+    x2 = XUU - csp%x(i)
+    suma = suma + int_single(x2)
 
-    ! Consider the limits of integration
+    ! Consider the order of the limits of integration
     suma = sign * suma
+
   contains
-    function int_single() result(y)
+    function int_single(xx) result(y)
+      real(dp), intent(IN) :: xx
       real(dp) :: y
       associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
-        y = x2 * (A(i) * (A(i) + x2 * B(i))                           &
-          &      + x2**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp       &
-          &      + x2 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp          &
-          &      + x2 * ((2 * B(i) * D(i) + C(i)**2) / 5._dp          &
-          &      + x2 * D(i) * (C(i) / 3._dp + x2 * D(i) / 7._dp))))) &
-          &      - x1 * (A(i) * (A(i) + x1 * B(i))                    &
-          &      + x1**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp       &
-          &      + x1 * ((B(i) * C(i) + A(i) * D(i)) / 2._dp          &
-          &      + x1 * ((2 * B(i) * D(i) + C(i)**2) / 5._dp          &
-          &      + x1 * D(i) * (C(i) / 3._dp + x1 * D(i) / 7._dp)))))
+        y = xx * (A(i) * (A(i) + xx * B(i))                           &
+          &      + xx**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp       &
+          &      + xx * ((B(i) * C(i) + A(i) * D(i)) / 2._dp          &
+          &      + xx * ((2 * B(i) * D(i) + C(i)**2) / 5._dp          &
+          &      + xx * D(i) * (C(i) / 3._dp + xx * D(i) / 7._dp)))))
       end associate
-      y = max(y, Zero)
+      y = max(y, Zero)          ! If less than zero is an error
     end function int_single
 
   end function splint_square

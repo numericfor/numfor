@@ -24,6 +24,7 @@ contains
     call csplrep(x, y, -y(1), -y(Ndim), csp)
     ynew = csplev(xnew, csp)
     ! yder = csplev(xnew, csp, 1)
+    ! First-order derivative
     csd = csplder(csp, 1)
     yder = csplev(xnew, csd)
 
