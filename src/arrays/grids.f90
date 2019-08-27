@@ -1,7 +1,9 @@
-!> This module provides convenience routines to work with grids and arrays
+!> @file grids.f90
+!! @date "2019-08-27 13:59:48"
+
+!> This module provides convenience routines to create grids
 !! Ver si otras funciones pueden ser útiles:
-!! sort
-!! compress, nonzero, clip (no es claro que valga la pena)
+!! merge_arrays?
 module grids
   use basic, only: dp, Zero, Small, stdout, print_msg
 
@@ -337,3 +339,10 @@ contains
   end subroutine savetxt
 
 end module grids
+
+! Local variables:
+! eval: (add-hook 'before-save-hook 'time-stamp)
+! time-stamp-start: "date[ ]+\\\\?[\"]+"
+! time-stamp-format: "%:y-%02m-%02d %02H:%02M:%02S"
+! End:
+

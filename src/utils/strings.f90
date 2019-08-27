@@ -1,4 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
+!! @date "2019-08-27 13:37:18"
 
 !> This module defines functions to manipulate strings of characters.
 !! Documentation: @ref modstrings
@@ -396,3 +397,9 @@ contains
   end function r2str
 
 end module strings
+
+! Local variables:
+! eval: (add-hook 'before-save-hook 'time-stamp)
+! time-stamp-start: "date[ ]+\\\\?[\"]+"
+! time-stamp-format: "%:y-%02m-%02d %02H:%02M:%02S"
+! End:

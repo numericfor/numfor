@@ -1,5 +1,7 @@
+!> @file histogram.f90
+!! @date "2019-08-27 13:40:00"
+
 !> The module `histograms` provides infrastructure for the calculation of histograms. i.e: a count of frequency
-!!
 !!
 module histograms
 
@@ -233,3 +235,9 @@ contains
   end function width_doane
 
 end module histograms
+
+! Local variables:
+! eval: (add-hook 'before-save-hook 'time-stamp)
+! time-stamp-start: "date[ ]+\\\\?[\"]+"
+! time-stamp-format: "%:y-%02m-%02d %02H:%02M:%02S"
+! End:

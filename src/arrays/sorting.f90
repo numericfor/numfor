@@ -1,3 +1,7 @@
+!> @file
+!! @author Juan Fiol <juanfiol@gmail.com>
+!! @date "2019-08-27 12:48:11"
+
 !> sort provides a framework for searching elements and sorting arrays
 !!
 module sorting
@@ -158,3 +162,9 @@ contains
   end function searchsorted_dpi
 
 end module sorting
+
+! Local variables:
+! eval: (add-hook 'before-save-hook 'time-stamp)
+! time-stamp-start: "date[ ]+\\\\?[\"]+"
+! time-stamp-format: "%:y-%02m-%02d %02H:%02M:%02S"
+! End:

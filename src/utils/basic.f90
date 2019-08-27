@@ -1,3 +1,6 @@
+!> file basic.f90 contains module basic
+!! @date "2019-08-27 12:45:49"
+
 !> This module will provide some basic convenience routines
 !! It should have:
 !!  - types (real, double precision, etc) (?)
@@ -299,3 +302,8 @@ contains
 
 end module basic
 
+! Local variables:
+! eval: (add-hook 'before-save-hook 'time-stamp)
+! time-stamp-start: "date[ ]+\\\\?[\"]+"
+! time-stamp-format: "%:y-%02m-%02d %02H:%02M:%02S"
+! End:

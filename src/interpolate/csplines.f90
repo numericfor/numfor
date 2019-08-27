@@ -1,12 +1,12 @@
-!> @file   splines.F90
+!> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date   Mon Jul 20 01:53:48 2009
+!! @date "2019-08-27 13:45:55"
 !!
 !! @brief implements several functions for simple use of cubic splines.
-!! Several sources were reused.
 !!
+!! @note Several sources were reused.
 !! Most (all) of the routines were modified from the original.
-!! See below for authors of original versions
+!! See below for authors of original and earlier versions
 
 !> csplines implements interpolation using cubic splines
 !!
@@ -409,6 +409,11 @@ contains
     end function int_single
 
   end function splint_square
-
 end module csplines
+
+! Local variables:
+! eval: (add-hook 'before-save-hook 'time-stamp)
+! time-stamp-start: "date[ ]+\\\\?[\"]+"
+! time-stamp-format: "%:y-%02m-%02d %02H:%02M:%02S"
+! End:
 

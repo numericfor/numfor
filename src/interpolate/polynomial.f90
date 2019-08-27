@@ -1,3 +1,6 @@
+!> @file polynomial.f90
+!! @date "2019-08-27 13:59:25"
+
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
 !! It allows to easily evaluate, derivate, and integrate a polynomial
 !! Examples:
@@ -180,3 +183,8 @@ contains
   end function polyint
 
 end module polynomial
+! Local variables:
+! eval: (add-hook 'before-save-hook 'time-stamp)
+! time-stamp-start: "date[ ]+\\\\?[\"]+"
+! time-stamp-format: "%:y-%02m-%02d %02H:%02M:%02S"
+! End:
