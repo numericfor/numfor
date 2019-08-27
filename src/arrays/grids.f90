@@ -1,5 +1,5 @@
 !> @file grids.f90
-!! @date "2019-08-27 13:59:48"
+!! @date "2019-08-27 15:13:14"
 
 !> This module provides convenience routines to create grids
 !! Ver si otras funciones pueden ser útiles:
@@ -11,7 +11,7 @@ module grids
   real(dp), parameter :: def_base = 10._dp
 
   private
-  public :: linspace, logspace, geomspace, arange, mean, std
+  public :: linspace, logspace, geomspace, arange
 
 contains
 
@@ -250,93 +250,6 @@ contains
       x(i + 1) = start + i * step_
     end do
   end function arange
-
-  !> std Computes the standard deviation of the array.
-  !!
-  !! @note : Basically: `sqrt(mean(x - mean(x))* alfa )` with `alfa= (N/(N-1))`
-  function std(x) result(y)
-    implicit none
-    real(dp) :: y !< Standard deviation
-    real(dp), dimension(:), intent(IN) :: x !< Input array of real values
-    integer :: N
-    N = size(x)
-    ! y = sqrt((sum(x**2) - sum(x)**2 / real(N, kind=dp)) / real(N - 1, kind=dp))
-    y = sqrt(mean((x - mean(x))**2) * (N / real(N - 1, kind=dp)))
-  end function std
-
-  !> mean Computes the arithmetic mean of the array.
-  !!
-  !! @note the mean is basically: `sum(x)/size(x)`
-  function mean(x) result(y)
-    implicit none
-    real(dp) :: y !< Mean value
-    real(dp), dimension(:), intent(IN) :: x !< Input array of real values
-    y = sum(x) / size(x)
-  end function mean
-
-  !> savetxt Guarda un array 2D en un archivo de texto
-  !!
-  !! @note
-  !! Si fname es "stdout" o " ", o no están presente ni fname ni unit,
-  !! usa stdout
-  !! Si se da fname el archivo se abre y cierra.
-  !! Si se da unit, el archivo queda abierto
-  subroutine savetxt(a, fmt, fname, unit)
-    implicit none
-    real(dp), dimension(:, :), intent(IN) :: a        !< Array a
-    !escribir a archivo de texto
-    character(len=*), optional, intent(in) :: fmt    !< formato a
-    !usar para los datos. Default 'g0.5'
-    character(len=*), optional, intent(in) :: fname  !< Nombre del
-    !archivo de salida
-    integer, optional, intent(in) :: unit            !< Unidad a
-    !escribir si el archivo está abierto
-
-    real(dp), dimension(ubound(a, 2), ubound(a, 1)) :: b
-    integer, dimension(2) :: sh
-    integer :: i
-    integer :: u
-
-    character(len=32) :: form = "g0.5" ! Default
-    character(len=32) :: formato
-    logical :: closef
-
-    ! Si fname está presente => Toma precedencia sobre unit. Si
-    ! ninguna está usa stdout
-    closef = .False.
-    u = stdout
-    if (present(fname)) then
-      if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
-        open (newunit=u, file=trim(fname))
-        closef = .True.
-      end if
-    else if (present(unit)) then ! The file was already open before
-      ! invoking the function
-      IF (unit >= 0 .and. unit <= 99) u = unit
-    end if
-
-    b = transpose(a)
-    sh = shape(b)
-
-    if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
-      if (index('(', fmt) == 0) then
-        write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(fmt), '&
-          &,1x))'
-      else
-        formato = fmt
-      end if
-    else
-      write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(form), '&
-        &,1x))'
-    end if
-    do i = 1, sh(2)
-      write (u, formato) b(:, i)
-    end do
-
-    ! write (u, formato) (b(:, i), i=1, sh(2))
-
-    IF (closef) close (u)
-  end subroutine savetxt
 
 end module grids
 
