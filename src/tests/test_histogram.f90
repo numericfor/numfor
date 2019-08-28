@@ -1,7 +1,7 @@
 program test
-  use basic, only: dp, Zero, timer
-  use strings, only: center
-  use grids, only: linspace, geomspace, mean, std
+  USE utils, only: dp, Zero, timer, center
+  USE grids, only: linspace, geomspace
+  USE array_utils, only: mean, std
   USE histograms
   implicit none
 
@@ -17,7 +17,7 @@ program test
   type(timer) :: T
 
   Ndat = 10000 * 10000
-  print *, 'huge/Ndat', huge(1) / Ndat
+  print "(A,I10,A,f4.2,A)", 'Number of data =', Ndat, " = ", Ndat / real(huge(1), kind=dp), ' of huge'
 
   allocate (b(Ndat))
   b = linspace(0._dp, 1.0_dp, num=Ndat)
@@ -35,7 +35,7 @@ program test
   call T%stop()
 
   print '(A)', repeat('-', 65)
-  print "(A)", center("Example for numpy documentation", 65, '-')
+  print "(A)", center("Example from numpy documentation", 65, '-')
   h = histogram(linspace(0.5_dp, 5.5_dp, 6), Nbins=5)
   print "(A, 6(1x,g0.2))", 'Values', linspace(0.5_dp, 5.5_dp, 6)
   print "(A, 6(1x,g0.2))", 'Bin Edges:', h%bin_edges

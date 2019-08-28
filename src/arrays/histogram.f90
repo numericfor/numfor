@@ -1,12 +1,13 @@
 !> @file histogram.f90
-!! @date "2019-08-27 13:40:00"
+!! @date "2019-08-28 08:34:37"
 
 !> The module `histograms` provides infrastructure for the calculation of histograms. i.e: a count of frequency
 !!
 module histograms
 
   USE basic, only: dp, Zero, Small, print_msg
-  USE grids, only: linspace, mean, std
+  USE grids, only: linspace
+  USE array_utils, only: mean, std
   USE sorting, only: searchsorted
 
   !> type histogram holds the data from an histogram

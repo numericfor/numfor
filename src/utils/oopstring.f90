@@ -1,5 +1,5 @@
 !> @file oopstring.f90 file provides an object-oriented type for working with string
-!! @date "2019-08-27 10:48:09"
+!! @date "2019-08-28 13:15:30"
 
 !> Module defining the `fStr` object and its methods. Documentation: @ref modfstring
 module fString
@@ -12,8 +12,8 @@ module fString
     & st_center => center, st_find => find, st_replace => replace
   implicit none
 
-  private count_sub
-  Public fStr
+  private
+  public fStr, len, str
 
   !> This type defines a string class, with its methods
   type :: fStr
@@ -61,15 +61,27 @@ module fString
 
   end type fStr
 
+  interface str
+    module procedure :: char_str
+  end interface str
+
   interface len
     module procedure :: len_str
-  end interface
+  end interface len
 
   interface fStr
     module procedure set_anyvalue
   end interface fStr
 
 contains
+
+  !> char converts a fStr to a standard allocatable character
+  function char_str(S) result(output)
+    implicit none
+    class(fStr), intent(IN) :: S
+    character(len=:), allocatable :: output
+    output = S%val
+  end function char_str
 
   subroutine init(S, value)
     class(fStr), intent(Out) :: S

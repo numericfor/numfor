@@ -5,7 +5,7 @@ program test
   USE grids, only: linspace, arange
   USE sorting, only: searchsorted, sort
   implicit none
-  integer, parameter :: Ndat = 1000 * 100000
+  integer, parameter :: Ndat = 1000 * 10000
   real(dp), dimension(Ndat) :: a
   real(dp), dimension(Ndat) :: b
   real(dp) :: elem

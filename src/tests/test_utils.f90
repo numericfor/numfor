@@ -22,7 +22,7 @@ program test
     c = -c
   end do
 
-  call T1%finish()
+  call T1%stop()
 
   call T1%show()
 
