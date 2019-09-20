@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-09-18 16:25:25"
+!! @date "2019-09-18 20:39:36"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -236,13 +236,14 @@ contains
         SI1 = D(i + 1) / 6._dp
         hi = A(i)
         ih = 1._dp / hi
-        A(i) = y(i)
         B(i) = -(SI1 + 2 * SI) * hi + (y(i + 1) - y(i)) * ih
         C(i) = 3 * SI
         D(i) = ih * (SI1 - SI)
+        A(i) = y(i)
       enddo
     end associate
   end function spline_coeff
+
   subroutine cubspl(tau, c, n, ibcbeg, ibcend)
     !***********************************************************************
     !! CUBSPL defines an interpolatory cubic spline.
