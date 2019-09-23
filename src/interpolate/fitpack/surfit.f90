@@ -355,58 +355,64 @@ subroutine surfit(iopt, m, x, y, z, w, xb, xe, yb, ye, kx, ky, s, nxest, nyest,&
   kwest = m + nreg
   if (lwrk1 < lwest .or. kwrk < kwest) go to 71
   if (xb >= xe .or. yb >= ye) go to 71
-  do 20 i = 1, m
-    if (w(i) <= 0.) go to 70
+  do i = 1, m
+    if (w(i) <= 0._8) return
     if (x(i) < xb .or. x(i) > xe) go to 71
     if (y(i) < yb .or. y(i) > ye) go to 71
-20  continue
-    if (iopt >= 0) go to 50
+  end do
+
+  if (iopt >= 0) then
+    if (s < 0.) go to 71
+  else
+
     if (nx < nminx .or. nx > nxest) go to 71
     nxk = nx - kx1
     tx(kx1) = xb
     tx(nxk + 1) = xe
-    do 30 i = kx1, nxk
+    do i = kx1, nxk
       if (tx(i + 1) <= tx(i)) go to 72
-30    continue
-      if (ny < nminy .or. ny > nyest) go to 71
-      nyk = ny - ky1
-      ty(ky1) = yb
-      ty(nyk + 1) = ye
-      do 40 i = ky1, nyk
-        if (ty(i + 1) <= ty(i)) go to 73
-40      continue
-        go to 60
-50      if (s < 0.) go to 71
-60      ier = 0
+    end do
+
+    if (ny < nminy .or. ny > nyest) go to 71
+    nyk = ny - ky1
+    ty(ky1) = yb
+    ty(nyk + 1) = ye
+    do i = ky1, nyk
+      if (ty(i + 1) <= ty(i)) go to 73
+    end do
+
+  end if
+
+  ier = 0
 !  we partition the working space and determine the spline approximation
-        kn = 1
-        ki = kn + m
-        lq = 2
-        la = lq + ncest * ib3
-        lf = la + ncest * ib1
-        lff = lf + ncest
-        lfp = lff + ncest
-        lco = lfp + nrint
-        lh = lco + nrint
-        lbx = lh + ib3
-        nek = nest * km2
-        lby = lbx + nek
-        lsx = lby + nek
-        lsy = lsx + m * km1
-        call fpsurf(iopt, m, x, y, z, w, xb, xe, yb, ye, kx, ky, s, nxest, nyest,&
-          &eps, tol, maxit, nest, km1, km2, ib1, ib3, ncest, nrint, nreg, nx, tx,&
-          &ny, ty, c, fp, wrk1(1), wrk1(lfp), wrk1(lco), wrk1(lf), wrk1(lff),&
-          &wrk1(la), wrk1(lq), wrk1(lbx), wrk1(lby), wrk1(lsx), wrk1(lsy),&
-          &wrk1(lh), iwrk(ki), iwrk(kn), wrk2, lwrk2, ier)
-70      return
-71      print *, "iopt,kx,ky,m=", iopt, kx, ky, m
-        print *, "nxest,nyest,nmax=", nxest, nyest, nmax
-        print *, "lwrk1,lwrk2,kwrk=", lwrk1, lwrk2, kwrk
-        print *, "xb,xe,yb,ye=", xb, xe, yb, ye
-        print *, "eps,s", eps, s
-        return
-72      print *, "tx=", tx
-        return
-73      print *, "ty=", ty
-        return
-      end
+  kn = 1
+  ki = kn + m
+  lq = 2
+  la = lq + ncest * ib3
+  lf = la + ncest * ib1
+  lff = lf + ncest
+  lfp = lff + ncest
+  lco = lfp + nrint
+  lh = lco + nrint
+  lbx = lh + ib3
+  nek = nest * km2
+  lby = lbx + nek
+  lsx = lby + nek
+  lsy = lsx + m * km1
+  call fpsurf(iopt, m, x, y, z, w, xb, xe, yb, ye, kx, ky, s, nxest, nyest,&
+    &eps, tol, maxit, nest, km1, km2, ib1, ib3, ncest, nrint, nreg, nx, tx,&
+    &ny, ty, c, fp, wrk1(1), wrk1(lfp), wrk1(lco), wrk1(lf), wrk1(lff),&
+    &wrk1(la), wrk1(lq), wrk1(lbx), wrk1(lby), wrk1(lsx), wrk1(lsy),&
+    &wrk1(lh), iwrk(ki), iwrk(kn), wrk2, lwrk2, ier)
+
+71 print *, "iopt,kx,ky,m=", iopt, kx, ky, m
+  print *, "nxest,nyest,nmax=", nxest, nyest, nmax
+  print *, "lwrk1,lwrk2,kwrk=", lwrk1, lwrk2, kwrk
+  print *, "xb,xe,yb,ye=", xb, xe, yb, ye
+  print *, "eps,s", eps, s
+  return
+72 print *, "tx=", tx
+  return
+73 print *, "ty=", ty
+  return
+end

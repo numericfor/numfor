@@ -1,4 +1,4 @@
-      subroutine profil(iopt, tx, nx, ty, ny, c, kx, ky, u, nu, cu, ier)
+subroutine profil(iopt, tx, nx, ty, ny, c, kx, ky, u, nu, cu, ier)
 !  if iopt=0 subroutine profil calculates the b-spline coefficients of
 !  the univariate spline f(y) = s(u,y) with s(x,y) a bivariate spline of
 !  degrees kx and ky, given in the b-spline representation.
@@ -49,69 +49,72 @@
 !  latest update : march 1987
 !
 !  ..scalar arguments..
-        integer :: iopt, nx, ny, kx, ky, nu, ier
-        real(8) :: u
+  integer :: iopt, nx, ny, kx, ky, nu, ier
+  real(8) :: u
 !  ..array arguments..
-        real(8) :: tx(nx), ty(ny), c((nx - kx - 1) * (ny - ky - 1)), cu(nu)
+  real(8) :: tx(nx), ty(ny), c((nx - kx - 1) * (ny - ky - 1)), cu(nu)
 !  ..local scalars..
-        integer :: i, j, kx1, ky1, l, l1, m, m0, nkx1, nky1
-        real(8) :: sum
+  integer :: i, j, kx1, ky1, l, l1, m, m0, nkx1, nky1
+  real(8) :: sum
 !  ..local array
-        real(8) :: h(6)
+  real(8) :: h(6)
 !  ..
 !  before starting computations a data check is made. if the input data
 !  are invalid control is immediately repassed to the calling program.
-        kx1 = kx + 1
-        ky1 = ky + 1
-        nkx1 = nx - kx1
-        nky1 = ny - ky1
-        ier = 10
-        if (iopt /= 0) go to 200
-        if (nu < ny) go to 300
-        if (u < tx(kx1) .or. u > tx(nkx1 + 1)) go to 300
+  kx1 = kx + 1
+  ky1 = ky + 1
+  nkx1 = nx - kx1
+  nky1 = ny - ky1
+  ier = 10
+  if (iopt /= 0) go to 200
+  if (nu < ny) return
+  if (u < tx(kx1) .or. u > tx(nkx1 + 1)) return
 !  the b-splinecoefficients of f(y) = s(u,y).
-        ier = 0
-        l = kx1
-        l1 = l + 1
-110     if (u < tx(l1) .or. l == nkx1) go to 120
-        l = l1
-        l1 = l + 1
-        go to 110
-120     call fpbspl(tx, nx, kx, u, l, h)
-        m0 = (l - kx1) * nky1 + 1
-        do 140 i = 1, nky1
-          m = m0
-          sum = 0.
-          do 130 j = 1, kx1
-            sum = sum + h(j) * c(m)
-            m = m + nky1
-130         continue
-            cu(i) = sum
-            m0 = m0 + 1
-140         continue
-            go to 300
-200         if (nu < nx) go to 300
-            if (u < ty(ky1) .or. u > ty(nky1 + 1)) go to 300
+  ier = 0
+  l = kx1
+  l1 = l + 1
+110 if (u < tx(l1) .or. l == nkx1) go to 120
+  l = l1
+  l1 = l + 1
+  go to 110
+120 call fpbspl(tx, nx, kx, u, l, h)
+  m0 = (l - kx1) * nky1 + 1
+  do i = 1, nky1
+    m = m0
+    sum = 0.
+    do j = 1, kx1
+      sum = sum + h(j) * c(m)
+      m = m + nky1
+    end do
+
+    cu(i) = sum
+    m0 = m0 + 1
+  end do
+
+  return
+200 if (nu < nx) return
+  if (u < ty(ky1) .or. u > ty(nky1 + 1)) return
 !  the b-splinecoefficients of g(x) = s(x,u).
-            ier = 0
-            l = ky1
-            l1 = l + 1
-210         if (u < ty(l1) .or. l == nky1) go to 220
-            l = l1
-            l1 = l + 1
-            go to 210
-220         call fpbspl(ty, ny, ky, u, l, h)
-            m0 = l - ky
-            do 240 i = 1, nkx1
-              m = m0
-              sum = 0.
-              do 230 j = 1, ky1
-                sum = sum + h(j) * c(m)
-                m = m + 1
-230             continue
-                cu(i) = sum
-                m0 = m0 + nky1
-240             continue
-300             return
-              end
+  ier = 0
+  l = ky1
+  l1 = l + 1
+210 if (u < ty(l1) .or. l == nky1) go to 220
+  l = l1
+  l1 = l + 1
+  go to 210
+220 call fpbspl(ty, ny, ky, u, l, h)
+  m0 = l - ky
+  do i = 1, nkx1
+    m = m0
+    sum = 0.
+    do j = 1, ky1
+      sum = sum + h(j) * c(m)
+      m = m + 1
+    end do
+
+    cu(i) = sum
+    m0 = m0 + nky1
+  end do
+
+end
 

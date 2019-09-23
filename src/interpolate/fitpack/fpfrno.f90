@@ -28,7 +28,7 @@ subroutine fpfrno(maxtr, up, left, right, info, point, merk, n1, count, ier)
 
 30 if (i < count) go to 110
   if (i == count) go to 100
-40 if (up(count) == 0) go to 50
+  if (up(count) == 0) go to 50
   count = count + 1
   go to 30
 50 up(count) = up(i)
