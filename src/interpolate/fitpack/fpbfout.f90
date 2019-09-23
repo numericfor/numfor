@@ -176,7 +176,7 @@ subroutine fpbfou(t, n, par, ress, resc)
 
   !  calculate the integrals ress(j) and resc(j),j=n-6,n-5,n-4 by setting
   !  up a divided difference table.
-160 do 190 j = 1, 3
+160 do j = 1, 3
     nmj = nm3 - j
     i = 5 - j
     call fpcsin(t(nm3), t(nmj), par, si(4), co(4), si(i - 1), co(i - 1), rs(j), rc(j))
@@ -205,6 +205,6 @@ subroutine fpbfou(t, n, par, ress, resc)
 
     ress(nmj) = hs(4) - hs(5)
     resc(nmj) = hc(4) - hc(5)
-190 continue
-    return
   end do
+
+end subroutine fpbfou

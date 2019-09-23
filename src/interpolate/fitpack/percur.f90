@@ -1,5 +1,5 @@
-      subroutine percur(iopt, m, x, y, w, k, s, nest, n, t, c, fp,
-      *wrk, lwrk, iwrk, ier)
+subroutine percur(iopt, m, x, y, w, k, s, nest, n, t, c, fp,&
+  &wrk, lwrk, iwrk, ier)
 !  given the set of data points (x(i),y(i)) and the set of positive
 !  numbers w(i),i=1,2,...,m-1, subroutine percur determines a smooth
 !  periodic spline approximation of degree k with period per=x(m)-x(1).
@@ -205,70 +205,70 @@
 !
 !  ..
 !  ..scalar arguments..
-      real(8) :: s, fp
-      integer :: iopt, m, k, nest, n, lwrk, ier
+  real(8) :: s, fp
+  integer :: iopt, m, k, nest, n, lwrk, ier
 !  ..array arguments..
-      real(8) :: x(m), y(m), w(m), t(nest), c(nest), wrk(lwrk)
-      integer :: iwrk(nest)
+  real(8) :: x(m), y(m), w(m), t(nest), c(nest), wrk(lwrk)
+  integer :: iwrk(nest)
 !  ..local scalars..
-      real(8) :: per, tol
-      integer :: i, ia1, ia2, ib, ifp, ig1, ig2, iq, iz, i1, i2, j1, j2, k1, k2, lwest,
-      *maxit, m1, nmin
+  real(8) :: per, tol
+  integer :: i, ia1, ia2, ib, ifp, ig1, ig2, iq, iz, i1, i2, j1, j2, k1, k2, lwest,&
+    &maxit, m1, nmin
 !  ..subroutine references..
 !    perper,pcheck
 !  ..
 !  we set up the parameters tol and maxit
-      maxit = 20
-      tol = 0.1e-02
+  maxit = 20
+  tol = 0.1e-02
 !  before starting computations a data check is made. if the input data
 !  are invalid, control is immediately repassed to the calling program.
-      ier = 10
-      if (k <= 0 .or. k > 5) go to 50
-      k1 = k + 1
-      k2 = k1 + 1
-      if (iopt < (-1) .or. iopt > 1) go to 50
-      nmin = 2 * k1
-      if (m < 2 .or. nest < nmin) go to 50
-      lwest = m * k1 + nest * (8 + 5 * k)
-      if (lwrk < lwest) go to 50
-      m1 = m - 1
-      do 10 i = 1, m1
-        if (x(i) >= x(i + 1) .or. w(i) <= 0.) go to 50
-10      continue
-        if (iopt >= 0) go to 30
-        if (n <= nmin .or. n > nest) go to 50
-        per = x(m) - x(1)
-        j1 = k1
-        t(j1) = x(1)
-        i1 = n - k
-        t(i1) = x(m)
-        j2 = j1
-        i2 = i1
-        do 20 i = 1, k
-          i1 = i1 + 1
-          i2 = i2 - 1
-          j1 = j1 + 1
-          j2 = j2 - 1
-          t(j2) = t(i2) - per
-          t(i1) = t(j1) + per
-20        continue
-          call fpchep(x, m, t, n, k, ier)
-          if (ier == 0) go to 40
-          go to 50
-30        if (s < 0.) go to 50
-          if (s == 0. .and. nest < (m + 2 * k)) go to 50
-          ier = 0
+  ier = 10
+  if (k <= 0 .or. k > 5) go to 50
+  k1 = k + 1
+  k2 = k1 + 1
+  if (iopt < (-1) .or. iopt > 1) go to 50
+  nmin = 2 * k1
+  if (m < 2 .or. nest < nmin) go to 50
+  lwest = m * k1 + nest * (8 + 5 * k)
+  if (lwrk < lwest) go to 50
+  m1 = m - 1
+  do 10 i = 1, m1
+    if (x(i) >= x(i + 1) .or. w(i) <= 0.) go to 50
+10  continue
+    if (iopt >= 0) go to 30
+    if (n <= nmin .or. n > nest) go to 50
+    per = x(m) - x(1)
+    j1 = k1
+    t(j1) = x(1)
+    i1 = n - k
+    t(i1) = x(m)
+    j2 = j1
+    i2 = i1
+    do 20 i = 1, k
+      i1 = i1 + 1
+      i2 = i2 - 1
+      j1 = j1 + 1
+      j2 = j2 - 1
+      t(j2) = t(i2) - per
+      t(i1) = t(j1) + per
+20    continue
+      call fpchep(x, m, t, n, k, ier)
+      if (ier == 0) go to 40
+      go to 50
+30    if (s < 0.) go to 50
+      if (s == 0. .and. nest < (m + 2 * k)) go to 50
+      ier = 0
 ! we partition the working space and determine the spline approximation.
-40        ifp = 1
-          iz = ifp + nest
-          ia1 = iz + nest
-          ia2 = ia1 + nest * k1
-          ib = ia2 + nest * k
-          ig1 = ib + nest * k2
-          ig2 = ig1 + nest * k2
-          iq = ig2 + nest * k1
-          call fpperi(iopt, x, y, w, m, k, s, nest, tol, maxit, k1, k2, n, t, c, fp,
-          *wrk(ifp), wrk(iz), wrk(ia1), wrk(ia2), wrk(ib), wrk(ig1), wrk(ig2),
-          *wrk(iq), iwrk, ier)
-50        return
-        end
+40    ifp = 1
+      iz = ifp + nest
+      ia1 = iz + nest
+      ia2 = ia1 + nest * k1
+      ib = ia2 + nest * k
+      ig1 = ib + nest * k2
+      ig2 = ig1 + nest * k2
+      iq = ig2 + nest * k1
+      call fpperi(iopt, x, y, w, m, k, s, nest, tol, maxit, k1, k2, n, t, c, fp,&
+        &wrk(ifp), wrk(iz), wrk(ia1), wrk(ia2), wrk(ib), wrk(ig1), wrk(ig2),&
+        &wrk(iq), iwrk, ier)
+50    return
+    end

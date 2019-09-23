@@ -1,5 +1,5 @@
-      subroutine parcur(iopt, ipar, idim, m, u, mx, x, w, ub, ue, k, s, nest, n, t,
-      *nc, c, fp, wrk, lwrk, iwrk, ier)
+subroutine parcur(iopt, ipar, idim, m, u, mx, x, w, ub, ue, k, s, nest, n, t,&
+  &nc, c, fp, wrk, lwrk, iwrk, ier)
 !  given the ordered set of m points x(i) in the idim-dimensional space
 !  and given also a corresponding set of strictly increasing values u(i)
 !  and the set of positive numbers w(i),i=1,2,...,m, subroutine parcur
@@ -253,82 +253,87 @@
 !
 !  ..
 !  ..scalar arguments..
-      real(8) :: ub, ue, s, fp
-      integer :: iopt, ipar, idim, m, mx, k, nest, n, nc, lwrk, ier
+  real(8) :: ub, ue, s, fp
+  integer :: iopt, ipar, idim, m, mx, k, nest, n, nc, lwrk, ier
 !  ..array arguments..
-      real(8) :: u(m), x(mx), w(m), t(nest), c(nc), wrk(lwrk)
-      integer :: iwrk(nest)
+  real(8) :: u(m), x(mx), w(m), t(nest), c(nc), wrk(lwrk)
+  integer :: iwrk(nest)
 !  ..local scalars..
-      real(8) :: tol, dist
-      integer :: i, ia, ib, ifp, ig, iq, iz, i1, i2, j, k1, k2, lwest, maxit, nmin, ncc
+  real(8) :: tol, dist
+  integer :: i, ia, ib, ifp, ig, iq, iz, i1, i2, j, k1, k2, lwest, maxit, nmin, ncc
 ! ..function references
-      real(8) :: sqrt
+  real(8) :: sqrt
 !  ..
 !  we set up the parameters tol and maxit
-      maxit = 20
-      tol = 0.1e-02
+  maxit = 20
+  tol = 0.1e-02
 !  before starting computations a data check is made. if the input data
 !  are invalid, control is immediately repassed to the calling program.
-      ier = 10
-      if (iopt < (-1) .or. iopt > 1) go to 90
-      if (ipar < 0 .or. ipar > 1) go to 90
-      if (idim <= 0 .or. idim > 10) go to 90
-      if (k <= 0 .or. k > 5) go to 90
-      k1 = k + 1
-      k2 = k1 + 1
-      nmin = 2 * k1
-      if (m < k1 .or. nest < nmin) go to 90
-      ncc = nest * idim
-      if (mx < m * idim .or. nc < ncc) go to 90
-      lwest = m * k1 + nest * (6 + idim + 3 * k)
-      if (lwrk < lwest) go to 90
-      if (ipar /= 0 .or. iopt > 0) go to 40
-      i1 = 0
-      i2 = idim
-      u(1) = 0.
-      do 20 i = 2, m
-        dist = 0.
-        do 10 j = 1, idim
-          i1 = i1 + 1
-          i2 = i2 + 1
-          dist = dist + (x(i2) - x(i1))**2
-10        continue
-          u(i) = u(i - 1) + sqrt(dist)
-20        continue
-          if (u(m) <= 0.) go to 90
-          do 30 i = 2, m
-            u(i) = u(i) / u(m)
-30          continue
-            ub = 0.
-            ue = 1.
-            u(m) = ue
-40          if (ub > u(1) .or. ue < u(m) .or. w(1) <= 0.) go to 90
-            do 50 i = 2, m
-              if (u(i - 1) >= u(i) .or. w(i) <= 0.) go to 90
-50            continue
-              if (iopt >= 0) go to 70
-              if (n < nmin .or. n > nest) go to 90
-              j = n
-              do 60 i = 1, k1
-                t(i) = ub
-                t(j) = ue
-                j = j - 1
-60              continue
-                call fpchec(u, m, t, n, k, ier)
-                if (ier == 0) go to 80
-                go to 90
-70              if (s < 0.) go to 90
-                if (s == 0. .and. nest < (m + k1)) go to 90
-                ier = 0
+  ier = 10
+  if (iopt < (-1) .or. iopt > 1) go to 90
+  if (ipar < 0 .or. ipar > 1) go to 90
+  if (idim <= 0 .or. idim > 10) go to 90
+  if (k <= 0 .or. k > 5) go to 90
+  k1 = k + 1
+  k2 = k1 + 1
+  nmin = 2 * k1
+  if (m < k1 .or. nest < nmin) go to 90
+  ncc = nest * idim
+  if (mx < m * idim .or. nc < ncc) go to 90
+  lwest = m * k1 + nest * (6 + idim + 3 * k)
+  if (lwrk < lwest) go to 90
+  if (ipar /= 0 .or. iopt > 0) go to 40
+  i1 = 0
+  i2 = idim
+  u(1) = 0.
+  do i = 2, m
+    dist = 0.
+    do j = 1, idim
+      i1 = i1 + 1
+      i2 = i2 + 1
+      dist = dist + (x(i2) - x(i1))**2
+    end do
+
+    u(i) = u(i - 1) + sqrt(dist)
+  end do
+
+  if (u(m) <= 0.) go to 90
+  do i = 2, m
+    u(i) = u(i) / u(m)
+  end do
+
+  ub = 0.
+  ue = 1.
+  u(m) = ue
+40 if (ub > u(1) .or. ue < u(m) .or. w(1) <= 0.) go to 90
+  do i = 2, m
+    if (u(i - 1) >= u(i) .or. w(i) <= 0.) go to 90
+  end do
+
+  if (iopt >= 0) go to 70
+  if (n < nmin .or. n > nest) go to 90
+  j = n
+  do i = 1, k1
+    t(i) = ub
+    t(j) = ue
+    j = j - 1
+  end do
+
+  call fpchec(u, m, t, n, k, ier)
+  if (ier == 0) go to 80
+  go to 90
+70 if (s < 0.) go to 90
+  if (s == 0. .and. nest < (m + k1)) go to 90
+  ier = 0
 ! we partition the working space and determine the spline curve.
-80              ifp = 1
-                iz = ifp + nest
-                ia = iz + ncc
-                ib = ia + nest * k1
-                ig = ib + nest * k2
-                iq = ig + nest * k2
-                call fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit, k1, k2,
-                *n, t, ncc, c, fp, wrk(ifp), wrk(iz), wrk(ia), wrk(ib), wrk(ig), wrk(iq),
-                *iwrk, ier)
-90              return
-              end
+80 ifp = 1
+  iz = ifp + nest
+  ia = iz + ncc
+  ib = ia + nest * k1
+  ig = ib + nest * k2
+  iq = ig + nest * k2
+  call fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit, k1, k2,&
+    &n, t, ncc, c, fp, wrk(ifp), wrk(iz), wrk(ia), wrk(ib), wrk(ig), wrk(iq),&
+    &iwrk, ier)
+90 return
+end

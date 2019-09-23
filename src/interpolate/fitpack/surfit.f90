@@ -1,5 +1,5 @@
-      subroutine surfit(iopt, m, x, y, z, w, xb, xe, yb, ye, kx, ky, s, nxest, nyest,
-      *nmax, eps, nx, tx, ny, ty, c, fp, wrk1, lwrk1, wrk2, lwrk2, iwrk, kwrk, ier)
+subroutine surfit(iopt, m, x, y, z, w, xb, xe, yb, ye, kx, ky, s, nxest, nyest,&
+  &nmax, eps, nx, tx, ny, ty, c, fp, wrk1, lwrk1, wrk2, lwrk2, iwrk, kwrk, ier)
 ! given the set of data points (x(i),y(i),z(i)) and the set of positive
 ! numbers w(i),i=1,...,m, subroutine surfit determines a smooth bivar-
 ! iate spline approximation s(x,y) of degrees kx and ky on the rect-
@@ -301,112 +301,112 @@
 !
 !  ..
 !  ..scalar arguments..
-      real(8) :: xb, xe, yb, ye, s, eps, fp
-      integer :: iopt, m, kx, ky, nxest, nyest, nmax, nx, ny, lwrk1, lwrk2, kwrk, ier
+  real(8) :: xb, xe, yb, ye, s, eps, fp
+  integer :: iopt, m, kx, ky, nxest, nyest, nmax, nx, ny, lwrk1, lwrk2, kwrk, ier
 !  ..array arguments..
-      real(8) :: x(m), y(m), z(m), w(m), tx(nmax), ty(nmax),
-      *c((nxest - kx - 1) * (nyest - ky - 1)), wrk1(lwrk1), wrk2(lwrk2)
-      integer :: iwrk(kwrk)
+  real(8) :: x(m), y(m), z(m), w(m), tx(nmax), ty(nmax),&
+    &c((nxest - kx - 1) * (nyest - ky - 1)), wrk1(lwrk1), wrk2(lwrk2)
+  integer :: iwrk(kwrk)
 !  ..local scalars..
-      real(8) :: tol
-      integer :: i, ib1, ib3, jb1, ki, kmax, km1, km2, kn, kwest, kx1, ky1, la, lbx,
-      *lby, lco, lf, lff, lfp, lh, lq, lsx, lsy, lwest, maxit, ncest, nest, nek,
-      *nminx, nminy, nmx, nmy, nreg, nrint, nxk, nyk
+  real(8) :: tol
+  integer :: i, ib1, ib3, jb1, ki, kmax, km1, km2, kn, kwest, kx1, ky1, la, lbx,&
+    &lby, lco, lf, lff, lfp, lh, lq, lsx, lsy, lwest, maxit, ncest, nest, nek,&
+    &nminx, nminy, nmx, nmy, nreg, nrint, nxk, nyk
 !  ..function references..
-      integer :: max0
+  integer :: max0
 !  ..subroutine references..
 !    fpsurf
 !  ..
 !  we set up the parameters tol and maxit.
-      maxit = 20
-      tol = 0.1e-02
+  maxit = 20
+  tol = 0.1e-02
 !  before starting computations a data check is made. if the input data
 !  are invalid,control is immediately repassed to the calling program.
-      ier = 10
-      if (eps <= 0. .or. eps >= 1.) go to 71
-      if (kx <= 0 .or. kx > 5) go to 71
-      kx1 = kx + 1
-      if (ky <= 0 .or. ky > 5) go to 71
-      ky1 = ky + 1
-      kmax = max0(kx, ky)
-      km1 = kmax + 1
-      km2 = km1 + 1
-      if (iopt < (-1) .or. iopt > 1) go to 71
-      if (m < (kx1 * ky1)) go to 71
-      nminx = 2 * kx1
-      if (nxest < nminx .or. nxest > nmax) go to 71
-      nminy = 2 * ky1
-      if (nyest < nminy .or. nyest > nmax) go to 71
-      nest = max0(nxest, nyest)
-      nxk = nxest - kx1
-      nyk = nyest - ky1
-      ncest = nxk * nyk
-      nmx = nxest - nminx + 1
-      nmy = nyest - nminy + 1
-      nrint = nmx + nmy
-      nreg = nmx * nmy
-      ib1 = kx * nyk + ky1
-      jb1 = ky * nxk + kx1
-      ib3 = kx1 * nyk + 1
-      if (ib1 <= jb1) go to 10
-      ib1 = jb1
-      ib3 = ky1 * nxk + 1
-10    lwest = ncest * (2 + ib1 + ib3) + 2 * (nrint + nest * km2 + m * km1) + ib3
-      kwest = m + nreg
-      if (lwrk1 < lwest .or. kwrk < kwest) go to 71
-      if (xb >= xe .or. yb >= ye) go to 71
-      do 20 i = 1, m
-        if (w(i) <= 0.) go to 70
-        if (x(i) < xb .or. x(i) > xe) go to 71
-        if (y(i) < yb .or. y(i) > ye) go to 71
-20      continue
-        if (iopt >= 0) go to 50
-        if (nx < nminx .or. nx > nxest) go to 71
-        nxk = nx - kx1
-        tx(kx1) = xb
-        tx(nxk + 1) = xe
-        do 30 i = kx1, nxk
-          if (tx(i + 1) <= tx(i)) go to 72
-30        continue
-          if (ny < nminy .or. ny > nyest) go to 71
-          nyk = ny - ky1
-          ty(ky1) = yb
-          ty(nyk + 1) = ye
-          do 40 i = ky1, nyk
-            if (ty(i + 1) <= ty(i)) go to 73
-40          continue
-            go to 60
-50          if (s < 0.) go to 71
-60          ier = 0
+  ier = 10
+  if (eps <= 0. .or. eps >= 1.) go to 71
+  if (kx <= 0 .or. kx > 5) go to 71
+  kx1 = kx + 1
+  if (ky <= 0 .or. ky > 5) go to 71
+  ky1 = ky + 1
+  kmax = max0(kx, ky)
+  km1 = kmax + 1
+  km2 = km1 + 1
+  if (iopt < (-1) .or. iopt > 1) go to 71
+  if (m < (kx1 * ky1)) go to 71
+  nminx = 2 * kx1
+  if (nxest < nminx .or. nxest > nmax) go to 71
+  nminy = 2 * ky1
+  if (nyest < nminy .or. nyest > nmax) go to 71
+  nest = max0(nxest, nyest)
+  nxk = nxest - kx1
+  nyk = nyest - ky1
+  ncest = nxk * nyk
+  nmx = nxest - nminx + 1
+  nmy = nyest - nminy + 1
+  nrint = nmx + nmy
+  nreg = nmx * nmy
+  ib1 = kx * nyk + ky1
+  jb1 = ky * nxk + kx1
+  ib3 = kx1 * nyk + 1
+  if (ib1 <= jb1) go to 10
+  ib1 = jb1
+  ib3 = ky1 * nxk + 1
+10 lwest = ncest * (2 + ib1 + ib3) + 2 * (nrint + nest * km2 + m * km1) + ib3
+  kwest = m + nreg
+  if (lwrk1 < lwest .or. kwrk < kwest) go to 71
+  if (xb >= xe .or. yb >= ye) go to 71
+  do 20 i = 1, m
+    if (w(i) <= 0.) go to 70
+    if (x(i) < xb .or. x(i) > xe) go to 71
+    if (y(i) < yb .or. y(i) > ye) go to 71
+20  continue
+    if (iopt >= 0) go to 50
+    if (nx < nminx .or. nx > nxest) go to 71
+    nxk = nx - kx1
+    tx(kx1) = xb
+    tx(nxk + 1) = xe
+    do 30 i = kx1, nxk
+      if (tx(i + 1) <= tx(i)) go to 72
+30    continue
+      if (ny < nminy .or. ny > nyest) go to 71
+      nyk = ny - ky1
+      ty(ky1) = yb
+      ty(nyk + 1) = ye
+      do 40 i = ky1, nyk
+        if (ty(i + 1) <= ty(i)) go to 73
+40      continue
+        go to 60
+50      if (s < 0.) go to 71
+60      ier = 0
 !  we partition the working space and determine the spline approximation
-            kn = 1
-            ki = kn + m
-            lq = 2
-            la = lq + ncest * ib3
-            lf = la + ncest * ib1
-            lff = lf + ncest
-            lfp = lff + ncest
-            lco = lfp + nrint
-            lh = lco + nrint
-            lbx = lh + ib3
-            nek = nest * km2
-            lby = lbx + nek
-            lsx = lby + nek
-            lsy = lsx + m * km1
-            call fpsurf(iopt, m, x, y, z, w, xb, xe, yb, ye, kx, ky, s, nxest, nyest,
-            *eps, tol, maxit, nest, km1, km2, ib1, ib3, ncest, nrint, nreg, nx, tx,
-            *ny, ty, c, fp, wrk1(1), wrk1(lfp), wrk1(lco), wrk1(lf), wrk1(lff),
-            *wrk1(la), wrk1(lq), wrk1(lbx), wrk1(lby), wrk1(lsx), wrk1(lsy),
-            *wrk1(lh), iwrk(ki), iwrk(kn), wrk2, lwrk2, ier)
-70          return
-71          print *, "iopt,kx,ky,m=", iopt, kx, ky, m
-            print *, "nxest,nyest,nmax=", nxest, nyest, nmax
-            print *, "lwrk1,lwrk2,kwrk=", lwrk1, lwrk2, kwrk
-            print *, "xb,xe,yb,ye=", xb, xe, yb, ye
-            print *, "eps,s", eps, s
-            return
-72          print *, "tx=", tx
-            return
-73          print *, "ty=", ty
-            return
-          end
+        kn = 1
+        ki = kn + m
+        lq = 2
+        la = lq + ncest * ib3
+        lf = la + ncest * ib1
+        lff = lf + ncest
+        lfp = lff + ncest
+        lco = lfp + nrint
+        lh = lco + nrint
+        lbx = lh + ib3
+        nek = nest * km2
+        lby = lbx + nek
+        lsx = lby + nek
+        lsy = lsx + m * km1
+        call fpsurf(iopt, m, x, y, z, w, xb, xe, yb, ye, kx, ky, s, nxest, nyest,&
+          &eps, tol, maxit, nest, km1, km2, ib1, ib3, ncest, nrint, nreg, nx, tx,&
+          &ny, ty, c, fp, wrk1(1), wrk1(lfp), wrk1(lco), wrk1(lf), wrk1(lff),&
+          &wrk1(la), wrk1(lq), wrk1(lbx), wrk1(lby), wrk1(lsx), wrk1(lsy),&
+          &wrk1(lh), iwrk(ki), iwrk(kn), wrk2, lwrk2, ier)
+70      return
+71      print *, "iopt,kx,ky,m=", iopt, kx, ky, m
+        print *, "nxest,nyest,nmax=", nxest, nyest, nmax
+        print *, "lwrk1,lwrk2,kwrk=", lwrk1, lwrk2, kwrk
+        print *, "xb,xe,yb,ye=", xb, xe, yb, ye
+        print *, "eps,s", eps, s
+        return
+72      print *, "tx=", tx
+        return
+73      print *, "ty=", ty
+        return
+      end

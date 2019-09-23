@@ -1,5 +1,5 @@
-      subroutine parder(tx, nx, ty, ny, c, kx, ky, nux, nuy, x, mx, y, my, z,
-      *wrk, lwrk, iwrk, kwrk, ier)
+subroutine parder(tx, nx, ty, ny, c, kx, ky, nux, nuy, x, mx, y, my, z,&
+  &wrk, lwrk, iwrk, kwrk, ier)
 !  subroutine parder evaluates on a grid (x(i),y(j)),i=1,...,mx; j=1,...
 !  ,my the partial derivative ( order nux,nuy) of a bivariate spline
 !  s(x,y) of degrees kx and ky, given in the b-spline representation.
@@ -71,109 +71,108 @@
 !  latest update : march 1989
 !
 !  ..scalar arguments..
-      integer :: nx, ny, kx, ky, nux, nuy, mx, my, lwrk, kwrk, ier
+  integer :: nx, ny, kx, ky, nux, nuy, mx, my, lwrk, kwrk, ier
 !  ..array arguments..
-      integer :: iwrk(kwrk)
-      real(8) :: tx(nx), ty(ny), c((nx - kx - 1) * (ny - ky - 1)), x(mx), y(my), z(mx * my),
-      *wrk(lwrk)
+  integer :: iwrk(kwrk)
+  real(8) :: tx(nx), ty(ny), c((nx - kx - 1) * (ny - ky - 1)), x(mx), y(my), z(mx * my), wrk(lwrk)
 !  ..local scalars..
-      integer :: i, iwx, iwy, j, kkx, kky, kx1, ky1, lx, ly, lwest, l1, l2, m, m0, m1,
-      *nc, nkx1, nky1, nxx, nyy
-      real(8) :: ak, fac
+  integer :: i, iwx, iwy, j, kkx, kky, kx1, ky1, lx, ly, lwest, l1, l2, m, m0, m1,&
+    &nc, nkx1, nky1, nxx, nyy
+  real(8) :: ak, fac
 !  ..
 !  before starting computations a data check is made. if the input data
 !  are invalid control is immediately repassed to the calling program.
-      ier = 10
-      kx1 = kx + 1
-      ky1 = ky + 1
-      nkx1 = nx - kx1
-      nky1 = ny - ky1
-      nc = nkx1 * nky1
-      if (nux < 0 .or. nux >= kx) go to 400
-      if (nuy < 0 .or. nuy >= ky) go to 400
-      lwest = nc + (kx1 - nux) * mx + (ky1 - nuy) * my
-      if (lwrk < lwest) go to 400
-      if (kwrk < (mx + my)) go to 400
-      if (mx < 1) go to 400
-      if (mx == 1) go to 30
-      go to 10
-10    do 20 i = 2, mx
-        if (x(i) < x(i - 1)) go to 400
-20      continue
-30      if (my < 1) go to 400
-        if (my == 1) go to 60
-        go to 40
-40      do 50 i = 2, my
-          if (y(i) < y(i - 1)) go to 400
-50        continue
-60        ier = 0
-          nxx = nkx1
-          nyy = nky1
-          kkx = kx
-          kky = ky
+  ier = 10
+  kx1 = kx + 1
+  ky1 = ky + 1
+  nkx1 = nx - kx1
+  nky1 = ny - ky1
+  nc = nkx1 * nky1
+  if (nux < 0 .or. nux >= kx) go to 400
+  if (nuy < 0 .or. nuy >= ky) go to 400
+  lwest = nc + (kx1 - nux) * mx + (ky1 - nuy) * my
+  if (lwrk < lwest) go to 400
+  if (kwrk < (mx + my)) go to 400
+  if (mx < 1) go to 400
+  if (mx == 1) go to 30
+  go to 10
+10 do 20 i = 2, mx
+    if (x(i) < x(i - 1)) go to 400
+20  continue
+30  if (my < 1) go to 400
+    if (my == 1) go to 60
+    go to 40
+40  do 50 i = 2, my
+      if (y(i) < y(i - 1)) go to 400
+50    continue
+60    ier = 0
+      nxx = nkx1
+      nyy = nky1
+      kkx = kx
+      kky = ky
 !  the partial derivative of order (nux,nuy) of a bivariate spline of
 !  degrees kx,ky is a bivariate spline of degrees kx-nux,ky-nuy.
 !  we calculate the b-spline coefficients of this spline
-          do 70 i = 1, nc
-            wrk(i) = c(i)
-70          continue
-            if (nux == 0) go to 200
-            lx = 1
-            do 100 j = 1, nux
-              ak = kkx
-              nxx = nxx - 1
-              l1 = lx
-              m0 = 1
-              do 90 i = 1, nxx
-                l1 = l1 + 1
-                l2 = l1 + kkx
-                fac = tx(l2) - tx(l1)
-                if (fac <= 0.) go to 90
-                do 80 m = 1, nyy
-                  m1 = m0 + nyy
-                  wrk(m0) = (wrk(m1) - wrk(m0)) * ak / fac
-                  m0 = m0 + 1
-80                continue
-90                continue
-                  lx = lx + 1
-                  kkx = kkx - 1
-100               continue
-200               if (nuy == 0) go to 300
-                  ly = 1
-                  do 230 j = 1, nuy
-                    ak = kky
-                    nyy = nyy - 1
-                    l1 = ly
-                    do 220 i = 1, nyy
-                      l1 = l1 + 1
-                      l2 = l1 + kky
-                      fac = ty(l2) - ty(l1)
-                      if (fac <= 0.) go to 220
-                      m0 = i
-                      do 210 m = 1, nxx
-                        m1 = m0 + 1
-                        wrk(m0) = (wrk(m1) - wrk(m0)) * ak / fac
-                        m0 = m0 + nky1
-210                     continue
-220                     continue
-                        ly = ly + 1
-                        kky = kky - 1
-230                     continue
-                        m0 = nyy
-                        m1 = nky1
-                        do 250 m = 2, nxx
-                          do 240 i = 1, nyy
-                            m0 = m0 + 1
-                            m1 = m1 + 1
-                            wrk(m0) = wrk(m1)
-240                         continue
-                            m1 = m1 + nuy
-250                         continue
+      do 70 i = 1, nc
+        wrk(i) = c(i)
+70      continue
+        if (nux == 0) go to 200
+        lx = 1
+        do 100 j = 1, nux
+          ak = kkx
+          nxx = nxx - 1
+          l1 = lx
+          m0 = 1
+          do 90 i = 1, nxx
+            l1 = l1 + 1
+            l2 = l1 + kkx
+            fac = tx(l2) - tx(l1)
+            if (fac <= 0.) go to 90
+            do 80 m = 1, nyy
+              m1 = m0 + nyy
+              wrk(m0) = (wrk(m1) - wrk(m0)) * ak / fac
+              m0 = m0 + 1
+80            continue
+90            continue
+              lx = lx + 1
+              kkx = kkx - 1
+100           continue
+200           if (nuy == 0) go to 300
+              ly = 1
+              do 230 j = 1, nuy
+                ak = kky
+                nyy = nyy - 1
+                l1 = ly
+                do 220 i = 1, nyy
+                  l1 = l1 + 1
+                  l2 = l1 + kky
+                  fac = ty(l2) - ty(l1)
+                  if (fac <= 0.) go to 220
+                  m0 = i
+                  do 210 m = 1, nxx
+                    m1 = m0 + 1
+                    wrk(m0) = (wrk(m1) - wrk(m0)) * ak / fac
+                    m0 = m0 + nky1
+210                 continue
+220                 continue
+                    ly = ly + 1
+                    kky = kky - 1
+230                 continue
+                    m0 = nyy
+                    m1 = nky1
+                    do 250 m = 2, nxx
+                      do 240 i = 1, nyy
+                        m0 = m0 + 1
+                        m1 = m1 + 1
+                        wrk(m0) = wrk(m1)
+240                     continue
+                        m1 = m1 + nuy
+250                     continue
 !  we partition the working space and evaluate the partial derivative
-300                         iwx = 1 + nxx * nyy
-                            iwy = iwx + mx * (kx1 - nux)
-                            call fpbisp(tx(nux + 1), nx - 2 * nux, ty(nuy + 1), ny - 2 * nuy, wrk, kkx, kky,
-                            *x, mx, y, my, z, wrk(iwx), wrk(iwy), iwrk(1), iwrk(mx + 1))
-400                         return
-                          end
+300                     iwx = 1 + nxx * nyy
+                        iwy = iwx + mx * (kx1 - nux)
+                        call fpbisp(tx(nux + 1), nx - 2 * nux, ty(nuy + 1), ny - 2 * nuy, wrk, kkx, kky,&
+                          &x, mx, y, my, z, wrk(iwx), wrk(iwy), iwrk(1), iwrk(mx + 1))
+400                     return
+                      end
 

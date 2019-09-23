@@ -1,5 +1,5 @@
-      subroutine parsur(iopt, ipar, idim, mu, u, mv, v, f, s, nuest, nvest,
-      *nu, tu, nv, tv, c, fp, wrk, lwrk, iwrk, kwrk, ier)
+subroutine parsur(iopt, ipar, idim, mu, u, mv, v, f, s, nuest, nvest,&
+  &nu, tu, nv, tv, c, fp, wrk, lwrk, iwrk, kwrk, ier)
 !  given the set of ordered points f(i,j) in the idim-dimensional space,
 !  corresponding to grid values (u(i),v(j)) ,i=1,...,mu ; j=1,...,mv,
 !  parsur determines a smooth approximating spline surface s(u,v) , i.e.
@@ -266,126 +266,130 @@
 !
 !  ..
 !  ..scalar arguments..
-      real(8) :: s, fp
-      integer :: iopt, idim, mu, mv, nuest, nvest, nu, nv, lwrk, kwrk, ier
+  real(8) :: s, fp
+  integer :: iopt, idim, mu, mv, nuest, nvest, nu, nv, lwrk, kwrk, ier
 !  ..array arguments..
-      real(8) :: u(mu), v(mv), f(mu * mv * idim), tu(nuest), tv(nvest),
-      *c((nuest - 4) * (nvest - 4) * idim), wrk(lwrk)
-      integer :: ipar(2), iwrk(kwrk)
+  real(8) :: u(mu), v(mv), f(mu * mv * idim), tu(nuest), tv(nvest),&
+    &c((nuest - 4) * (nvest - 4) * idim), wrk(lwrk)
+  integer :: ipar(2), iwrk(kwrk)
 !  ..local scalars..
-      real(8) :: tol, ub, ue, vb, ve, peru, perv
-      integer :: i, j, jwrk, kndu, kndv, knru, knrv, kwest, l1, l2, l3, l4,
-      *lfpu, lfpv, lwest, lww, maxit, nc, mf, mumin, mvmin
+  real(8) :: tol, ub, ue, vb, ve, peru, perv
+  integer :: i, j, jwrk, kndu, kndv, knru, knrv, kwest, l1, l2, l3, l4,&
+    &lfpu, lfpv, lwest, lww, maxit, nc, mf, mumin, mvmin
 !  ..function references..
-      integer :: max0
+  integer :: max0
 !  ..subroutine references..
 !    fppasu,fpchec,fpchep
 !  ..
 !  we set up the parameters tol and maxit.
-      maxit = 20
-      tol = 0.1e-02
+  maxit = 20
+  tol = 0.1e-02
 !  before starting computations a data check is made. if the input data
 !  are invalid, control is immediately repassed to the calling program.
-      ier = 10
-      if (iopt < (-1) .or. iopt > 1) go to 200
-      if (ipar(1) < 0 .or. ipar(1) > 1) go to 200
-      if (ipar(2) < 0 .or. ipar(2) > 1) go to 200
-      if (idim <= 0 .or. idim > 3) go to 200
-      mumin = 4 - 2 * ipar(1)
-      if (mu < mumin .or. nuest < 8) go to 200
-      mvmin = 4 - 2 * ipar(2)
-      if (mv < mvmin .or. nvest < 8) go to 200
-      mf = mu * mv
-      nc = (nuest - 4) * (nvest - 4)
-      lwest = 4 + nuest * (mv * idim + 11 + 4 * ipar(1)) + nvest * (11 + 4 * ipar(2)) +
-      *4 * (mu + mv) + max0(nuest, mv) * idim
-      kwest = 3 + mu + mv + nuest + nvest
-      if (lwrk < lwest .or. kwrk < kwest) go to 200
-      do 10 i = 2, mu
-        if (u(i - 1) >= u(i)) go to 200
-10      continue
-        do 20 i = 2, mv
-          if (v(i - 1) >= v(i)) go to 200
-20        continue
-          if (iopt >= 0) go to 100
-          if (nu < 8 .or. nu > nuest) go to 200
-          ub = u(1)
-          ue = u(mu)
-          if (ipar(1) /= 0) go to 40
-          j = nu
-          do 30 i = 1, 4
-            tu(i) = ub
-            tu(j) = ue
-            j = j - 1
-30          continue
-            call fpchec(u, mu, tu, nu, 3, ier)
-            if (ier /= 0) go to 200
-            go to 60
-40          l1 = 4
-            l2 = l1
-            l3 = nu - 3
-            l4 = l3
-            peru = ue - ub
-            tu(l2) = ub
-            tu(l3) = ue
-            do 50 j = 1, 3
-              l1 = l1 + 1
-              l2 = l2 - 1
-              l3 = l3 + 1
-              l4 = l4 - 1
-              tu(l2) = tu(l4) - peru
-              tu(l3) = tu(l1) + peru
-50            continue
-              call fpchep(u, mu, tu, nu, 3, ier)
-              if (ier /= 0) go to 200
-60            if (nv < 8 .or. nv > nvest) go to 200
-              vb = v(1)
-              ve = v(mv)
-              if (ipar(2) /= 0) go to 80
-              j = nv
-              do 70 i = 1, 4
-                tv(i) = vb
-                tv(j) = ve
-                j = j - 1
-70              continue
-                call fpchec(v, mv, tv, nv, 3, ier)
-                if (ier /= 0) go to 200
-                go to 150
-80              l1 = 4
-                l2 = l1
-                l3 = nv - 3
-                l4 = l3
-                perv = ve - vb
-                tv(l2) = vb
-                tv(l3) = ve
-                do 90 j = 1, 3
-                  l1 = l1 + 1
-                  l2 = l2 - 1
-                  l3 = l3 + 1
-                  l4 = l4 - 1
-                  tv(l2) = tv(l4) - perv
-                  tv(l3) = tv(l1) + perv
-90                continue
-                  call fpchep(v, mv, tv, nv, 3, ier)
-                  if (ier == 0) go to 150
-                  go to 200
-100               if (s < 0.) go to 200
-                  if (s == 0. .and. (nuest < (mu + 4 + 2 * ipar(1)) .or.
-                  *nvest < (mv + 4 + 2 * ipar(2)))) go to 200
-                  ier = 0
+  ier = 10
+  if (iopt < (-1) .or. iopt > 1) go to 200
+  if (ipar(1) < 0 .or. ipar(1) > 1) go to 200
+  if (ipar(2) < 0 .or. ipar(2) > 1) go to 200
+  if (idim <= 0 .or. idim > 3) go to 200
+  mumin = 4 - 2 * ipar(1)
+  if (mu < mumin .or. nuest < 8) go to 200
+  mvmin = 4 - 2 * ipar(2)
+  if (mv < mvmin .or. nvest < 8) go to 200
+  mf = mu * mv
+  nc = (nuest - 4) * (nvest - 4)
+  lwest = 4 + nuest * (mv * idim + 11 + 4 * ipar(1)) + nvest * (11 + 4 * ipar(2)) +&
+    &4 * (mu + mv) + max0(nuest, mv) * idim
+  kwest = 3 + mu + mv + nuest + nvest
+  if (lwrk < lwest .or. kwrk < kwest) go to 200
+  do i = 2, mu
+    if (u(i - 1) >= u(i)) go to 200
+  end do
+
+  do i = 2, mv
+    if (v(i - 1) >= v(i)) go to 200
+  end do
+
+  if (iopt >= 0) go to 100
+  if (nu < 8 .or. nu > nuest) go to 200
+  ub = u(1)
+  ue = u(mu)
+  if (ipar(1) /= 0) go to 40
+  j = nu
+  do 30 i = 1, 4
+    tu(i) = ub
+    tu(j) = ue
+    j = j - 1
+30  continue
+    call fpchec(u, mu, tu, nu, 3, ier)
+    if (ier /= 0) go to 200
+    go to 60
+40  l1 = 4
+    l2 = l1
+    l3 = nu - 3
+    l4 = l3
+    peru = ue - ub
+    tu(l2) = ub
+    tu(l3) = ue
+    do j = 1, 3
+      l1 = l1 + 1
+      l2 = l2 - 1
+      l3 = l3 + 1
+      l4 = l4 - 1
+      tu(l2) = tu(l4) - peru
+      tu(l3) = tu(l1) + peru
+    end do
+    call fpchep(u, mu, tu, nu, 3, ier)
+    if (ier /= 0) go to 200
+60  if ((nv < 8) .or. (nv > nvest)) go to 200
+    vb = v(1)
+    ve = v(mv)
+    if (ipar(2) /= 0) go to 80
+    j = nv
+    do i = 1, 4
+      tv(i) = vb
+      tv(j) = ve
+      j = j - 1
+    end do
+
+    call fpchec(v, mv, tv, nv, 3, ier)
+    if (ier .ne. 0) go to 200
+    go to 150
+80  l1 = 4
+    l2 = l1
+    l3 = nv - 3
+    l4 = l3
+    perv = ve - vb
+    tv(l2) = vb
+    tv(l3) = ve
+    do j = 1, 3
+      l1 = l1 + 1
+      l2 = l2 - 1
+      l3 = l3 + 1
+      l4 = l4 - 1
+      tv(l2) = tv(l4) - perv
+      tv(l3) = tv(l1) + perv
+    end do
+
+    call fpchep(v, mv, tv, nv, 3, ier)
+    if (ier == 0) go to 150
+
+    go to 200
+100 if (s < 0.) go to 200
+    if (s == 0. .and. (nuest < (mu + 4 + 2 * ipar(1)) .or. (nvest < (mv + 4 + 2 * ipar(2))))) go to 200
+    ier = 0
 !  we partition the working space and determine the spline approximation
-150               lfpu = 5
-                  lfpv = lfpu + nuest
-                  lww = lfpv + nvest
-                  jwrk = lwrk - 4 - nuest - nvest
-                  knru = 4
-                  knrv = knru + mu
-                  kndu = knrv + mv
-                  kndv = kndu + nuest
-                  call fppasu(iopt, ipar, idim, u, mu, v, mv, f, mf, s, nuest, nvest,
-                  *tol, maxit, nc, nu, tu, nv, tv, c, fp, wrk(1), wrk(2), wrk(3), wrk(4),
-                  *wrk(lfpu), wrk(lfpv), iwrk(1), iwrk(2), iwrk(3), iwrk(knru),
-                  *iwrk(knrv), iwrk(kndu), iwrk(kndv), wrk(lww), jwrk, ier)
-200               return
-                end
+150 lfpu = 5
+    lfpv = lfpu + nuest
+    lww = lfpv + nvest
+    jwrk = lwrk - 4 - nuest - nvest
+    knru = 4
+    knrv = knru + mu
+    kndu = knrv + mv
+    kndv = kndu + nuest
+    call fppasu(iopt, ipar, idim, u, mu, v, mv, f, mf, s, nuest, nvest,&
+      &tol, maxit, nc, nu, tu, nv, tv, c, fp, wrk(1), wrk(2), wrk(3), wrk(4),&
+      &wrk(lfpu), wrk(lfpv), iwrk(1), iwrk(2), iwrk(3), iwrk(knru),&
+      &iwrk(knrv), iwrk(kndu), iwrk(kndv), wrk(lww), jwrk, ier)
+200 return
+  end
 

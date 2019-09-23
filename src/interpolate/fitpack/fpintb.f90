@@ -1,5 +1,5 @@
-      subroutine fpintb(t, n, bint, nk1, x, y)
-        implicit none
+subroutine fpintb(t, n, bint, nk1, x, y)
+  implicit none
 !  subroutine fpintb calculates integrals of the normalized b-splines
 !  nj,k+1(x) of degree k, defined on the set of knots t(j),j=1,2,...n.
 !  it makes use of the formulae of gaffney for the calculation of
@@ -19,36 +19,35 @@
 !    bint : array,length nk1, containing the integrals of the b-splines.
 !  ..
 !  ..scalars arguments..
-        integer :: n, nk1
-        real(8) :: x, y
+  integer :: n, nk1
+  real(8) :: x, y
 !  ..array arguments..
-        real(8) :: t(n), bint(nk1)
+  real(8) :: t(n), bint(nk1)
 !  ..local scalars..
-        integer :: i, ia, ib, it, j, j1, k, k1, l, li, lj, lk, l0, min
-        real(8) :: a, ak, arg, b, f, one
+  integer :: i, ia, ib, it, j, j1, k, k1, l, li, lj, lk, l0, min
+  real(8) :: a, ak, arg, b, f, one
 !  ..local arrays..
-        real(8) :: aint(6), h(6), h1(6)
+  real(8) :: aint(6), h(6), h1(6)
 !  initialization.
-        one = 0.1d+01
-        k1 = n - nk1
-        ak = k1
-        k = k1 - 1
-        do 10 i = 1, nk1
-          bint(i) = 0.0d0
-10        continue
+  one = 0.1d+01
+  k1 = n - nk1
+  ak = k1
+  k = k1 - 1
+
+  bint(:nk1) = 0._8
+
 !  the integration limits are arranged in increasing order.
-          a = x
-          b = y
-          min = 0
-          if (a < b) go to 30
-          if (a == b) go to 160
-          go to 20
-20        a = y
-          b = x
-          min = 1
-30        if (a < t(k1)) a = t(k1)
-          if (b > t(nk1 + 1)) b = t(nk1 + 1)
-          if (a > b) go to 160
+  a = x
+  b = y
+  min = 0
+  if (a < b) go to 30
+  if (a == b) return
+  a = y
+  b = x
+  min = 1
+30 if (a < t(k1)) a = t(k1)
+  if (b > t(nk1 + 1)) b = t(nk1 + 1)
+  if (a > b) return
 !  using the expression of gaffney for the indefinite integral of a
 !  b-spline we find that
 !  bint(j) = (t(j+k+1)-t(j))*(res(j,b)-res(j,a))/(k+1)
@@ -58,74 +57,76 @@
 !             = aint(j+k-l+1), j=l-k,l-k+1,...,l
 !               = sumi((x-t(j+i))*nj+i,k+1-i(x)/(t(j+k+1)-t(j+i)))
 !                 i=0,1,...,k
-          l = k1
-          l0 = l + 1
+  l = k1
+  l0 = l + 1
 !  set arg = a.
-          arg = a
-          do 90 it = 1, 2
+  arg = a
+  do it = 1, 2
 !  search for the knot interval t(l) <= arg < t(l+1).
-40          if (arg < t(l0) .or. l == nk1) go to 50
-            l = l0
-            l0 = l + 1
-            go to 40
+40  if (arg < t(l0) .or. l == nk1) go to 50
+    l = l0
+    l0 = l + 1
+    go to 40
 !  calculation of aint(j), j=1,2,...,k+1.
 !  initialization.
-50          do 55 j = 1, k1
-              aint(j) = 0.0d0
-55            continue
-              aint(1) = (arg - t(l)) / (t(l + 1) - t(l))
-              h1(1) = one
-              do 70 j = 1, k
+
+50  aint(:k1) = 0._8
+    aint(1) = (arg - t(l)) / (t(l + 1) - t(l))
+    h1(1) = one
+    do j = 1, k
 !  evaluation of the non-zero b-splines of degree j at arg,i.e.
 !    h(i+1) = nl-j+i,j(arg), i=0,1,...,j.
-                h(1) = 0.0d0
-                do 60 i = 1, j
-                  li = l + i
-                  lj = li - j
-                  f = h1(i) / (t(li) - t(lj))
-                  h(i) = h(i) + f * (t(li) - arg)
-                  h(i + 1) = f * (arg - t(lj))
-60                continue
+      h(1) = 0._8
+      do i = 1, j
+        li = l + i
+        lj = li - j
+        f = h1(i) / (t(li) - t(lj))
+        h(i) = h(i) + f * (t(li) - arg)
+        h(i + 1) = f * (arg - t(lj))
+      end do
+
 !  updating of the integrals aint.
-                  j1 = j + 1
-                  do 70 i = 1, j1
-                    li = l + i
-                    lj = li - j1
-                    aint(i) = aint(i) + h(i) * (arg - t(lj)) / (t(li) - t(lj))
-                    h1(i) = h(i)
-70                  continue
-                    if (it == 2) go to 100
+      j1 = j + 1
+      do i = 1, j1
+        li = l + i
+        lj = li - j1
+        aint(i) = aint(i) + h(i) * (arg - t(lj)) / (t(li) - t(lj))
+        h1(i) = h(i)
+      end do
+
+    end do
+
+    if (it == 2) go to 100
 !  updating of the integrals bint
-                    lk = l - k
-                    ia = lk
-                    do 80 i = 1, k1
-                      bint(lk) = -aint(i)
-                      lk = lk + 1
-80                    continue
+    lk = l - k
+    ia = lk
+    do i = 1, k1
+      bint(lk) = -aint(i)
+      lk = lk + 1
+    end do
+
 !  set arg = b.
-                      arg = b
-90                    continue
+    arg = b
+  end do
+
 !  updating of the integrals bint.
-100                   lk = l - k
-                      ib = lk - 1
-                      do 110 i = 1, k1
-                        bint(lk) = bint(lk) + aint(i)
-                        lk = lk + 1
-110                     continue
-                        if (ib < ia) go to 130
-                        do 120 i = ia, ib
-                          bint(i) = bint(i) + one
-120                       continue
+100 lk = l - k
+  ib = lk - 1
+  do i = 1, k1
+    bint(lk) = bint(lk) + aint(i)
+    lk = lk + 1
+  end do
+
+  if (ib >= ia) bint(ia:ib) = bint(ia:ib) + one
+
 !  the scaling factors are taken into account.
-130                       f = one / ak
-                          do 140 i = 1, nk1
-                            j = i + k1
-                            bint(i) = bint(i) * (t(j) - t(i)) * f
-140                         continue
+  f = one / ak
+  do i = 1, nk1
+    j = i + k1
+    bint(i) = bint(i) * (t(j) - t(i)) * f
+  end do
+
 !  the order of the integration limits is taken into account.
-                            if (min == 0) go to 160
-                            do 150 i = 1, nk1
-                              bint(i) = -bint(i)
-150                           continue
-160                           return
-                            end
+  IF (min /= 0) bint(:nk1) = -bint(:nk1)
+
+end

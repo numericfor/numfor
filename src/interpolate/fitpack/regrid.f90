@@ -1,5 +1,5 @@
-      subroutine regrid(iopt, mx, x, my, y, z, xb, xe, yb, ye, kx, ky, s,
-      *nxest, nyest, nx, tx, ny, ty, c, fp, wrk, lwrk, iwrk, kwrk, ier)
+subroutine regrid(iopt, mx, x, my, y, z, xb, xe, yb, ye, kx, ky, s,&
+  &nxest, nyest, nx, tx, ny, ty, c, fp, wrk, lwrk, iwrk, kwrk, ier)
 ! given the set of values z(i,j) on the rectangular grid (x(i),y(j)),
 ! i=1,...,mx;j=1,...,my, subroutine regrid determines a smooth bivar-
 ! iate spline approximation s(x,y) of degrees kx and ky on the rect-
@@ -265,89 +265,92 @@
 !
 !  ..
 !  ..scalar arguments..
-      real(8) :: xb, xe, yb, ye, s, fp
-      integer :: iopt, mx, my, kx, ky, nxest, nyest, nx, ny, lwrk, kwrk, ier
+  real(8) :: xb, xe, yb, ye, s, fp
+  integer :: iopt, mx, my, kx, ky, nxest, nyest, nx, ny, lwrk, kwrk, ier
 !  ..array arguments..
-      real(8) :: x(mx), y(my), z(mx * my), tx(nxest), ty(nyest),
-      *c((nxest - kx - 1) * (nyest - ky - 1)), wrk(lwrk)
-      integer :: iwrk(kwrk)
+  real(8) :: x(mx), y(my), z(mx * my), tx(nxest), ty(nyest),&
+    &c((nxest - kx - 1) * (nyest - ky - 1)), wrk(lwrk)
+  integer :: iwrk(kwrk)
 !  ..local scalars..
-      real(8) :: tol
-      integer :: i, j, jwrk, kndx, kndy, knrx, knry, kwest, kx1, kx2, ky1, ky2,
-      *lfpx, lfpy, lwest, lww, maxit, nc, nminx, nminy, mz
+  real(8) :: tol
+  integer :: i, j, jwrk, kndx, kndy, knrx, knry, kwest, kx1, kx2, ky1, ky2,&
+    &lfpx, lfpy, lwest, lww, maxit, nc, nminx, nminy, mz
 !  ..function references..
-      integer :: max0
+  integer :: max0
 !  ..subroutine references..
 !    fpregr,fpchec
 !  ..
 !  we set up the parameters tol and maxit.
-      maxit = 20
-      tol = 0.1e-02
+  maxit = 20
+  tol = 0.1e-02
 !  before starting computations a data check is made. if the input data
 !  are invalid, control is immediately repassed to the calling program.
-      ier = 10
-      if (kx <= 0 .or. kx > 5) go to 70
-      kx1 = kx + 1
-      kx2 = kx1 + 1
-      if (ky <= 0 .or. ky > 5) go to 70
-      ky1 = ky + 1
-      ky2 = ky1 + 1
-      if (iopt < (-1) .or. iopt > 1) go to 70
-      nminx = 2 * kx1
-      if (mx < kx1 .or. nxest < nminx) go to 70
-      nminy = 2 * ky1
-      if (my < ky1 .or. nyest < nminy) go to 70
-      mz = mx * my
-      nc = (nxest - kx1) * (nyest - ky1)
-      lwest = 4 + nxest * (my + 2 * kx2 + 1) + nyest * (2 * ky2 + 1) + mx * kx1 +
-      *my * ky1 + max0(nxest, my)
-      kwest = 3 + mx + my + nxest + nyest
-      if (lwrk < lwest .or. kwrk < kwest) go to 70
-      if (xb > x(1) .or. xe < x(mx)) go to 70
-      do 10 i = 2, mx
-        if (x(i - 1) >= x(i)) go to 70
-10      continue
-        if (yb > y(1) .or. ye < y(my)) go to 70
-        do 20 i = 2, my
-          if (y(i - 1) >= y(i)) go to 70
-20        continue
-          if (iopt >= 0) go to 50
-          if (nx < nminx .or. nx > nxest) go to 70
-          j = nx
-          do 30 i = 1, kx1
-            tx(i) = xb
-            tx(j) = xe
-            j = j - 1
-30          continue
-            call fpchec(x, mx, tx, nx, kx, ier)
-            if (ier /= 0) go to 70
-            if (ny < nminy .or. ny > nyest) go to 70
-            j = ny
-            do 40 i = 1, ky1
-              ty(i) = yb
-              ty(j) = ye
-              j = j - 1
-40            continue
-              call fpchec(y, my, ty, ny, ky, ier)
-              if (ier == 0) go to 60
-              go to 70
-50            if (s < 0.) go to 70
-              if (s == 0. .and. (nxest < (mx + kx1) .or. nyest < (my + ky1)))
-              *go to 70
-              ier = 0
+  ier = 10
+  if (kx <= 0 .or. kx > 5) go to 70
+  kx1 = kx + 1
+  kx2 = kx1 + 1
+  if (ky <= 0 .or. ky > 5) go to 70
+  ky1 = ky + 1
+  ky2 = ky1 + 1
+  if (iopt < (-1) .or. iopt > 1) go to 70
+  nminx = 2 * kx1
+  if (mx < kx1 .or. nxest < nminx) go to 70
+  nminy = 2 * ky1
+  if (my < ky1 .or. nyest < nminy) go to 70
+  mz = mx * my
+  nc = (nxest - kx1) * (nyest - ky1)
+  lwest = 4 + nxest * (my + 2 * kx2 + 1) + nyest * (2 * ky2 + 1) + mx * kx1 +&
+    &my * ky1 + max0(nxest, my)
+  kwest = 3 + mx + my + nxest + nyest
+  if (lwrk < lwest .or. kwrk < kwest) go to 70
+  if (xb > x(1) .or. xe < x(mx)) go to 70
+  do i = 2, mx
+    if (x(i - 1) >= x(i)) go to 70
+  end do
+
+  if (yb > y(1) .or. ye < y(my)) go to 70
+  do i = 2, my
+    if (y(i - 1) >= y(i)) go to 70
+  end do
+
+  if (iopt >= 0) go to 50
+  if (nx < nminx .or. nx > nxest) go to 70
+  j = nx
+  do i = 1, kx1
+    tx(i) = xb
+    tx(j) = xe
+    j = j - 1
+  end do
+
+  call fpchec(x, mx, tx, nx, kx, ier)
+  if (ier /= 0) go to 70
+  if (ny < nminy .or. ny > nyest) go to 70
+  j = ny
+  do i = 1, ky1
+    ty(i) = yb
+    ty(j) = ye
+    j = j - 1
+  end do
+
+  call fpchec(y, my, ty, ny, ky, ier)
+  if (ier == 0) go to 60
+  go to 70
+50 if (s < 0.) go to 70
+  if (s == 0. .and. (nxest < (mx + kx1) .or. nyest < (my + ky1))) go to 70
+  ier = 0
 !  we partition the working space and determine the spline approximation
-60            lfpx = 5
-              lfpy = lfpx + nxest
-              lww = lfpy + nyest
-              jwrk = lwrk - 4 - nxest - nyest
-              knrx = 4
-              knry = knrx + mx
-              kndx = knry + my
-              kndy = kndx + nxest
-              call fpregr(iopt, x, mx, y, my, z, mz, xb, xe, yb, ye, kx, ky, s, nxest, nyest,
-              *tol, maxit, nc, nx, tx, ny, ty, c, fp, wrk(1), wrk(2), wrk(3), wrk(4),
-              *wrk(lfpx), wrk(lfpy), iwrk(1), iwrk(2), iwrk(3), iwrk(knrx),
-              *iwrk(knry), iwrk(kndx), iwrk(kndy), wrk(lww), jwrk, ier)
-70            return
-            end
+60 lfpx = 5
+  lfpy = lfpx + nxest
+  lww = lfpy + nyest
+  jwrk = lwrk - 4 - nxest - nyest
+  knrx = 4
+  knry = knrx + mx
+  kndx = knry + my
+  kndy = kndx + nxest
+  call fpregr(iopt, x, mx, y, my, z, mz, xb, xe, yb, ye, kx, ky, s, nxest, nyest,&
+    &tol, maxit, nc, nx, tx, ny, ty, c, fp, wrk(1), wrk(2), wrk(3), wrk(4),&
+    &wrk(lfpx), wrk(lfpy), iwrk(1), iwrk(2), iwrk(3), iwrk(knrx),&
+    &iwrk(knry), iwrk(kndx), iwrk(kndy), wrk(lww), jwrk, ier)
+70 return
+end
 
