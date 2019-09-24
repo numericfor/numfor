@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-08-27 13:37:18"
+!! @date "2019-09-24 15:11:41"
 
 !> This module defines functions to manipulate strings of characters.
 !! Documentation: @ref modstrings
@@ -14,7 +14,13 @@ module strings
   character(*), parameter :: letters_uppercase = ascii_uppercase//accented_uppercase
 
   character(*), private, parameter :: blanks = ' '//achar(9)
-  Public
+  Public :: str
+  Public :: ascii_lowercase, ascii_uppercase, letters_lowercase, letters_uppercase
+  Public :: accented_lowercase, accented_uppercase
+
+  Public :: upper, lower, swapcase, reverse, endswith, startswith
+  Public :: lstrip, rstrip, strip, issub, rjust, ljust, zfill, center, find, replace
+
   Private :: c2str, i2str, r2str, dp2str
 
   !> `str()` converts a number (integer or real) to a string

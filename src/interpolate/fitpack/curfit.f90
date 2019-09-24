@@ -16,8 +16,7 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
   !  subroutine splev.
   !
   !  calling sequence:
-  !     call curfit(iopt,m,x,y,w,xb,xe,k,s,nest,n,t,c,fp,wrk,
-  !    * lwrk,iwrk,ier)
+  !     call curfit(iopt,m,x,y,w,xb,xe,k,s,nest,n,t,c,fp,wrk,lwrk,iwrk,ier)
   !
   !  parameters:
   !   iopt  : integer flag. on entry iopt must specify whether a weighted
@@ -217,7 +216,7 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
   !  ..
   !  we set up the parameters tol and maxit
   maxit = 20
-  tol = 0.1d-02
+  tol = 0.001_8
   !  before starting computations a data check is made. if the input data
   !  are invalid, control is immediately repassed to the calling program.
   ier = 10
@@ -234,20 +233,21 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
     if (x(i - 1) > x(i)) return
   end do
 
-  if (iopt >= 0) go to 30
-  if (n < nmin .or. n > nest) return
-  j = n
-  do i = 1, k1
-    t(i) = xb
-    t(j) = xe
-    j = j - 1
-  end do
+  if (iopt >= 0) then
+    if (s < 0._8) return
+    if (s == 0._8 .and. nest < (m + k1)) return
+  else
+    if (n < nmin .or. n > nest) return
+    j = n
+    do i = 1, k1
+      t(i) = xb
+      t(j) = xe
+      j = j - 1
+    end do
 
-  call fpchec(x, m, t, n, k, ier)
-  if (ier == 0) go to 40
-  return
-30 if (s < 0.) return
-  if (s == 0. .and. nest < (m + k1)) return
+    call fpchec(x, m, t, n, k, ier)
+    if (ier /= 0) return
+  end if
   ! we partition the working space and determine the spline approximation.
 40 ifp = 1
   iz = ifp + nest
@@ -257,4 +257,5 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
   iq = ig + nest * k2
   call fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2, n, t, c, fp, &
     & wrk(ifp), wrk(iz), wrk(ia), wrk(ib), wrk(ig), wrk(iq), iwrk, ier)
+
 end subroutine curfit

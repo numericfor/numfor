@@ -1,5 +1,5 @@
 !> file basic.f90 contains module basic
-!! @date "2019-08-27 12:45:49"
+!! @date "2019-09-24 14:53:41"
 
 !> This module will provide some basic convenience routines
 !! It should have:
@@ -60,9 +60,9 @@ module basic
   ! Common constants
   real(dp), public, parameter :: Zero = 0._dp          !< Real cero
   real(dp), public, parameter :: Small = epsilon(1._dp) !< Real small number
-  complex(dp), public, parameter :: C0 = (0._dp, 0._dp) !< Complex cero
-  complex(dp), public, parameter :: C1 = (1._dp, 0._dp) !< Complex unit
-  complex(dp), public, parameter :: CI = (0._dp, 1._dp) !< Complex imaginary unit
+  complex(dp), public, parameter :: C_Z0 = (0._dp, 0._dp) !< Complex cero
+  complex(dp), public, parameter :: C_R1 = (1._dp, 0._dp) !< Complex unit
+  complex(dp), public, parameter :: C_I1 = (0._dp, 1._dp) !< Complex imaginary unit
 
   ! Basic mathematical constants (mostly from gsl).
   ! Many have more decimal places than needed/used
