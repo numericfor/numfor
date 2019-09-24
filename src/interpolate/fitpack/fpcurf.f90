@@ -261,10 +261,7 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
   p3 = -one
   f3 = fpms
   p = sum(a(:nk1, 1))
-  !   p = 0.
-  !   do 255 i = 1, nk1
-  !     p = p + a(i, 1)
-  ! 255 continue
+
   rn = nk1
   p = rn / p
   ich1 = 0

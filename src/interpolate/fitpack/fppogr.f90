@@ -145,8 +145,8 @@ subroutine fppogr(iopt, ider, u, mu, v, mv, z, mz, z0, r, s, nuest, nvest,&
 
 ! we compute the interpolating spline.
 95 call fpopdi(ifsu, ifsv, ifbu, ifbv, u, mu, v, mv, z, mz, z0, dz, iopt, idd,&
- &tu, nu, tv, nv, nuest, nvest, p, step, c, nc, fp, fpintu, fpintv, nru, nrv,&
- &wrk, lwrk)
+&tu, nu, tv, nv, nuest, nvest, p, step, c, nc, fp, fpintu, fpintv, nru, nrv,&
+&wrk, lwrk)
   go to 430
 !  if s>0 our initial choice of knots depends on the value of iopt(1).
 100 ier = 0
@@ -207,7 +207,7 @@ subroutine fppogr(iopt, ider, u, mu, v, mv, z, mz, z0, r, s, nuest, nvest,&
 !  main loop for the different sets of knots.mpm=mu+mv is a save upper
 !  bound for the number of trials.
 120 mpm = mu + mv
-  do 270 iter = 1, mpm
+  do iter = 1, mpm
 !  find nrintu (nrintv) which is the number of knot intervals in the
 !  u-direction (v-direction).
     nrintu = nu - 7
@@ -312,31 +312,34 @@ subroutine fppogr(iopt, ider, u, mu, v, mv, z, mz, z0, r, s, nuest, nvest,&
     ifsu = 0
     istart = 0
     if (iopt(2) == 0) istart = 1
-    do 220 l = 1, nplusu
+    do l = 1, nplusu
 !  add a new knot in the u-direction
       call fpknot(u, mu, tu, nu, fpintu, nrdatu, nrintu, nuest, istart)
 !  test whether we cannot further increase the number of knots in the
 !  u-direction.
-      if (nu == nue) go to 270
-220   continue
-      go to 270
-230   if (nv == nve) go to 210
+      if (nu == nue) exit
+    end do
+
+    cycle
+230 if (nv == nve) go to 210
 !  addition in the v-direction.
-      lastdi = 1
-      nplusv = nplv
-      ifsv = 0
-      do 240 l = 1, nplusv
+    lastdi = 1
+    nplusv = nplv
+    ifsv = 0
+    do l = 1, nplusv
 !  add a new knot in the v-direction.
-        call fpknot(v, mv, tv, nv, fpintv, nrdatv, nrintv, nvest, 1)
+      call fpknot(v, mv, tv, nv, fpintv, nrdatv, nrintv, nvest, 1)
 !  test whether we cannot further increase the number of knots in the
 !  v-direction.
-        if (nv == nve) go to 270
-240     continue
+      if (nv == nve) exit
+    end do
+
 !  restart the computations with the new set of knots.
-270     continue
+  end do
+
 !  test whether the least-squares polynomial is a solution of our
 !  approximation problem.
-300     if (ier == (-2)) go to 440
+300 if (ier == (-2)) go to 440
 !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ! part 2: determination of the smoothing spline sp(u,v)                c
 ! *****************************************************                c
@@ -355,64 +358,65 @@ subroutine fppogr(iopt, ider, u, mu, v, mv, z, mz, z0, r, s, nuest, nvest,&
 !  convergence is guaranteed by taking f1 > 0 and f3 < 0.              c
 !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 !  initial value for p.
-        p1 = 0.
-        f1 = fp0 - s
-        p3 = -one
-        f3 = fpms
-        p = one
-        dzz(1) = dz(1)
-        dzz(2) = dz(2)
-        dzz(3) = dz(3)
-        ich1 = 0
-        ich3 = 0
+  p1 = 0.
+  f1 = fp0 - s
+  p3 = -one
+  f3 = fpms
+  p = one
+  dzz(1) = dz(1)
+  dzz(2) = dz(2)
+  dzz(3) = dz(3)
+  ich1 = 0
+  ich3 = 0
 !  iteration process to find the root of f(p)=s.
-        do 350 iter = 1, maxit
+  do iter = 1, maxit
 !  find the smoothing spline sp(u,v) and the corresponding sum f(p).
-          call fpopdi(ifsu, ifsv, ifbu, ifbv, u, mu, v, mv, z, mz, z0, dzz, iopt, idd,&
-            &tu, nu, tv, nv, nuest, nvest, p, step, c, nc, fp, fpintu, fpintv, nru, nrv,&
-            &wrk, lwrk)
+    call fpopdi(ifsu, ifsv, ifbu, ifbv, u, mu, v, mv, z, mz, z0, dzz, iopt, idd,&
+      &tu, nu, tv, nv, nuest, nvest, p, step, c, nc, fp, fpintu, fpintv, nru, nrv,&
+      &wrk, lwrk)
 !  test whether the approximation sp(u,v) is an acceptable solution.
-          fpms = fp - s
-          if (abs(fpms) < acc) go to 440
+    fpms = fp - s
+    if (abs(fpms) < acc) go to 440
 !  test whether the maximum allowable number of iterations has been
 !  reached.
-          if (iter == maxit) go to 400
+    if (iter == maxit) go to 400
 !  carry out one more step of the iteration process.
-          p2 = p
-          f2 = fpms
-          if (ich3 /= 0) go to 320
-          if ((f2 - f3) > acc) go to 310
+    p2 = p
+    f2 = fpms
+    if (ich3 /= 0) go to 320
+    if ((f2 - f3) > acc) go to 310
 !  our initial choice of p is too large.
-          p3 = p2
-          f3 = f2
-          p = p * con4
-          if (p <= p1) p = p1 * con9 + p2 * con1
-          go to 350
-310       if (f2 < 0.) ich3 = 1
-320       if (ich1 /= 0) go to 340
-          if ((f1 - f2) > acc) go to 330
+    p3 = p2
+    f3 = f2
+    p = p * con4
+    if (p <= p1) p = p1 * con9 + p2 * con1
+    cycle
+310 if (f2 < 0.) ich3 = 1
+320 if (ich1 /= 0) go to 340
+    if ((f1 - f2) > acc) go to 330
 !  our initial choice of p is too small
-          p1 = p2
-          f1 = f2
-          p = p / con4
-          if (p3 < 0.) go to 350
-          if (p >= p3) p = p2 * con1 + p3 * con9
-          go to 350
+    p1 = p2
+    f1 = f2
+    p = p / con4
+    if (p3 < 0.) cycle
+    if (p >= p3) p = p2 * con1 + p3 * con9
+    cycle
 !  test whether the iteration process proceeds as theoretically
 !  expected.
-330       if (f2 > 0.) ich1 = 1
-340       if (f2 >= f1 .or. f2 <= f3) go to 410
+330 if (f2 > 0.) ich1 = 1
+340 if (f2 >= f1 .or. f2 <= f3) go to 410
 !  find the new value of p.
-          p = fprati(p1, f1, p2, f2, p3, f3)
-350       continue
+    p = fprati(p1, f1, p2, f2, p3, f3)
+  end do
+
 !  error codes and messages.
-400       ier = 3
-          go to 440
-410       ier = 2
-          go to 440
-420       ier = 1
-          go to 440
-430       ier = -1
-          fp = 0.
-440       return
-        end
+400 ier = 3
+  go to 440
+410 ier = 2
+  go to 440
+420 ier = 1
+  go to 440
+430 ier = -1
+  fp = 0.
+440 return
+end

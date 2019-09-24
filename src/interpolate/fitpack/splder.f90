@@ -1,5 +1,5 @@
-      subroutine splder(t, n, c, k, nu, x, y, m, e, wrk, ier)
-        implicit none
+subroutine splder(t, n, c, k, nu, x, y, m, e, wrk, ier)
+  implicit none
 !  subroutine splder evaluates in a number of points x(i),i=1,2,...,m
 !  the derivative of order nu of a spline s(x) of degree k,given in
 !  its b-spline representation.
@@ -60,132 +60,135 @@
 !++   - fixed initialization of sp to double precision value
 !
 !  ..scalar arguments..
-        integer :: n, k, nu, m, e, ier
+  integer :: n, k, nu, m, e, ier
 !  ..array arguments..
-        real(8) :: t(n), c(n), x(m), y(m), wrk(n)
+  real(8) :: t(n), c(n), x(m), y(m), wrk(n)
 !  ..local scalars..
-        integer :: i, j, kk, k1, k2, l, ll, l1, l2, nk1, nk2, nn
-        real(8) :: ak, arg, fac, sp, tb, te
+  integer :: i, j, kk, k1, k2, l, ll, l1, l2, nk1, nk2, nn
+  real(8) :: ak, arg, fac, sp, tb, te
 !++..
-        integer :: k3
+  integer :: k3
 !..++
 !  ..local arrays ..
-        real(8) :: h(6)
+  real(8) :: h(6)
 !  before starting computations a data check is made. if the input data
 !  are invalid control is immediately repassed to the calling program.
-        ier = 10
-        if (nu < 0 .or. nu > k) go to 200
+  ier = 10
+  if (nu < 0 .or. nu > k) return
 !--      if(m-1) 200,30,10
 !++..
-        if (m < 1) go to 200
+  if (m < 1) return
 !..++
-!--  10  do 20 i=2,m
-!--        if(x(i) < x(i-1)) go to 200
-!--  20  continue
-        ier = 0
+!--  10  do i=2,m
+!--        if(x(i) < x(i-1)) return
+!--      end do
+  ier = 0
 !  fetch tb and te, the boundaries of the approximation interval.
-        k1 = k + 1
-        k3 = k1 + 1
-        nk1 = n - k1
-        tb = t(k1)
-        te = t(nk1 + 1)
+  k1 = k + 1
+  k3 = k1 + 1
+  nk1 = n - k1
+  tb = t(k1)
+  te = t(nk1 + 1)
 !  the derivative of order nu of a spline of degree k is a spline of
 !  degree k-nu,the b-spline coefficients wrk(i) of which can be found
 !  using the recurrence scheme of de boor.
-        l = 1
-        kk = k
-        nn = n
-        do 40 i = 1, nk1
-          wrk(i) = c(i)
-40        continue
-          if (nu == 0) go to 100
-          nk2 = nk1
-          do 60 j = 1, nu
-            ak = kk
-            nk2 = nk2 - 1
-            l1 = l
-            do 50 i = 1, nk2
-              l1 = l1 + 1
-              l2 = l1 + kk
-              fac = t(l2) - t(l1)
-              if (fac <= 0.) go to 50
-              wrk(i) = ak * (wrk(i + 1) - wrk(i)) / fac
-50            continue
-              l = l + 1
-              kk = kk - 1
-60            continue
-              if (kk /= 0) go to 100
+  l = 1
+  kk = k
+  nn = n
+
+  wrk(:nk1) = c(:nk1)
+
+  if (nu == 0) go to 100
+  nk2 = nk1
+  do j = 1, nu
+    ak = kk
+    nk2 = nk2 - 1
+    l1 = l
+    do i = 1, nk2
+      l1 = l1 + 1
+      l2 = l1 + kk
+      fac = t(l2) - t(l1)
+      if (fac <= 0.) cycle
+      wrk(i) = ak * (wrk(i + 1) - wrk(i)) / fac
+    end do
+
+    l = l + 1
+    kk = kk - 1
+  end do
+
+  if (kk /= 0) go to 100
 !  if nu=k the derivative is a piecewise constant function
-              j = 1
-              do 90 i = 1, m
-                arg = x(i)
+  j = 1
+  do i = 1, m
+    arg = x(i)
 !++..
 !  check if arg is in the support
-                if (arg < tb .or. arg > te) then
-                  if (e == 0) then
-                    goto 65
-                  else if (e == 1) then
-                    y(i) = 0
-                    goto 90
-                  else if (e == 2) then
-                    ier = 1
-                    goto 200
-                  endif
-                endif
+    if (arg < tb .or. arg > te) then
+      if (e == 0) then
+        goto 65
+      else if (e == 1) then
+        y(i) = 0
+        cycle
+      else if (e == 2) then
+        ier = 1
+        return
+      endif
+    endif
 !  search for knot interval t(l) <= arg < t(l+1)
-65              if (arg >= t(l) .or. l + 1 == k3) go to 70
-                l1 = l
-                l = l - 1
-                j = j - 1
-                go to 65
+65  if (arg >= t(l) .or. l + 1 == k3) go to 70
+    l1 = l
+    l = l - 1
+    j = j - 1
+    go to 65
 !..++
-70              if (arg < t(l + 1) .or. l == nk1) go to 80
-                l = l + 1
-                j = j + 1
-                go to 70
-80              y(i) = wrk(j)
-90              continue
-                go to 200
+70  if (arg < t(l + 1) .or. l == nk1) go to 80
+    l = l + 1
+    j = j + 1
+    go to 70
+80  y(i) = wrk(j)
+  end do
 
-100             l = k1
-                l1 = l + 1
-                k2 = k1 - nu
+  return
+
+100 l = k1
+  l1 = l + 1
+  k2 = k1 - nu
 !  main loop for the different points.
-                do 180 i = 1, m
+  do i = 1, m
 !  fetch a new x-value arg.
-                  arg = x(i)
+    arg = x(i)
 !  check if arg is in the support
-                  if (arg < tb .or. arg > te) then
-                    if (e == 0) then
-                      goto 135
-                    else if (e == 1) then
-                      y(i) = 0
-                      goto 180
-                    else if (e == 2) then
-                      ier = 1
-                      goto 200
-                    endif
-                  endif
+    if (arg < tb .or. arg > te) then
+      if (e == 0) then
+        goto 135
+      else if (e == 1) then
+        y(i) = 0
+        cycle
+      else if (e == 2) then
+        ier = 1
+        return
+      endif
+    endif
 !  search for knot interval t(l) <= arg < t(l+1)
-135               if (arg >= t(l) .or. l1 == k3) go to 140
-                  l1 = l
-                  l = l - 1
-                  go to 135
+135 if (arg >= t(l) .or. l1 == k3) go to 140
+    l1 = l
+    l = l - 1
+    go to 135
 !..++
-140               if (arg < t(l1) .or. l == nk1) go to 150
-                  l = l1
-                  l1 = l + 1
-                  go to 140
+140 if (arg < t(l1) .or. l == nk1) go to 150
+    l = l1
+    l1 = l + 1
+    go to 140
 !  evaluate the non-zero b-splines of degree k-nu at arg.
-150               call fpbspl(t, n, kk, arg, l, h)
+150 call fpbspl(t, n, kk, arg, l, h)
 !  find the value of the derivative at x=arg.
-                  sp = 0.0d0
-                  ll = l - k1
-                  do 160 j = 1, k2
-                    ll = ll + 1
-                    sp = sp + wrk(ll) * h(j)
-160                 continue
-                    y(i) = sp
-180                 continue
-200                 return
-                  end
+    sp = 0.0d0
+    ll = l - k1
+    do j = 1, k2
+      ll = ll + 1
+      sp = sp + wrk(ll) * h(j)
+    end do
+
+    y(i) = sp
+  end do
+end

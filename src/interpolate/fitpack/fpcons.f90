@@ -310,10 +310,6 @@ subroutine fpcons(iopt, idim, m, u, mx, x, w, ib, ie, k, s, nest, tol, maxit,&
   p3 = -one
   f3 = fpms
 
-!   p = 0.
-!   do 252 i = 1, nn
-!     p = p + a(i, 1)
-! 252 continue
   p = sum(a(:nn, 1))
   rn = nn
   p = rn / p

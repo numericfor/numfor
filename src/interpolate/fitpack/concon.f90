@@ -159,13 +159,13 @@ subroutine concon(iopt, m, x, y, w, v, s, nest, maxtr, maxbin, n, t, c, sq, &
   !     .............
   !     iopt = 0
   !     s = 0.1e+60  (s very large)
-  !     do 10 i=1,m
+  !     do i=1,m
   !       call concon(iopt,m,x,y,w,v,s,nest,maxtr,maxbin,n,t,c,sq,sx,
   !    *  bind,wrk,lwrk,iwrk,kwrk,ier)
   !       ......
   !       s = sq
   !       iopt=1
-  ! 10  continue
+  !     end do
   !     .............
   !
   !  other subroutines required:

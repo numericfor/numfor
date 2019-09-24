@@ -168,7 +168,7 @@ subroutine fpclos(iopt, idim, m, u, mx, x, w, k, s, nest, tol, maxit, k1, k2,&
   nrdata(2) = m1 - mm
   !  main loop for the different sets of knots. m is a save upper
   !  bound for the number of trials.
-50 do 340 iter = 1, m
+50 do iter = 1, m
     !  find nrint, the number of knot intervals.
     nrint = n - nmin + 1
     !  find the position of the additional knots which are needed for
@@ -482,7 +482,7 @@ subroutine fpclos(iopt, idim, m, u, mx, x, w, k, s, nest, tol, maxit, k1, k2,&
     end do knots
 
     !  restart the computations with the new set of knots.
-340 end do
+  end do
 
   !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
   !  part 2: determination of the smoothing closed curve sp(u).          c
