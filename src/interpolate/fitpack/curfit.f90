@@ -205,8 +205,10 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
   !
   !  ..
   !  ..scalar arguments..
+  implicit none
   real(8) :: xb, xe, s, fp
-  integer :: iopt, m, k, nest, n, lwrk, ier
+  integer :: iopt, m, k, nest, n, lwrk
+  integer, intent(OUT) :: ier
   !  ..array arguments..
   real(8) :: x(m), y(m), w(m), t(nest), c(nest), wrk(lwrk)
   integer :: iwrk(nest)
@@ -217,6 +219,7 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
   !  we set up the parameters tol and maxit
   maxit = 20
   tol = 0.001_8
+
   !  before starting computations a data check is made. if the input data
   !  are invalid, control is immediately repassed to the calling program.
   ier = 10
@@ -228,6 +231,7 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
   if (m < k1 .or. nest < nmin) return
   lwest = m * k1 + nest * (7 + 3 * k)
   if (lwrk < lwest) return
+
   if (xb > x(1) .or. xe < x(m)) return
   do i = 2, m
     if (x(i - 1) > x(i)) return
@@ -248,8 +252,9 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
     call fpchec(x, m, t, n, k, ier)
     if (ier /= 0) return
   end if
+
   ! we partition the working space and determine the spline approximation.
-40 ifp = 1
+  ifp = 1
   iz = ifp + nest
   ia = iz + nest
   ib = ia + nest * k1

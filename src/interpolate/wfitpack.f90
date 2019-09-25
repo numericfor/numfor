@@ -1,7 +1,7 @@
 !> fitpack provides a framework for fitting and interpolation using B-Splines
 module fitpack
 
-  USE utils, only: dp, str
+  USE utils, only: dp, str, print_msg
 
   !> Type used to keep all information on spline fitting
   !!
@@ -13,8 +13,47 @@ module fitpack
     real(dp) :: fp !< weighted sum of squared residuals of the spline approximation returned.
     real(dp), dimension(:), allocatable :: wrk
     integer, dimension(:), allocatable :: iwrk
+    integer :: ier
   end type UnivSpline
 
+  integer, dimension(-2:10), parameter :: curfit_msg_index_ = [3, 2, 1, 4, 5, 6, 0, 0, 0, 0, 0, 0, 7]
+  character(len=:), dimension(7), parameter :: curfit_msg_ = [&
+    &"Normal return. the spline returned has a residual sum of squares fp such that abs(fp - s) / s <= tol with tol a relative tolerance set to 0.001 by the program.",&
+    & "Normal return.the spline returned is an interpolating
+  spline(fp=0) .",&
+    &"Normal return.The spline returned is the weighted least - squares
+  polynomial of degree k.in this extreme case fp gives the upper
+  bound fp0 for the smoothing factor s.",&
+    &"Error.the required storage space exceeds the available storage
+  space, as specified by the parameter nest.probably causes:
+  nest too small.if nest is already large(say nest > m / 2), it may
+  also indicate that s is too small the approximation returned is
+  the weighted least - squares spline according to the knots
+  t(1), t(2), ..., t(n) . (n=nest) the parameter fp gives the
+  corresponding weighted sum of squared residuals(fp > s) .",&
+    &"Error.a theoretically impossible result was found during
+  the iteration process for finding a smoothing spline with
+  fp = s.probably causes:s too small.
+  there is an approximation returned but the corresponding
+  weighted sum of squared residuals does not satisfy the
+  condition abs(fp - s) / s < tol.",&
+    &"Error.the maximal number of iterations maxit(set to 20
+  by the program) allowed for finding a smoothing spline
+  with fp = s has been reached.probably causes:s too small
+  there is an approximation returned but the corresponding
+  weighted sum of squared residuals does not satisfy the
+  condition abs(fp - s) / s < tol.", &
+    &"Error.on entry, the input data are controlled on validity
+  the following restrictions must be satisfied.
+  -1 <= iopt <= 1, 1 <= k <= 5, m > k, nest > 2 * k + 2, w(i) > 0, i = 1, 2, ..., m
+  xb <= x(1) < x(2) < ... < x(m) <= xe, lwrk >= (k + 1) * m + nest * (7 + 3 * k)
+  if iopt = -1:2 * k + 2 <= n <= min(nest, m + k + 1)
+  xb < t(k + 2) < t(k + 3) < ... < t(n - k - 1) < xe
+  the schoenberg - whitney conditions, i.e.there
+  must be a subset of data points xx(j) such that
+  t(j) < xx(j) < t(j + k + 1), j = 1, 2, ..., n - k - 1
+  if iopt >= 0:s >= 0
+  if s = 0:nest >= m + k + 1"]
 contains
   !> splrep Computes
   !!
@@ -25,16 +64,17 @@ contains
   !!
   !! Examples:
   !!
-  subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck, ier)
+  ! subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck, ier)
+  subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Values of independent variable
     real(dp), dimension(size(x)), intent(IN) :: y !< The data points y=f(x)
-    real(dp), optional, dimension(size(x)), intent(IN) :: w !< Strictly positive rank-1 array of weights the same length as x and y.
+    real(dp), optional, dimension(size(x)), intent(IN) :: w !< Strictly positive rank-1 array of weights the same size as x and y.
     !!The weights are used in computing the weighted least-squares spline fit. If the errors in the y values have standard-deviation
     !!given by the vector d, then w should be 1/d.
     real(dp), optional, intent(IN) :: xb !< Lower limit of the interval to approximate (xb <= x(1))
     real(dp), optional, intent(IN) :: xe !< Upper limit of the interval to approximate (xe >= x(size(x))).
-    real(dp), optional, intent(IN) :: k !< The degree of the spline fit. It is recommended to use cubic splines.
+    integer, optional, intent(IN) :: k !< The degree of the spline fit. It is recommended to use cubic splines.
     !! Even values of k should be avoided especially with small s values. 1 <= k <= 5
     integer, optional, intent(IN) :: task !< {1, 0, -1},
     !! If task==0 find t and c for a given smoothing factor, s.
@@ -68,32 +108,34 @@ contains
     !!
     !! On input the user may provide values for:
     !!    wrk, iwrk: For tasks -1, 1. (usually set by a previous call)
-    integer, optional, intent(OUT) :: ier !<
-    character(len=:), allocatable, optional, intent(OUT) :: msg !<
+    ! integer, optional, intent(OUT) :: ier !<
 
-    real(dp), dimension(:), allocatable :: w_
+    real(dp), dimension(size(x)) :: w_
+    real(dp), dimension(:), allocatable :: c_
     real(dp), dimension(:), allocatable :: t_
-    real(dp), dimension(:), allocatable :: c
-    real(dp), dimension(:), allocatable :: wrk
-    integer, dimension(:), allocatable :: iwrk
+    real(dp), dimension(:), allocatable :: wrk_
+    integer, dimension(:), allocatable :: iwrk_
     real(dp) :: xb_, xe_, s_
-    integer :: task_, k_
+    integer :: task_, k_, ier_
+    logical :: per_
+
     integer :: m
+    integer :: nest
     integer :: nknots, k1, nwrk, n
 
     ! Is it periodic data
     per_ = .FALSE.; if (Present(per)) per_ = per
 
-    m = len(x)
-    IF (len(y) /= m) call print_msg('len(y) different than len(x)='//str(m), 'splrep')
+    m = size(x)
+    IF (size(y) /= m) call print_msg('size(y) different than size(x)='//str(m), 'splrep')
 
     ! Weights
     if (Present(w)) then
-      IF (len(w) /= m) call print_msg('len(w) different than len(x)='//str(m), 'splrep')
+      IF (size(w) /= m) call print_msg('size(w) different than size(x)='//str(m), 'splrep')
       w_ = w
-      if (.not. Present(s)) s_ = m - sqrt(2 * m)
+      if (.not. Present(s)) s_ = m - sqrt(2._dp * m)
     else
-      allocate (w_(m))
+      ! allocate (w_(m))
       w_ = 1._dp
       if (.not. Present(s)) s_ = 0._dp
     end if
@@ -116,11 +158,11 @@ contains
     if (task_ == -1) then
       ! Interior knots t are given. Copy to work array
       IF (.not. Present(t)) call print_msg('Knots are required for task = -1')
-      nknots = len(t)
+      nknots = size(t)
       nest = nknots + 2 * k_ + 2
       allocate (t_(nest))
       t_(k_:nest - k_) = t
-    else if (task == 0) then
+    else if (task_ == 0) then
       ! Reserve memory for knots t. Not initialized
       if (per_) then
         nest = max(m + 2 * k_, 2 * k1 + 1)
@@ -130,38 +172,41 @@ contains
       allocate (t_(nest))
     end if
 
+    allocate (c_(nest))
+
     ! Set workspace
-    if (task <= 0) then
+    if (task_ <= 0) then
       if (per_) then
         nwrk = m * k1 + nest * (3 + 5 * k1)
       else
         nwrk = m * k1 + nest * (4 + 3 * k1)
       end if
-      allocate (wrk(nwrk))
-      allocate (iwrk(nest))
+      allocate (wrk_(nwrk))
+      allocate (iwrk_(nest))
 
     else
-      wrk = tck%wrk
-      iwrk = tck%iwrk
+      wrk_ = tck%wrk
+      nwrk = size(wrk_)
+      iwrk_ = tck%iwrk
     end if
 
-    call curfit(task, m, x, y, w_, xb_, xe_, k_, s_, nest, n, t, c, tck%fp, wrk, nwrk, iwrk, ier)
+    call curfit(task_, m, x, y, w_, xb_, xe_, k_, s_, nest, n, t_, c_, tck%fp, wrk_, nwrk, iwrk_, ier_)
 
-    if (ier < 0) then
-      call print_msg('Error in splrep', code=ier)
-    end if
+    tck%ier = ier_
+    ! if (Present(ier)) ier = ier_
 
     tck%k = k_
-    ! Set the first n values to the output
+
+    ! Set the first n (number of knots) values to the output
     allocate (tck%wrk(n), tck%iwrk(n))
-    tck%wrk = wrk(:n)
-    tck%iwrk = iwrk(:n)
+    tck%wrk = wrk_(:n)
+    tck%iwrk = iwrk_(:n)
 
     allocate (tck%t(n), tck%c(n))
-    tck%c = c(:n)
-    tck%t = t(:n)
+    tck%c = c_(:n)
+    tck%t = t_(:n)
 
-    deallocate (t_, c, wrk, iwrk)
+    deallocate (c_, t_, wrk_, iwrk_)
 
   end subroutine splrep
 

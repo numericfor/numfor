@@ -1,5 +1,5 @@
 !> file basic.f90 contains module basic
-!! @date "2019-09-24 14:53:41"
+!! @date "2019-09-25 10:48:35"
 
 !> This module will provide some basic convenience routines
 !! It should have:
@@ -280,6 +280,7 @@ contains
   !! The next two will keep running after printing the message to stderr.
   !! The last will keep running after printing the message to a previously open file.
   subroutine print_msg(msg, sub, errcode, unit)
+    implicit none
     character(len=*) :: msg     !< Message to print on stderr
     character(len=*), optional, intent(in) :: sub !< Routine name. Default = None
     integer, optional, intent(in) :: errcode !< Error code. Default = 1
@@ -297,7 +298,7 @@ contains
     else
       write (unit_, '(A)') 'Code: '//tmp//' -> '//msg
     end if
-    if (errcode_ > 0) stop errcode_
+    if (errcode_ > 0) stop 1
   end subroutine print_msg
 
 end module basic

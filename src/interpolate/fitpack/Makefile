@@ -12,13 +12,16 @@ SRC:=$(shell ls *.f90)
 OBJ=$(patsubst %.f90,%.o,$(shell ls *.f90))
 all: lib$(LIB).a
 
-# Here are defined the compiler-dependent variables	
+# Here are defined the compiler-dependent variables. Change later for relative path	
 include /home/fiol/trabajo/programas/numfor/scripts/compiler_gnu.mk
 
 lib$(LIB).a: $(OBJ)
 	$(AR) rus lib$(LIB).a $?
+	cp lib$(LIB).a /home/fiol/trabajo/programas/numfor/lib
 clean:
 	rm *.o
+
+
 
 
 
