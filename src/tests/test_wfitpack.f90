@@ -6,9 +6,9 @@ program test_wfitpack
   implicit none
   real(dp), dimension(:), allocatable :: x
   real(dp), dimension(:), allocatable :: y
-  integer, parameter :: N = 12
+  integer, parameter :: N = 6
   integer :: i
-  integer :: ier
+  integer :: u
 
   type(UnivSpline) :: tck
 
@@ -22,8 +22,12 @@ program test_wfitpack
   print *, ''
   print *, ''
   call splrep(x, y, tck=tck)
-  ier = -1000
-  call splrep(x, y, tck=tck, ier=ier)
-  print *, tck%c
-  print *, ier
+
+  ! call splrep(x, y, tck=tck, ier=ier)
+  open (newunit=u, file='splrep1.dat')
+  do i = 1, size(tck%c)
+    write (u, "(2(g0.14, 1x))") tck%c(i), tck%t(i)
+  end do
+
+  close (u)
 end program test_wfitpack
