@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-09-24 15:11:41"
+!! @date "2019-09-26 16:03:49"
 
 !> This module defines functions to manipulate strings of characters.
 !! Documentation: @ref modstrings
@@ -14,6 +14,7 @@ module strings
   character(*), parameter :: letters_uppercase = ascii_uppercase//accented_uppercase
 
   character(*), private, parameter :: blanks = ' '//achar(9)
+
   Public :: str
   Public :: ascii_lowercase, ascii_uppercase, letters_lowercase, letters_uppercase
   Public :: accented_lowercase, accented_uppercase
@@ -377,29 +378,65 @@ contains
   end function i2str
 
   ! Casts a real(dp) into an string
+  ! function dp2str(rin, fmt) result(Sout)
   function dp2str(rin) result(Sout)
     implicit none
     real(dp), intent(IN) :: rin !< number to convert
+    ! character(len=9), optional, intent(IN) :: fmt
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
-    if ((abs(rin) > 1.e-6) .and. (abs(rin) < 1.e6)) then
-      write (S_, '(f0.15)') rin
+    ! character(len=9) :: fmt_
+    character(len=:), allocatable :: expo
+    character(len=:), allocatable :: decim
+    integer :: i
+
+    ! if (Present(fmt)) then
+    !   fmt_ = fmt
+    !   write (S_, fmt) rin
+    !   Sout = strip(lower(S_))
+    !   return
+    ! else
+    if (rin == 0._dp) then
+      Sout = '0.0'
+    else if ((abs(rin) > 1.e-6) .and. (abs(rin) < 1.e6)) then
+      write (S_, '(f23.13)') rin
       Sout = lower(rstrip(lstrip(S_), '0 '))
+
     else
-      write (S_, '(es23.15)') rin
-      Sout = lower(rstrip(lstrip(S_), ' '))
+      write (S_, '(es25.13)') rin
+      S_ = lower(rstrip(lstrip(S_), ' '))
+      i = find(S_, 'e')
+      expo = trim(S_(i:))
+      decim = strip(S_(3:i - 1), ' 0')
+      Sout = S_(:2)//decim//expo
     end if
+    ! end if
 
   end function dp2str
 
-! Casts a real(sp) into an string
+  ! Casts a real(sp) into an string
   function r2str(rin) result(Sout)
     implicit none
     real(sp), intent(IN) :: rin !< number to convert
     character(len=:), allocatable :: Sout !< String converted
-    character(len=21) :: S_
-    write (S_, '(g0)') rin
-    Sout = lower(rstrip(S_, '0 '))
+    character(len=18) :: S_
+    character(len=:), allocatable :: expo
+    character(len=:), allocatable :: decim
+    integer :: i
+    if (rin == 0._dp) then
+      Sout = '0.0'
+    else if ((abs(rin) > 1.e-6) .and. (abs(rin) < 1.e6)) then
+      write (S_, '(f16.6)') rin
+      Sout = lower(rstrip(lstrip(S_), '0 '))
+
+    else
+      write (S_, '(es18.6)') rin
+      S_ = lower(rstrip(lstrip(S_), ' '))
+      i = find(S_, 'e')
+      expo = trim(S_(i:))
+      decim = strip(S_(3:i - 1), ' 0')
+      Sout = S_(:2)//decim//expo
+    end if
   end function r2str
 
 end module strings

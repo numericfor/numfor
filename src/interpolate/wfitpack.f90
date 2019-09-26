@@ -16,6 +16,10 @@ module fitpack
     integer :: ier
   end type UnivSpline
 
+  Public :: UnivSpline, splrep, splrep_msg
+
+  character, private, parameter :: nl = new_line('a')
+
 contains
 
   !> splrep_msg
@@ -28,33 +32,30 @@ contains
     character(len=:), allocatable :: msg
     select case (flag)
     case (0)
-      msg = "Normal return. the spline returned has a residual sum of squares fp such that abs(fp - s) / s <= tol"//&
-        &" with tol a relative tolerance set to 0.001 by the program."
+      msg = "Normal return. The spline returned has a residual sum of squares fp such that abs(fp - s)/s <= 1.e-3"
     case (-1)
-      msg = "Normal return.the spline returned is an interpolating spline(fp=0) ."
+      msg = "Normal return. The spline interpolates the data (fp=0)."
     case (-2)
-      msg = "Normal return.The spline returned is the weighted least - squares polynomial of degree k."//&
-        &" In this extreme case fp gives the upper bound fp0 for the smoothing factor s."
+      msg = "Normal return. The spline is the weighted least-squares polynomial of degree k."//nl//" &
+        &    fp gives the upper bound fp0 for the smoothing factor s."
     case (1)
-      msg = "Error. The required storage space exceeds the available storage space, as specified by the parameter nest."//&
-        &"Probably causes: nest too small. If nest is already large (> m / 2), it may also indicate that s is too small."//&
-        &"The approximation returned is the weighted least - squares spline according to the knots t(1), t(2), ..., t(n) ."//&
-        &" (n=nest) the parameter fp gives the corresponding weighted sum of squared residuals(fp > s) ."
+      msg = "Error. The required storage space exceeds the available storage space."//nl//"&
+        & Probable causes: size(x) too small or smoothing parameter s is too small (fp > s) ."
     case (2)
-      msg = "Error. A theoretically impossible result was found during the iteration  to find a smoothing spline with fp = s."//&
-        &"Probably causes:s too small.A value is returned but the corresponding weighted sum of squared residuals"//&
-        &"does not satisfy the condition abs(fp - s) / s < tol."
+      msg = "Error. A theoretically impossible result when finding a smoothing spline with fp = s."//nl//&
+        &"Probable cause: s too small. abs(fp - s) / s > 0.001"
     case (3)
-      msg = "Error. The maximal number of iterations maxit(set to 20 by the program) allowed for finding a smoothing spline"//&
-        &"with fp = s has been reached.probably causes:s too small there is an approximation returned but"//&
-        &"the weighted sum of squared residuals does not satisfy the condition abs(fp - s) / s < tol."
+      msg = "Error. The maximal number of iterations (maxit=20) allowed for finding a smoothing spline &
+        &with fp = s has been reached."//nl//"Probable cause: s too small abs(fp - s) / s > 0.001."
     case (10)
-      msg = "Error. On entry the input data are controlled on validity the following restrictions must be satisfied."//&
-        &"-1 <= iopt <= 1, 1 <= k <= 5, m > k, nest > 2 * k + 2, w(i) > 0, i = 1, 2, ..., m "//&
-        &"xb <= x(1) < x(2) < ... < x(m) <= xe, lwrk >= (k + 1) * m + nest * (7 + 3 * k) "//&
-        &"if iopt = -1:2 * k + 2 <= n <= min(nest, m + k + 1) xb < t(k + 2) < t(k + 3) < ... < t(n - k - 1) < xe "//&
-        &"the Schoenberg - Whitney conditions, i.e.there must be a subset of data points xx(j) such that "//&
-        &"t(j) < xx(j) < t(j + k + 1), j = 1, 2, ..., n - k - 1 if iopt >= 0:s >= 0 if s = 0:nest >= m + k + 1"
+      msg = "Error. On entry the input data are controlled on validity the following restrictions must be satisfied."//nl//&
+        &"  -1 <= task <= 1,"//nl//"   1 <= k <= 5,"//nl//"   m > k,"//nl//" w(i) > 0, i = 1, 2, ..., m "//nl//&
+        &"  xb <= x(1) < x(2) < ... < x(m) <= xe,"//nl// &
+        &"  if task == -1: then 2 * k + 2 <= n "//nl//&
+        &"  xb < t(k + 2) < t(k + 3) < ... < t(n - k - 1) < xe "//&
+        &"  The Schoenberg-Whitney conditions, i.e.there must be a subset of data points xx(j) such that "//nl//&
+        &"     t(j) < xx(j) < t(j + k + 1), j = 1, 2, ..., n - k - 1"//nl//&
+        &"  if task >= 0:  s >= 0."
     end select
 
     print *, msg

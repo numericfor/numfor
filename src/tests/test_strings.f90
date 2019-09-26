@@ -86,6 +86,7 @@ program test
   print *, 'I2str: - int:', 123, '- string: |'//str(123)//'|'
   print *, 'r2str:  - real:', 123.1219000_sp, '- string: |'//str(123.1219000_sp)//'|'
   print *, 'dp2str: - real:', 123.1221_dp, '- string: |'//str(123.1221_dp)//'|'
+  print *, 'dp2str: - real:', 123.1221_dp, '- string: |'//str(123.1221_dp)//'|'
   print *, 'dp2str: - real:', -123.121_dp, '- string: |'//str(-123.121_dp)//'|'
   print *, 'dp2str: - real:', -123.1221e-12_dp, '- string: |'//str(-123.1221e-12_dp)//'|'
   print *, 'dp2str: - real:', M_PI, '- string: |'//str(M_PI)//'|'

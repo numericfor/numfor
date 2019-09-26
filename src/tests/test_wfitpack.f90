@@ -1,6 +1,6 @@
 !> test_wfitpack
 program test_wfitpack
-  USE utils, only: dp, Zero, M_PI
+  USE utils, only: dp, Zero, M_PI, str
   USE grids, only: linspace
   USE fitpack
   implicit none
@@ -8,26 +8,43 @@ program test_wfitpack
   real(dp), dimension(:), allocatable :: y
   integer, parameter :: N = 6
   integer :: i
-  integer :: u
+  real(dp) :: s, ds
+  character(len=:), allocatable :: fname
+  character(len=:), allocatable :: header
 
   type(UnivSpline) :: tck
 
   allocate (x(N), y(N))
   x = linspace(Zero, M_PI, N)
   y = sin(x)
-  do i = 1, N
-    print *, x(i), y(i)
+  s = 0._dp
+  ds = 0.25_dp
+  header = '#   t           c'
+  do i = 1, 4
+    fname = 'data/testsplrep_s'//str(s)//'.dat'
+    call splrep(x, y, tck=tck, s=s)
+    call save_arrays(fname, tck%t, tck%c, head=header)
+    s = i * ds
   end do
-
-  print *, ''
-  print *, ''
-  call splrep(x, y, tck=tck)
-
   ! call splrep(x, y, tck=tck, ier=ier)
-  open (newunit=u, file='splrep1.dat')
-  do i = 1, size(tck%c)
-    write (u, "(2(g0.14, 1x))") tck%c(i), tck%t(i)
-  end do
+contains
+  !> save_arrays
+  !!
+  !! Examples:
+  !!
+  subroutine save_arrays(fname, x, y, head)
+    implicit none
+    real(dp), dimension(:), intent(IN) :: x !<
+    real(dp), dimension(size(x)), intent(IN) :: y !<
+    character(len=:), allocatable, intent(IN) :: fname
+    character(len=:), allocatable, intent(IN) :: head
+    integer :: i, u
+    open (newunit=u, file=fname)
+    write (u, "(A)") head
+    do i = 1, size(x)
+      write (u, "(2(g0.14, 1x))") x(i), y(i)
+    end do
+    close (u)
 
-  close (u)
+  end subroutine save_arrays
 end program test_wfitpack
