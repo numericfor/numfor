@@ -78,7 +78,7 @@ subroutine fpgrpa(ifsu, ifsv, ifbu, ifbv, idim, ipar, u, mu, v, mv, z, mz,&
     number = 0
     do it = 1, muu
       arg = u(it)
-      do while (tu(l1) < arg .and. l /= nu4)
+      do while (tu(l1) <= arg .and. l /= nu4)
         l = l1
         l1 = l + 1
         number = number + 1

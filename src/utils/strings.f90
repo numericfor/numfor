@@ -1,10 +1,10 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-09-27 09:36:11"
+!! @date "2019-09-27 16:12:00"
 
 !> This module defines functions to manipulate strings of characters.
 !! Documentation: @ref modstrings
 module strings
-  USE basic, only: sp, dp
+  USE basic, only: sp, dp, Small
   character(*), parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
   character(*), parameter :: accented_lowercase = 'áéíóúñàèìòùäëïöü'
   character(*), parameter :: letters_lowercase = ascii_lowercase//accented_lowercase
@@ -385,6 +385,7 @@ contains
     ! character(len=9), optional, intent(IN) :: fmt
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
+    real(dp) :: rr
     ! character(len=9) :: fmt_
     character(len=:), allocatable :: expo
     character(len=:), allocatable :: decim
@@ -396,8 +397,11 @@ contains
     !   Sout = strip(lower(S_))
     !   return
     ! else
-    if (rin == 0._dp) then
-      Sout = '0'
+    rr = rin - int(rin)
+    if (rr < Small) then
+      Sout = i2str(int(rin))
+      ! if (rin == 0._dp) then
+      !   Sout = '0'
     else if ((abs(rin) > 1.e-6_dp) .and. (abs(rin) < 1.e6_dp)) then
       write (S_, '(f23.13)') rin
       Sout = lower(rstrip(lstrip(S_), '0 '))

@@ -105,7 +105,7 @@ subroutine fpgrdi(ifsu, ifsv, ifbu, ifbv, iback, u, mu, v, mv, z, mz, dz,&
   number = 0
   do it = 1, mv
     arg = v(it)
-    do while (tv(l1) < arg .and. l /= nv4)
+    do while (tv(l1) <= arg .and. l /= nv4)
       l = l1
       l1 = l + 1
       number = number + 1
@@ -496,20 +496,20 @@ subroutine fpgrdi(ifsu, ifsv, ifbu, ifbv, iback, u, mu, v, mv, z, mz, dz,&
   end do
 
 815 if (nuu /= 0) then
-  do l = 1, nuu
-    ii = i
-    do k = 1, nv7
-      i = i + 1
-      j = j + 1
-      q(i) = c(j)
-    end do
+    do l = 1, nuu
+      ii = i
+      do k = 1, nv7
+        i = i + 1
+        j = j + 1
+        q(i) = c(j)
+      end do
 
-    do k = 1, 3
-      ii = ii + 1
-      i = i + 1
-      q(i) = q(ii)
+      do k = 1, 3
+        ii = ii + 1
+        i = i + 1
+        q(i) = q(ii)
+      end do
     end do
-  end do
   end if
 
   if (iop1 /= 0) q(i + 1:i + nv4) = 0._8

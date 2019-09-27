@@ -2,6 +2,7 @@
 program test_wfitpack
   USE utils, only: dp, Zero, M_PI, str
   USE grids, only: linspace
+  USE strings, only: center
   USE fitpack
   implicit none
   real(dp), dimension(:), allocatable :: x
@@ -17,14 +18,14 @@ program test_wfitpack
   allocate (x(N), y(N))
   x = linspace(Zero, M_PI, N)
   y = sin(x)
-  s = 0._dp
-  ds = 0.25_dp
+  ds = 1._dp
   header = '#   t           c'
   do i = 1, 4
+    s = (i - 1) * ds
+    ! print *, center(' s = '//str(s)//' ', 120, '*')
     fname = 'data/testsplrep_s'//str(s)//'.dat'
     call splrep(x, y, tck=tck, s=s)
     call save_arrays(fname, tck%t, tck%c, head=header)
-    s = i * ds
   end do
   ! call splrep(x, y, tck=tck, ier=ier)
 contains

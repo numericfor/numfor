@@ -133,12 +133,14 @@ contains
     if (Present(w)) then
       IF (size(w) /= m) call print_msg('size(w) different than size(x)='//str(m), 'splrep')
       w_ = w
-      if (.not. Present(s)) s_ = m - sqrt(2._dp * m)
+      IF (.not. Present(s)) s_ = m - sqrt(2._dp * m)
     else
       ! allocate (w_(m))
       w_ = 1._dp
-      if (.not. Present(s)) s_ = 0._dp
+      IF (.not. Present(s)) s_ = 0._dp
     end if
+
+    if (Present(s)) s_ = s
 
     ! Order of spline
     k_ = 3; IF (Present(k)) k_ = k
@@ -148,12 +150,11 @@ contains
     xb_ = x(1); IF (Present(xb)) xb_ = xb
     xe_ = x(m); IF (Present(xe)) xe_ = xe
 
-    IF (Present(t)) then
+    task_ = 0; IF (Present(task)) task_ = task
+
+    IF (Present(t)) then        ! overwrite task input
       task_ = -1  ! If knots given, then task = -1
-    else
-      task_ = 0
     end IF
-    IF (Present(task)) task_ = task
 
     if (task_ == -1) then
       ! Interior knots t are given. Copy to work array
@@ -161,7 +162,7 @@ contains
       nknots = size(t)
       nest = nknots + 2 * k_ + 2
       allocate (t_(nest))
-      t_(k_:nest - k_) = t
+      t_(k1 + 1:nest - k1) = t
     else if (task_ == 0) then
       ! Reserve memory for knots t. Not initialized
       if (per_) then

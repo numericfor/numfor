@@ -17,7 +17,6 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
   real(8) :: h(7)
   !  ..function references
   real(8) :: abs, fprati
-  ! integer :: max0, min0
   !  ..subroutine references..
   !    fpback,fpbspl,fpgivs,fpdisc,fpknot,fprota
   !  ..
@@ -48,6 +47,10 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
   !      we compute directly the least-squares polynomial of degree k.   c
   !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
   !  determine nmin, the number of knots for polynomial approximation.
+  ! JF: Initialize coefficients
+  ! JF: It seems that this is needed!!
+  c = 0._8
+
   nmin = 2 * k1
   if (iopt < 0) go to 60
   !  calculation of acc, the absolute tolerance for the root of f(p)=s.
@@ -94,6 +97,10 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
   fpold = 0._8
   nplus = 0
   nrdata(1) = m - 2
+
+  !JF: Not needed?
+  ! a = 0._8
+
   !  main loop for the different sets of knots. m is a save upper bound
   !  for the number of trials.
 60 do iter = 1, m
@@ -226,9 +233,6 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
     end do
 
     !  restart the computations with the new set of knots.
-    print "(A)", repeat('-', 60)
-    print "(5(f0.3,1x))", t
-    print "(A)", repeat('-', 60)
   end do
 
   !  test whether the least-squares kth degree polynomial is a solution
@@ -289,19 +293,16 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
         !  transformations to right hand side.
         call fprota(cos, sin, yi, c(j))
         if (j == nk1) exit
-        i2 = k1
-        if (j > n8) i2 = nk1 - j
+        i2 = k1; IF (j > n8) i2 = nk1 - j
         do i = 1, i2
           !  transformations to left hand side.
           i1 = i + 1
           call fprota(cos, sin, h(i1), g(j, i1))
           h(i) = h(i1)
         end do
-
         h(i2 + 1) = 0._8
       end do
     end do
-
     !  backward substitution to obtain the b-spline coefficients.
     call fpback(g, c, nk1, k2, c, nest)
     !  computation of f(p).

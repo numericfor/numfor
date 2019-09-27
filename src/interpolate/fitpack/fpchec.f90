@@ -36,12 +36,10 @@ subroutine fpchec(x, m, t, n, k, ier)
     if (t(j) < t(j - 1)) return
     j = j - 1
   end do
-
   !  check condition no 3
   do i = k2, nk2
     if (t(i) <= t(i - 1)) return
   end do
-
   !  check condition no 4
   if (x(1) < t(k1) .or. x(m) > t(nk2)) return
   !  check condition no 5

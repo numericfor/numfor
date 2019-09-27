@@ -110,7 +110,7 @@ subroutine fpgrsp(ifsu, ifsv, ifbu, ifbv, iback, u, mu, v, mv, r, mr, &
   number = 0
   do it = 1, mv
     arg = v(it)
-    do while (arg >= tv(l1) .and. l < nv4)
+    do while (arg >= tv(l1) .and. l /= nv4)
       l = l1
       l1 = l + 1
       number = number + 1
