@@ -11,10 +11,11 @@ subroutine fpbspl(t, n, k, x, l, h)
   !      is not checked.
   !  ..
   !  ..scalar arguments..
-  real(8) :: x
-  integer :: n, k, l
+  real(8), intent(IN) :: x
+  integer, intent(IN) :: n, k, l
   !  ..array arguments..
-  real(8) :: t(n), h(20)
+  real(8), intent(IN), dimension(n):: t
+  real(8), intent(OUT), dimension(20) :: h
   !  ..local scalars..
   real(8) :: f
   integer :: i, j, li, lj
@@ -29,12 +30,13 @@ subroutine fpbspl(t, n, k, x, l, h)
     do i = 1, j
       li = l + i
       lj = li - j
-      if (t(li) /= t(lj)) goto 15
-      h(i + 1) = 0.0_8
-      cycle
-15    f = hh(i) / (t(li) - t(lj))
-      h(i) = h(i) + f * (t(li) - x)
-      h(i + 1) = f * (x - t(lj))
+      if (t(li) == t(lj)) then
+        h(i + 1) = 0.0_8
+      else
+        f = hh(i) / (t(li) - t(lj))
+        h(i) = h(i) + f * (t(li) - x)
+        h(i + 1) = f * (x - t(lj))
+      end if
     end do
   end do
 

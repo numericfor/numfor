@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-09-26 16:03:49"
+!! @date "2019-09-27 09:36:11"
 
 !> This module defines functions to manipulate strings of characters.
 !! Documentation: @ref modstrings
@@ -397,8 +397,8 @@ contains
     !   return
     ! else
     if (rin == 0._dp) then
-      Sout = '0.0'
-    else if ((abs(rin) > 1.e-6) .and. (abs(rin) < 1.e6)) then
+      Sout = '0'
+    else if ((abs(rin) > 1.e-6_dp) .and. (abs(rin) < 1.e6_dp)) then
       write (S_, '(f23.13)') rin
       Sout = lower(rstrip(lstrip(S_), '0 '))
 
@@ -423,9 +423,9 @@ contains
     character(len=:), allocatable :: expo
     character(len=:), allocatable :: decim
     integer :: i
-    if (rin == 0._dp) then
-      Sout = '0.0'
-    else if ((abs(rin) > 1.e-6) .and. (abs(rin) < 1.e6)) then
+    if (rin == 0._sp) then
+      Sout = '0'
+    else if ((abs(rin) > 1.e-6_sp) .and. (abs(rin) < 1.e6_sp)) then
       write (S_, '(f16.6)') rin
       Sout = lower(rstrip(lstrip(S_), '0 '))
 

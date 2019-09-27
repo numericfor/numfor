@@ -24,7 +24,6 @@ subroutine fpback(a, z, n, k, c, nest)
       m = m + 1
       store = store - c(m) * a(i, l + 1)
     end do
-
     c(i) = store / a(i, 1)
     i = i - 1
   end do

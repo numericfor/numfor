@@ -17,7 +17,7 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
   real(8) :: h(7)
   !  ..function references
   real(8) :: abs, fprati
-  integer :: max0, min0
+  ! integer :: max0, min0
   !  ..subroutine references..
   !    fpback,fpbspl,fpgivs,fpdisc,fpknot,fprota
   !  ..
@@ -126,13 +126,13 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
       wi = w(it)
       yi = y(it) * wi
       !  search for knot interval t(l) <= xi < t(l+1).
-      do while (t(l + 1) <= xi .and. l < nk1)
+      do while (t(l + 1) <= xi .and. l /= nk1)
         l = l + 1
       end do
       !  evaluate the (k+1) non-zero b-splines at xi and store them in q.
       call fpbspl(t, n, k, xi, l, h)
       q(it, :k1) = h(:k1)
-      h = h * wi
+      h(:k1) = h(:k1) * wi
       !  rotate the new row of the observation matrix into triangle.
       j = l - k1
       do i = 1, k1
@@ -184,7 +184,7 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
 140 npl1 = nplus * 2
     rn = nplus
     if (fpold - fp > acc) npl1 = int(rn * fpms / (fpold - fp))
-    nplus = min0(nplus * 2, max0(npl1, nplus / 2, 1))
+    nplus = min(nplus * 2, max(npl1, nplus / 2, 1))
 150 fpold = fp
     !  compute the sum((w(i)*(y(i)-s(x(i))))**2) for each knot interval
     !  t(j+k) <= x(i) <= t(j+k+1) and store it in fpint(j),j=1,2,...nrint.
@@ -226,6 +226,9 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
     end do
 
     !  restart the computations with the new set of knots.
+    print "(A)", repeat('-', 60)
+    print "(5(f0.3,1x))", t
+    print "(A)", repeat('-', 60)
   end do
 
   !  test whether the least-squares kth degree polynomial is a solution
