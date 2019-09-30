@@ -191,7 +191,11 @@ contains
       iwrk_ = tck%iwrk
     end if
 
-    call curfit(task_, m, x, y, w_, xb_, xe_, k_, s_, nest, n, t_, c_, tck%fp, wrk_, nwrk, iwrk_, ier_)
+    if (per_) then
+      call percur(task_, m, x, y, w_, k_, s_, nest, n, t_, c_, tck%fp, wrk_, nwrk, iwrk_, ier_)
+    else
+      call curfit(task_, m, x, y, w_, xb_, xe_, k_, s_, nest, n, t_, c_, tck%fp, wrk_, nwrk, iwrk_, ier_)
+    end if
 
     tck%ier = ier_
     ! if (Present(ier)) ier = ier_
@@ -210,5 +214,38 @@ contains
     deallocate (c_, t_, wrk_, iwrk_)
 
   end subroutine splrep
+
+  !> splev Computes a B-spline or its derivatives.
+  !! Given the knots and coefficients of a B-spline representation, evaluate
+  !! the value of the smoothing polynomial and its derivatives.  This is a
+  !! wrapper around the FORTRAN routines splev and splder of FITPACK.
+  !!
+  !! Examples:
+  !!
+  function splev(x, tck, der, ext) result(y)
+    implicit none
+    real(dp), dimension(:), intent(IN) :: x !< Points at which to return the value of the smoothed spline or its derivative
+    type(UnivSpline), intent(IN) :: tck !< A spline representation returned by splrep
+    integer, optional, intent(IN) :: der !< The order of the derivative of the spline to compute (must be less than k).
+    integer, optional, intent(IN) :: ext !< Flag controling the result for  ``x`` outside the
+    !! interval defined by the knot sequence.
+    real(dp), dimension(size(x)) :: y !< Smoothed or interpolated spline values
+
+    integer :: k, n, m, e, ier, nu
+    k = tck%k
+    n = size(tck%t)
+    m = size(x)
+    e = 0; IF (Present(ext)) e = ext
+    nu = 0; IF (Present(der)) nu = der
+
+    IF ((nu < 0) .or. (nu > k)) call print_msg('Must be 0 <= der='//str(nu)//' <= k='//str(k))
+
+    IF ((e < 0) .or. (e > 3)) call print_msg('ext = '//str(e)//' not one of (0, 1, 2, 3)')
+    call splder(tck%t, n, tck%c, k, nu, x, y, m, e, tck%wrk, ier)
+
+    IF (ier == 10) call print_msg('Invalid input data', 'splev', errcode=0)
+    IF (ier == 1) call print_msg('x value out of bounds and e == 2', 'splev', errcode=0)
+
+  end function splev
 
 end module fitpack

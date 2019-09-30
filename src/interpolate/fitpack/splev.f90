@@ -1,4 +1,7 @@
-subroutine splev(t, n, c, k, x, y, m, e, ier)
+! JF: Renamed splev => dsplev to avoid conflict with wrapper
+! Decided keep splev name in wrapper for compatibility with scipy
+! IMPORTANT: NOT LONGER IN USE. Calling splder with nu=0
+subroutine dsplev(t, n, c, k, x, y, m, e, ier)
   !  subroutine splev evaluates in a number of points x(i),i=1,2,...,m
   !  a spline s(x) of degree k, given in its b-spline representation.
   !
@@ -56,22 +59,29 @@ subroutine splev(t, n, c, k, x, y, m, e, ier)
   !++   - fixed initialization of sp to double precision value
   !
   !  ..scalar arguments..
-  integer :: n, k, m, e, ier
+  implicit none
+  integer, intent(IN) :: n !<
+  integer, intent(IN) :: k !<
+  integer, intent(IN) :: m !<
+  integer, intent(IN) :: e !<
+  integer, intent(OUT) :: ier !<
+
   !  ..array arguments..
-  real(8) :: t(n), c(n), x(m), y(m)
+  real(8), dimension(n), intent(IN) :: t !<
+  real(8), dimension(n), intent(IN) :: c !<
+  real(8), dimension(m), intent(IN) :: x !<
+  real(8), dimension(m), intent(OUT) :: y !<
+
   !  ..local scalars..
-  integer :: i, j, k1, l, ll, l1, nk1
-  !++..
-  integer :: k2
+  integer :: i, k1, l, nk1
   !..++
-  real(8) :: arg, sp, tb, te
+  real(8) :: arg, tb, te
   !  ..local array..
   real(8) :: h(20)
   !  ..
   !  before starting computations a data check is made. if the input data
   !  are invalid control is immediately repassed to the calling program.
   ier = 10
-  !--      if(m-1) 100,30,10
   !++..
   if (m < 1) return
   !..++
@@ -81,57 +91,47 @@ subroutine splev(t, n, c, k, x, y, m, e, ier)
   ier = 0
   !  fetch tb and te, the boundaries of the approximation interval.
   k1 = k + 1
-  k2 = k1 + 1
   !
   nk1 = n - k1
   tb = t(k1)
   te = t(nk1 + 1)
   l = k1
-  l1 = l + 1
   !  main loop for the different points.
   do i = 1, m
     !  fetch a new x-value arg.
     arg = x(i)
     !  check if arg is in the support
     if (arg < tb .or. arg > te) then
-      if (e == 0) then
-        go to 35
-      else if (e == 1) then
-        y(i) = 0
-        cycle
-      else if (e == 2) then
-        ier = 1
-        return
-      else if (e == 3) then
+      if (e == 3) then
         if (arg < tb) then
           arg = tb
         else
           arg = te
         endif
+      else if (e == 2) then
+        ier = 1
+        return
+      else if (e == 1) then
+        y(i) = 0
+        cycle
       endif
     endif
     !  search for knot interval t(l) <= arg < t(l+1)
     !++..
-35  if (arg >= t(l) .or. l1 == k2) go to 40
-    l1 = l
-    l = l - 1
-    go to 35
-    !..++
-40  if (arg < t(l1) .or. l == nk1) go to 50
-    l = l1
-    l1 = l + 1
-    go to 40
-    !  evaluate the non-zero b-splines at arg.
-50  call fpbspl(t, n, k, arg, l, h)
-    !  find the value of s(x) at x=arg.
-    sp = 0._8
-    ll = l - k1
-    do j = 1, k1
-      ll = ll + 1
-      sp = sp + c(ll) * h(j)
+    !JF: This should be quite efficient if x(i) are ordered.
+    do while (arg < t(l) .and. l /= k1)
+      l = l - 1
+    end do
+    do while (arg >= t(l + 1) .and. l /= nk1)
+      l = l + 1
     end do
 
-    y(i) = sp
+    !  evaluate the non-zero b-splines at arg.
+    call fpbspl(t, n, k, arg, l, h)
+    !  find the value of s(x) at x=arg.
+
+    y(i) = sum(c(l - k1 + 1:l) * h(:k1))
   end do
 
-end subroutine splev
+end subroutine dsplev
+

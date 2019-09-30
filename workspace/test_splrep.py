@@ -2,30 +2,53 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import splrep
+from scipy.interpolate import splrep, splev
 
+# pyfname = 'data/pysplrep_s{}.dat'
+# fofname = 'data/testsplrep_s{}.dat'
 pyfname = 'data/pysplrep_s{}.dat'
-fofname = 'data/testsplrep_s{}.dat'
+fofname = 'data/testsplrep_per_s{}.dat'
+pyfdata = 'data/pysplev_s{}.dat'
+fofdata = 'data/fosplev_s{}.dat'
+
 ss = [0, 1, 2, 3]
+N = 6
+x = np.linspace(0, np.pi, N)
+y = np.sin(x)
+xnew = np.linspace(0, np.pi, 50)
+
+plt.ion()
 
 
 def create_sin_data():
-  N = 6
-  x = np.linspace(0, np.pi, N)
-  y = np.sin(x)
   for s in ss:
     tck = splrep(x, y, s=s)
     np.savetxt(pyfname.format(s), np.c_[tck[0], tck[1]], fmt="%.14g",
                header=' t           c')
     return tck
 
+
+def create_sin_spl():
+  for s in ss:
+    tck = splrep(x, y, s=s)
+    ynew = splev(xnew, tck)
+    np.savetxt(pyfname.format(s), np.c_[tck[0], tck[1]], fmt="%.14g",
+               header=' x           y')
+
+
+def create_sin_data_per():
+  for s in ss:
+    tck = splrep(x, y, s=s, per=True)
+    np.savetxt(pyfname.format(s), np.c_[tck[0], tck[1]], fmt="%.14g",
+               header=' t           c')
+
+
 # Plot
 
 
 def plot_sin_t():
-  plt.ion()
 
-  for s in ss[:]:
+  for s in ss:
     figt, axt = plt.subplots(num='t' + str(s))
 
     tp, cp = np.loadtxt(pyfname.format(s), unpack=True)
@@ -37,9 +60,8 @@ def plot_sin_t():
 
 
 def plot_sin_c():
-  plt.ion()
 
-  for s in ss[:]:
+  for s in ss:
     figc, axc = plt.subplots(num='c' + str(s))
 
     tp, cp = np.loadtxt(pyfname.format(s), unpack=True)
@@ -50,5 +72,10 @@ def plot_sin_c():
   plt.legend(loc='best')
 
 
-tck = create_sin_data()
-plot_sin_c()
+# create_sin_data_per()
+
+
+# plt.plot(x, y, 'o')
+# plt.plot(xnew, ynew)
+
+# plot_sin_c()
