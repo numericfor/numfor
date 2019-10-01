@@ -67,8 +67,7 @@ contains
   !! approximating spline curve g(`u`). Uses the routine parcur from (slightly modified) FITPACK.
   !! Examples:
   !!
-  subroutine splprep(x, w, u, ub, ue, k, task, s, t, per, tck, ier)
-    ! subroutine splprep(x, y, w, ub, ue, k, task, s, t, per, tck)
+  subroutine splprep(x, w, u, ulim, k, task, s, t, per, tck, ier)
     implicit none
     real(dp), dimension(:, :), intent(IN) :: x !<
     real(dp), dimension(:), intent(INOUT) :: u !< An array with parameters. If
@@ -76,8 +75,7 @@ contains
 
     !!The weights are used in computing the weighted least-squares spline fit. If the errors in the y values have standard-deviation
     !!given by the vector d, then w should be 1/d.
-    real(dp), optional, intent(INOUT) :: ub !< Lower limit of the interval to approximate (ub <= x(1))
-    real(dp), optional, intent(INOUT) :: ue !< Upper limit of the interval to approximate (ue >= x(size(x))).
+    real(dp), dimension(2), optional, intent(INOUT) :: ulim !< Lower and Uppdf limits of the interval to approximate (ub <= x(1))
     integer, optional, intent(IN) :: k !< The degree of the spline fit. It is recommended to use cubic splines.
     !! Even values of k should be avoided especially with small s values. 1 <= k <= 5
     integer, optional, intent(IN) :: task !< {1, 0, -1},
@@ -121,25 +119,54 @@ contains
     integer, dimension(:), allocatable :: iwrk_
     real(dp) :: ub_, ue_, s_
     integer :: task_, k_, ier_
+    real(dp) :: dist
     logical :: per_
 
     integer :: m
     integer :: nest
     integer :: nknots, k1, nwrk, n
 
-    ! Is it periodic data
-    per_ = .FALSE.; if (Present(per)) per_ = per
+    iwrk_ = shape(x)
+    idim = iwrk_(1)
+    m = iwrk_(2)
 
-    m = size(x)
-    IF (size(y) /= m) call print_msg('size(y) different than size(x)='//str(m), 'splprep')
+    ! !!!!!!!!!! Checks !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    IF (idim < 0 .or. idim > 10) call print_msg('0 < idim < 11 must hold', errcode=1)
 
-    ! Weights
-    if (Present(w)) then
+    per_ = .FALSE.; if (Present(per)) per_ = per    ! Is it periodic data?
+    if (per_) then
+      if (any(x(:, 1) /= x(:, m))) then ! Check that it really is periodic, otherwise fix it
+        call print_msg('Warning: Setting data periodic', 'splprep', errcode=0)
+        x(:, m) = x(:, 1)
+      end if
+    end if
+
+    ! Check size of u
+    IF (.not. allocated(u)) allocate (u(m))
+    IF (size(u) < m) call print_msg('size(u) < size(m)', 'splprep', errcode=1)
+
+    if (Present(ulim)) then
+      ub = u(1)
+      ue = u(m)
+    else
+      u(1) = 0._8
+      do i = 2, m
+        dist = sqrt(sum(x(idim * (i - 1) + 1:idim * i) - x(idim * (i - 2) + 1:idim * (i - 1))))
+        u(i) = u(i - 1) + dist
+      end do
+      IF (u(m) <= 0._8) call print_msg("u(m)="//str(u(m))//" <= 0", errcode=1)
+      u = u / u(m)
+      ub = 0._8
+      ue = 1._8
+      u(m) = ue
+    end if
+
+    if (Present(w)) then        ! Weights
       IF (size(w) /= m) call print_msg('size(w) different than size(x)='//str(m), 'splprep')
-      w_ = w
+      w_ => w
       IF (.not. Present(s)) s_ = m - sqrt(2._dp * m)
     else
-      ! allocate (w_(m))
+      allocate (w_(m))
       w_ = 1._dp
       IF (.not. Present(s)) s_ = 0._dp
     end if

@@ -17,8 +17,6 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
   real(8) :: h(7), xi(10)
   !  ..function references
   real(8) :: abs, fprati
-  integer :: max0, min0
-  logical :: cond1
   !  ..subroutine references..
   !    fpback,fpbspl,fpgivs,fpdisc,fpknot,fprota
   !  ..
@@ -50,68 +48,60 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
   !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
   !  determine nmin, the number of knots for polynomial approximation.
   nmin = 2 * k1
-  if (iopt >= 0) then
-    !  calculation of acc, the absolute tolerance for the root of f(p)=s.
-    acc = tol * s
-    !  determine nmax, the number of knots for spline interpolation.
-    nmax = m + k1
-    if (s == 0._8) then
-      !  if s=0, s(u) is an interpolating curve.
-      !  test whether the required storage space exceeds the available one.
-      n = nmax
-      if (nmax > nest) then
-        ier = 1
-        return
-      end if
+  if (iopt < 0) go to 60
+  !  calculation of acc, the absolute tolerance for the root of f(p)=s.
+  acc = tol * s
+  !  determine nmax, the number of knots for spline interpolation.
+  nmax = m + k1
+  if (s > 0._8) go to 45        !  s(u) is an interpolating curve.
 
-      !  find the position of the interior knots in case of interpolation.
-10    mk1 = m - k1
-      if (mk1 /= 0) then
-        k3 = k / 2
-        if (k3 * 2 == k) then         ! Even values of k => Take center of interval
-          t(k2:k2 + mk1 - 1) = (u(k3 + 2:k3 + 1 + mk1) + u(k3 + 1:k3 + mk1)) * half
-        else
-          t(k2:k2 + mk1 - 1) = u(k3 + 2:k3 + 1 + mk1)
-        end if
-      end if
-
-    else
-      !  if s>0 our initial choice of knots depends on the value of iopt.
-      !  if iopt=0 or iopt=1 and s>=fp0, we start computing the least-squares
-      !  polynomial curve which is a spline curve without interior knots.
-      !  if iopt=1 and fp0>s we start computing the least squares spline curve
-      !  according to the set of knots found at the last call of the routine.
-      cond1 = (iopt /= 0) .and. (n /= nmin)
-      if (cond1) then
-        fp0 = fpint(n)
-        fpold = fpint(n - 1)
-        nplus = nrdata(n)
-      end if
-      if ((cond1 .and. fp0 <= s) .or. (.not. cond1)) then
-        n = nmin
-        fpold = 0._8
-        nplus = 0
-        nrdata(1) = m - 2
-      end if
-    end if
-
+  n = nmax
+  if (nmax > nest) then !  The required storage space exceeds the available one?
+    ier = 1
+    return
   end if
 
+  !  find the position of the interior knots in case of interpolation.
+10 mk1 = m - k1
+  if (mk1 /= 0) then
+    k3 = k / 2
+    i = k2
+    j = k3 + 2
+    if (k3 * 2 == k) then
+      t(k2:k2 + mk1 - 1) = (u(k3 + 2:k3 + 1 + mk1) + u(k3 + 1:k3 + mk1)) * half
+    else                    ! Odd values of k
+      t(k2:k2 + mk1 - 1) = u(k3 + 2:k3 + 1 + mk1)
+    end if
+  end if
+
+  go to 60
+
+  !  if s>0 our initial choice of knots depends on the value of iopt.
+  !  if iopt=0 or iopt=1 and s>=fp0, we start computing the least-squares
+  !  polynomial curve which is a spline curve without interior knots.
+  !  if iopt=1 and fp0>s we start computing the least squares spline curve
+  !  according to the set of knots found at the last call of the routine.
+45 if (iopt == 0) go to 50
+  if (n == nmin) go to 50
+  fp0 = fpint(n)
+  fpold = fpint(n - 1)
+  nplus = nrdata(n)
+  if (fp0 > s) go to 60
+50 n = nmin
+  fpold = 0.
+  nplus = 0
+  nrdata(1) = m - 2
   !  main loop for the different sets of knots. m is a save upper bound
   !  for the number of trials.
-  do iter = 1, m
+60 do iter = 1, m
     if (n == nmin) ier = -2
     !  find nrint, tne number of knot intervals.
     nrint = n - nmin + 1
     !  find the position of the additional knots which are needed for
     !  the b-spline representation of s(u).
     nk1 = n - k1
-    i = n
-    do j = 1, k1
-      t(j) = ub
-      t(i) = ue
-      i = i - 1
-    end do
+    t(1:k1) = ub
+    t(n - k:n) = ue
 
     !  compute the b-spline coefficients of the least-squares spline curve
     !  sinf(u). the observation matrix a is built up row by row and
@@ -146,25 +136,25 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
       do i = 1, k1
         j = j + 1
         piv = h(i)
-        if (piv /= 0._8) then
-          !  calculate the parameters of the givens transformation.
-          call fpgivs(piv, a(j, 1), cos, sin)
-          !  transformations to right hand side.
-          j1 = j
-          do j2 = 1, idim
-            call fprota(cos, sin, xi(j2), z(j1))
-            j1 = j1 + n
-          end do
+        if (piv == 0._8) cycle
+        !  calculate the parameters of the givens transformation.
+        call fpgivs(piv, a(j, 1), cos, sin)
+        !  transformations to right hand side.
+        j1 = j
+        do j2 = 1, idim
+          call fprota(cos, sin, xi(j2), z(j1))
+          j1 = j1 + n
+        end do
 
-          if (i == k1) exit
-          i2 = 1
-          i3 = i + 1
-          do i1 = i3, k1
-            i2 = i2 + 1
-            !  transformations to left hand side.
-            call fprota(cos, sin, h(i1), a(j, i2))
-          end do
-        end if
+        if (i == k1) exit
+        i2 = 1
+        i3 = i + 1
+        do i1 = i3, k1
+          i2 = i2 + 1
+          !  transformations to left hand side.
+          call fprota(cos, sin, h(i1), a(j, i2))
+        end do
+
       end do
 
       !  add contribution of this row to the sum of squares of residual
@@ -204,7 +194,6 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
       ier = 1
       return
     end if
-
     !  determine the number of knots nplus we are going to add.
     if (ier == 0) then
       npl1 = nplus * 2
@@ -215,7 +204,6 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
       nplus = 1
       ier = 0
     end if
-
     fpold = fp
     !  compute the sum of squared residuals for each knot interval
     !  t(j+k) <= u(i) <= t(j+k+1) and store it in fpint(j),j=1,2,...nrint.
@@ -257,10 +245,8 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
       !  test whether we cannot further increase the number of knots.
       if (n == nest) exit
     end do
-
     !  restart the computations with the new set of knots.
   end do
-
   !  test whether the least-squares kth degree polynomial curve is a
   !  solution of our approximation problem.
 250 if (ier == (-2)) return
@@ -366,15 +352,15 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
 
       fp = fp + term * w(it)**2
     end do
-
     !  test whether the approximation sp(u) is an acceptable solution.
     fpms = fp - s
-    IF (abs(fpms) < acc) return
+    if (abs(fpms) < acc) return
     !  test whether the maximal number of iterations is reached.
     if (iter == maxit) then
       ier = 3
       return
-    end IF
+    end if
+
     !  carry out one more step of the iteration process.
     p2 = p
     f2 = fpms
@@ -406,8 +392,7 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
       IF (f2 > 0._8) ich1 = 1
     end if
 
-    !  test whether the iteration process proceeds as theoretically
-    !  expected.
+    !  Test whether the iteration process proceeds as expected.
     if (f2 >= f1 .or. f2 <= f3) then
       ier = 2
       return
@@ -417,4 +402,5 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
     p = fprati(p1, f1, p2, f2, p3, f3)
   end do
 
+  !  error codes and messages.
 end subroutine fppara

@@ -285,8 +285,8 @@ subroutine parcur(iopt, ipar, idim, m, u, mx, x, w, ub, ue, k, s, nest, n, t, nc
   !  ..
   !  we set up the parameters tol and maxit
   maxit = 20
-  tol = 1.e-03_8
-  !  before starting computations a data check is made. if the input data
+  tol = 0.001_8
+  !  before starting computations data checks are made. If the input data
   !  are invalid, control is immediately repassed to the calling program.
   ier = 10
   IF (iopt < (-1) .or. iopt > 1) return ! Check the task flag
@@ -305,17 +305,10 @@ subroutine parcur(iopt, ipar, idim, m, u, mx, x, w, ub, ue, k, s, nest, n, t, nc
   IF (lwrk < lwest) return
 
   if (ipar == 0 .and. iopt <= 0) then ! Determine u(1:m) automatically
-    i1 = 0
-    i2 = idim
     u(1) = 0._8
     do i = 2, m
-      dist = 0.
-      do j = 1, idim
-        i1 = i1 + 1
-        i2 = i2 + 1
-        dist = dist + (x(i2) - x(i1))**2
-      end do
-      u(i) = u(i - 1) + sqrt(dist)
+      dist = sqrt(sum(x(idim * (i - 1) + 1:idim * i) - x(idim * (i - 2) + 1:idim * (i - 1))))
+      u(i) = u(i - 1) + dist
     end do
 
     IF (u(m) <= 0._8) return

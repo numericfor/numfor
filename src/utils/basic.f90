@@ -1,5 +1,5 @@
 !> file basic.f90 contains module basic
-!! @date "2019-09-25 10:48:35"
+!! @date "2019-10-01 15:20:32"
 
 !> This module will provide some basic convenience routines
 !! It should have:
@@ -264,6 +264,7 @@ contains
 
   !> Print a message, and optionally stop the program
   !!
+  !! If errcode > 0 stop the program
   !! Examples of use:
   !! ---------------
   !! ```
@@ -283,12 +284,12 @@ contains
     implicit none
     character(len=*) :: msg     !< Message to print on stderr
     character(len=*), optional, intent(in) :: sub !< Routine name. Default = None
-    integer, optional, intent(in) :: errcode !< Error code. Default = 1
+    integer, optional, intent(in) :: errcode !< Error code. Default = 0
     integer, optional, intent(in) :: unit !< Unit to write. Default = stderr
     integer :: errcode_, unit_
     character(len=2) :: tmp
 
-    errcode_ = 1; IF (present(errcode)) errcode_ = errcode
+    errcode_ = 0; IF (present(errcode)) errcode_ = errcode
     write (tmp, '(I2.2)') abs(errcode_)
 
     unit_ = stderr; IF (present(unit)) unit_ = unit
