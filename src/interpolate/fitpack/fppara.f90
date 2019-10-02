@@ -53,7 +53,7 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
   acc = tol * s
   !  determine nmax, the number of knots for spline interpolation.
   nmax = m + k1
-  if (s > 0._8) go to 45        !  s(u) is an interpolating curve.
+  if (s > 0._8) go to 45        !  S(u) is an interpolating curve.
 
   n = nmax
   if (nmax > nest) then !  The required storage space exceeds the available one?
@@ -67,7 +67,7 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
     k3 = k / 2
     i = k2
     j = k3 + 2
-    if (k3 * 2 == k) then
+    if (k3 * 2 == k) then   ! Degree k is even. Take the center points
       t(k2:k2 + mk1 - 1) = (u(k3 + 2:k3 + 1 + mk1) + u(k3 + 1:k3 + mk1)) * half
     else                    ! Odd values of k
       t(k2:k2 + mk1 - 1) = u(k3 + 2:k3 + 1 + mk1)

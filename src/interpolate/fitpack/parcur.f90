@@ -307,7 +307,7 @@ subroutine parcur(iopt, ipar, idim, m, u, mx, x, w, ub, ue, k, s, nest, n, t, nc
   if (ipar == 0 .and. iopt <= 0) then ! Determine u(1:m) automatically
     u(1) = 0._8
     do i = 2, m
-      dist = sqrt(sum(x(idim * (i - 1) + 1:idim * i) - x(idim * (i - 2) + 1:idim * (i - 1))))
+      dist = sqrt(sum((x(idim * (i - 1) + 1:idim * i) - x(idim * (i - 2) + 1:idim * (i - 1)))**2))
       u(i) = u(i - 1) + dist
     end do
 

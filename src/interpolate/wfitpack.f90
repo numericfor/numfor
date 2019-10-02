@@ -67,15 +67,15 @@ contains
   !! approximating spline curve g(`u`). Uses the routine parcur from (slightly modified) FITPACK.
   !! Examples:
   !!
-  subroutine splprep(x, w, u, ulim, k, task, s, t, per, tck, ier)
+  subroutine splprep(x, u, tck, w, ulim, k, task, upar, s, t, per, ier)
     implicit none
-    real(dp), dimension(:, :), intent(IN) :: x !<
+    real(dp), dimension(:, :), intent(INOUT) :: x !<
     real(dp), dimension(:), intent(INOUT) :: u !< An array with parameters. If
-    real(dp), optional, dimension(size(x(1))), target, intent(IN) :: w !< Strictly positive rank-1 array of weights the same size as u.
+    real(dp), optional, dimension(size(x(1, :))), target, intent(IN) :: w !< Strictly positive rank-1 array of weights the same size as u.
 
     !!The weights are used in computing the weighted least-squares spline fit. If the errors in the y values have standard-deviation
     !!given by the vector d, then w should be 1/d.
-    real(dp), dimension(2), optional, intent(INOUT) :: ulim !< Lower and Uppdf limits of the interval to approximate (ub <= x(1))
+    real(dp), dimension(2), optional, intent(INOUT) :: ulim !< Lower and upper limits of the interval to approximate (ulim(1) <= u(1) and ulim(2) >= u(m) )
     integer, optional, intent(IN) :: k !< The degree of the spline fit. It is recommended to use cubic splines.
     !! Even values of k should be avoided especially with small s values. 1 <= k <= 5
     integer, optional, intent(IN) :: task !< {1, 0, -1},
@@ -99,6 +99,7 @@ contains
 
     real(dp), optional, dimension(:), intent(IN) :: t !< Input knots (interior knots only). if task = -1. If given then task is automatically set to -1.
 
+    logical, optional, intent(IN) :: upar  !< Flag indicating if u is given or must be automatically calculated
     logical, optional, intent(IN) :: per  !< Flag indicating if data are considered periodic
     type(UnivSpline), intent(OUT) :: tck !<  Coefficients, knots, and additional information for interpolation/fitting.
     !! On output the following values will be set:
@@ -110,30 +111,39 @@ contains
     !!
     !! On input the user may provide values for:
     !!    wrk, iwrk: For tasks -1, 1. (usually set by a previous call)
-    ! integer, optional, intent(OUT) :: ier !<
+    integer, optional, intent(OUT) :: ier !< Error code
 
-    real(dp), dimension(size(w)), pointer :: w_
+    !  ..local scalars..
+    real(8) :: tol
+    integer :: i, ia, ib, ifp, ig, iq, iz, maxit, ncc
+
+    real(dp), dimension(:), pointer :: w_
     real(dp), dimension(:), allocatable :: c_
     real(dp), dimension(:), allocatable :: t_
     real(dp), dimension(:), allocatable :: wrk_
     integer, dimension(:), allocatable :: iwrk_
-    real(dp) :: ub_, ue_, s_
+    real(dp) :: ub, ue, s_
     integer :: task_, k_, ier_
-    real(dp) :: dist
-    logical :: per_
-
+    logical :: per_, upar_
     integer :: m
     integer :: nest
-    integer :: nknots, k1, nwrk, n
+    integer :: mx, k1, k2, nwrk, n
+    integer :: idim
+
+    ! Set up the parameters tol and maxit
+    tol = 0.001_8
+    maxit = 20
 
     iwrk_ = shape(x)
     idim = iwrk_(1)
     m = iwrk_(2)
 
     ! !!!!!!!!!! Checks !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! Check dimension of space where lives the curve
     IF (idim < 0 .or. idim > 10) call print_msg('0 < idim < 11 must hold', errcode=1)
 
-    per_ = .FALSE.; if (Present(per)) per_ = per    ! Is it periodic data?
+    ! Check periodicity
+    per_ = .FALSE.; if (Present(per)) per_ = per
     if (per_) then
       if (any(x(:, 1) /= x(:, m))) then ! Check that it really is periodic, otherwise fix it
         call print_msg('Warning: Setting data periodic', 'splprep', errcode=0)
@@ -141,28 +151,15 @@ contains
       end if
     end if
 
-    ! Check size of u
-    IF (.not. allocated(u)) allocate (u(m))
+    ! Check parameter array u
     IF (size(u) < m) call print_msg('size(u) < size(m)', 'splprep', errcode=1)
+    !
+    upar_ = .False.; IF (Present(upar)) upar_ = upar
 
-    if (Present(ulim)) then
-      ub = u(1)
-      ue = u(m)
-    else
-      u(1) = 0._8
-      do i = 2, m
-        dist = sqrt(sum(x(idim * (i - 1) + 1:idim * i) - x(idim * (i - 2) + 1:idim * (i - 1))))
-        u(i) = u(i - 1) + dist
-      end do
-      IF (u(m) <= 0._8) call print_msg("u(m)="//str(u(m))//" <= 0", errcode=1)
-      u = u / u(m)
-      ub = 0._8
-      ue = 1._8
-      u(m) = ue
-    end if
-
-    if (Present(w)) then        ! Weights
-      IF (size(w) /= m) call print_msg('size(w) different than size(x)='//str(m), 'splprep')
+    ! Check weights and smoothing factor
+    if (Present(w)) then
+      IF (size(w) /= m) call print_msg('size(w) different than size(x)='//str(m), 'splprep', 10)
+      IF (any(w < 0._8)) call print_msg('Weights values must be non-negative', 'splprep', 10)
       w_ => w
       IF (.not. Present(s)) s_ = m - sqrt(2._dp * m)
     else
@@ -170,38 +167,43 @@ contains
       w_ = 1._dp
       IF (.not. Present(s)) s_ = 0._dp
     end if
+    IF (Present(s)) s_ = s
+    IF (s_ < 0._8) call print_msg('Smooth factor s='//str(s_)//'must be non-negative', 'splprep', 10)
 
-    if (Present(s)) s_ = s
-
-    ! Order of spline
+    ! Check order of spline
     k_ = 3; IF (Present(k)) k_ = k
+    IF (k_ < 0 .or. k_ > 5) call print_msg('1 <= k= '//str(k_)//' <= 5 must hold', 'splprep', 10)
+    IF (m <= k_) call print_msg('k= '//str(k_)//' < m ='//str(m)//' must hold', 'splprep', 10)
     k1 = k_ + 1
 
-    ! Limits
-    ub_ = x(1); IF (Present(ub)) ub_ = ub
-    ue_ = x(m); IF (Present(ue)) ue_ = ue
-
+    ! Check the task
     task_ = 0; IF (Present(task)) task_ = task
+    IF (abs(task_) > 1) call print_msg('task = '//str(task_)//', should be -1, 0 or 1', 'splprep', 10)
 
+    !! Scipy version do not force the task if t is present in this routine. We do (for now at least)
+    ! Check knots
     IF (Present(t)) then        ! overwrite task input
       task_ = -1  ! If knots given, then task = -1
     end IF
 
     if (task_ == -1) then
-      ! Interior knots t are given. Copy to work array
-      IF (.not. Present(t)) call print_msg('Knots are required for task = -1')
-      nknots = size(t)
-      nest = nknots + 2 * k_ + 2
+      ! All knots t are given. Copy to work array
+      IF (.not. Present(t)) call print_msg('Knots are required for task = -1', errcode=10)
+      nest = size(t) + 2 * k_ + 2
+      ! IF (nest < 2 * k_ + 2) call print_msg('There must be at least 2*k+2 knots for task=-1', errcode=10)
       allocate (t_(nest))
       t_(k1 + 1:nest - k1) = t
-    else if (task_ == 0) then
-      ! Reserve memory for knots t. Not initialized
+    else if (task_ == 0) then      ! Reserve memory for knots t. Not initialized
       if (per_) then
-        nest = max(m + 2 * k_, 2 * k1 + 1)
+        nest = m + 2 * k_
       else
-        nest = max(m + k1, 2 * k1 + 1)
+        nest = m + k_ + 1
       end if
       allocate (t_(nest))
+    else
+      nest = size(t)
+      allocate (t_(nest))
+      t_ = t
     end if
 
     allocate (c_(nest))
@@ -209,36 +211,73 @@ contains
     ! Set workspace
     if (task_ <= 0) then
       if (per_) then
-        nwrk = m * k1 + nest * (3 + 5 * k1)
+        nwrk = m * k1 + nest * (3 + idim + 5 * k1)
       else
-        nwrk = m * k1 + nest * (4 + 3 * k1)
+        nwrk = m * k1 + nest * (3 + idim + 3 * k1)
       end if
-      allocate (wrk_(nwrk))
-      allocate (iwrk_(nest))
 
+      IF ((allocated(wrk_)) .and. (size(wrk_) /= nwrk)) deallocate (wrk_)
+      IF (.not. allocated(wrk_)) allocate (wrk_(nwrk))
+
+      IF ((allocated(iwrk_)) .and. (size(iwrk_) /= nest)) deallocate (iwrk_)
+      IF (.not. allocated(iwrk_)) allocate (wrk_(nest))
     else
       wrk_ = tck%wrk
       nwrk = size(wrk_)
       iwrk_ = tck%iwrk
     end if
 
-    if (per_) then
-      call percur(task_, m, x, y, w_, k_, s_, nest, n, t_, c_, tck%fp, wrk_, nwrk, iwrk_, ier_)
-    else
-      call curfit(task_, m, x, y, w_, ub_, ue_, k_, s_, nest, n, t_, c_, tck%fp, wrk_, nwrk, iwrk_, ier_)
+    !
+    if (upar_) then
+      if (Present(ulim)) then
+        ub = ulim(1); ue = ulim(2)
+      else
+        ub = u(1); ue = u(m)
+      end if
+    else if (task_ <= 0) then    ! If upar_ is False and task_=-1,0  we calculate the values of u automatically
+      u(1) = 0._8
+      do i = 2, m
+        u(i) = u(i - 1) + norm2(x(:, i) - x(:, i - 1))
+      end do
+      IF (u(m) <= 0._8) call print_msg("u(m)="//str(u(m))//" <= 0", errcode=1)
+      u = u / u(m)
+      ub = 0._8
+      ue = 1._8
     end if
 
-    tck%ier = ier_
-    ! if (Present(ier)) ier = ier_
+    IF (ub > u(1)) call print_msg('ulim(1)='//str(ub)//' <= u(1)'//str(u(1))//' must hold', errcode=10)
+    IF (ue < u(m)) call print_msg('ulim(2)='//str(ue)//' >= u(m)'//str(u(m))//' must hold', errcode=10)
+    IF (any(u(1:m - 1) >= u(2:m))) call print_msg('u must be in ascending order', errcode=10)
+
+    !  Call parcur o fppara
+    ! We partition the working space and determine the spline curve.
+    ncc = idim * m
+    mx = ncc
+    k2 = k_ + 2
+
+    ifp = 1
+    iz = ifp + nest
+    ia = iz + ncc
+    ib = ia + nest * k1
+    ig = ib + nest * k2
+    iq = ig + nest * k2
+    call fppara(task_, idim, m, u, mx, reshape(x, [mx]), w, ub, ue, k, s, nest, tol, maxit, k1, k2,&
+      & n, t_, ncc, c_, tck%fp, wrk_(ifp), wrk_(iz), wrk_(ia), wrk_(ib), wrk_(ig), wrk_(iq), iwrk_, ier)
+
+    if (Present(ier)) ier = ier_
 
     tck%k = k_
 
     ! Set the first n (number of knots) values to the output
-    allocate (tck%wrk(n), tck%iwrk(n))
+    ! This can be done automatically
+    ! IF (deallocated(tck%wrk)) allocate (tck%wrk(n))
+    ! IF (deallocated(tck%iwrk)) allocate (tck%iwrk(n))
     tck%wrk = wrk_(:n)
     tck%iwrk = iwrk_(:n)
 
-    allocate (tck%t(n), tck%c(n))
+    ! It may be done automatically
+    ! IF (deallocated(tck%t)) allocate (tck%t(n))
+    ! IF (deallocated(tck%t)) allocate (tck%c(n))
     tck%c = c_(:n)
     tck%t = t_(:n)
 
