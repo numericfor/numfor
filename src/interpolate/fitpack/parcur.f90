@@ -279,7 +279,7 @@ subroutine parcur(iopt, ipar, idim, m, u, mx, x, w, ub, ue, k, s, nest, n, t, nc
 
   !  ..local scalars..
   real(8) :: tol, dist
-  integer :: i, ia, ib, ifp, ig, iq, iz, i1, i2, j, k1, k2, lwest, maxit, nmin, ncc
+  integer :: i, ia, ib, ifp, ig, iq, iz, k1, k2, lwest, maxit, nmin, ncc
   ! ..function references
   ! real(8) :: sqrt
   !  ..

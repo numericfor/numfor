@@ -3,3 +3,4 @@ THISDIR :=  interpolate
 FILES := polynomial.f90 csplines.f90 wfitpack.f90
 
 SRC += $(addprefix $(SRCD)/$(THISDIR)/,$(FILES)) $(addprefix $(SRCD)/$(THISDIR)/,$(THISDIR).f90)
+

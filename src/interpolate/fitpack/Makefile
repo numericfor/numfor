@@ -18,6 +18,8 @@ include /home/fiol/trabajo/programas/numfor/scripts/compiler_gnu.mk
 lib$(LIB).a: $(OBJ)
 	$(AR) rus lib$(LIB).a $?
 	cp lib$(LIB).a /home/fiol/trabajo/programas/numfor/lib
+	# cp *.o ..		
+
 clean:
 	rm *.o
 

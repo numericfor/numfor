@@ -73,7 +73,6 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
       t(k2:k2 + mk1 - 1) = u(k3 + 2:k3 + 1 + mk1)
     end if
   end if
-
   go to 60
 
   !  if s>0 our initial choice of knots depends on the value of iopt.

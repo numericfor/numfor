@@ -48,7 +48,7 @@ MKDIR:=mkdir -p
 ######################################################################
 # Path to *.mod and source files
 INCLUDES:= -I $(MODD)
-
+# INCLUDES += -I $(SRCD)/interpolate/fitpack
 # Path to *.o files
 LDFLAGS:=-L $(OBJD)
 
@@ -59,6 +59,7 @@ MODULES := utils arrays interpolate
 FMODULES =  $(addprefix $(SRCD)/,$(MODULES))
 # look for include files in each of the modules
 INCLUDES += $(patsubst %,-I %, $(FMODULES))
+
 
 # extra libraries if required
 LIBS := -lnumfor
