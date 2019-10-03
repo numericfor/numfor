@@ -13,7 +13,6 @@ module fitpack
     real(dp) :: fp !< weighted sum of squared residuals of the spline approximation returned.
     real(dp), dimension(:), allocatable :: wrk
     integer, dimension(:), allocatable :: iwrk
-    integer :: ier
   end type UnivSpline
 
   Public :: UnivSpline, splrep, splrep_msg
@@ -69,7 +68,7 @@ contains
   !!
   subroutine splprep(x, u, tck, w, ulim, k, task, upar, s, t, per, ier)
     implicit none
-    real(dp), dimension(:, :), intent(INOUT) :: x !<
+    real(dp), dimension(:, :), intent(IN) :: x !<
     real(dp), dimension(:), intent(INOUT) :: u !< An array with parameters. If
     real(dp), optional, dimension(size(x(1, :))), target, intent(IN) :: w !< Strictly positive rank-1 array of weights the same size as u.
 
@@ -113,15 +112,16 @@ contains
     !!    wrk, iwrk: For tasks -1, 1. (usually set by a previous call)
     integer, optional, intent(OUT) :: ier !< Error code
 
-    real(8) :: tol
-    integer :: i, ia, ib, ifp, ig, iq, iz, maxit, ncc
+    real(dp) :: tol
+    integer :: i, ia1, ia2, ib, ifp, ig1, ig2, iq, iz, maxit, ncc
 
+    real(dp), dimension(:), allocatable :: y
     real(dp), dimension(:), pointer :: w_
     real(dp), dimension(:), allocatable :: c_
     real(dp), dimension(:), allocatable :: t_
     real(dp), dimension(:), allocatable :: wrk_
     integer, dimension(:), allocatable :: iwrk_
-    real(dp) :: ub, ue, s_
+    real(dp) :: ub, ue, s_, Du
     integer :: task_, k_, ier_
     logical :: per_, upar_
     integer :: m
@@ -136,6 +136,8 @@ contains
     iwrk_ = shape(x)
     idim = iwrk_(1)
     m = iwrk_(2)
+    ncc = idim * m
+    mx = ncc
 
     ! !!!!!!!!!! Checks !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! Check dimension of space where lives the curve
@@ -146,9 +148,11 @@ contains
     if (per_) then
       if (any(x(:, 1) /= x(:, m))) then ! Check that it really is periodic, otherwise fix it
         call print_msg('Warning: Setting data periodic', 'splprep', errcode=0)
-        x(:, m) = x(:, 1)
+        ! x(:, m) = x(:, 1)
       end if
     end if
+    allocate (y(mx))            ! Not necessary?
+    y = reshape(x, [mx])
 
     ! Check parameter array u
     IF (size(u) < m) call print_msg('size(u) < size(m)', 'splprep', errcode=1)
@@ -182,12 +186,10 @@ contains
 
     !! Scipy version do not force the task if t is present in this routine. We do (for now at least)
     ! Check knots
-    IF (Present(t)) then        ! overwrite task input
-      task_ = -1  ! If knots given, then task = -1
-    end IF
+    IF (Present(t)) task_ = -1 ! If knots given, then task = -1
 
-    if (task_ == -1) then
-      ! All knots t are given. Copy to work array
+    ! Check task and knots
+    if (task_ == -1) then      ! Interior knots t are given. Copy to work array
       IF (.not. Present(t)) call print_msg('Knots are required for task = -1', errcode=10)
       nest = size(t) + 2 * k_ + 2
       ! IF (nest < 2 * k_ + 2) call print_msg('There must be at least 2*k+2 knots for task=-1', errcode=10)
@@ -200,7 +202,7 @@ contains
         nest = m + k_ + 1
       end if
       allocate (t_(nest))
-    else
+    else                        ! All knots are given
       nest = size(t)
       allocate (t_(nest))
       t_ = t
@@ -220,7 +222,7 @@ contains
       IF (.not. allocated(wrk_)) allocate (wrk_(nwrk))
 
       IF ((allocated(iwrk_)) .and. (size(iwrk_) /= nest)) deallocate (iwrk_)
-      IF (.not. allocated(iwrk_)) allocate (wrk_(nest))
+      IF (.not. allocated(iwrk_)) allocate (iwrk_(nest))
     else
       wrk_ = tck%wrk
       nwrk = size(wrk_)
@@ -253,51 +255,92 @@ contains
       n = nest
       if (per_) then
         Du = u(m) - u(1)
-        t(k1) = u(1); t(n - k) = u(m)
-        t(:k_) = t(:n - k1) - Du  ! ASÍ?????
+        t_(k1) = u(1); t_(n - k) = u(m) ! First two values
+        t_(:k_) = t_(n - 2 * k_:n - k1) - Du
+        t_(n - k_ + 1:n) = t_(k1 + 1:k1 + k_) + Du
+        call fpchep(u, m, t_, n, k_, ier_)
       else
-        t(1:k1) = ub
-        t(n - k:n) = ue
-        call fpchec(u, m, t, n, k, ier)
+        t_(1:k1) = ub
+        t_(n - k:n) = ue
+        call fpchec(u, m, t_, n, k_, ier_)
       end if
 
       IF (ier /= 0) &
         & call print_msg('Knots not positioned correctly for task=-1', errcode=ier)
     else
-      IF (s == 0._8 .and. nest < (m + k1)) call print_msg('s==0 and nest too small', errcode=10)
+      IF ((per_ .and. nest < (m + 2 * k_)) .or. ((.not. per_) .and. nest < (m + k1)))&
+        & call print_msg('Too few knots provided', 'splprep', errcode=10)
     end if
 
-    !  Call parcur o fppara
     ! We partition the working space and determine the spline curve.
-    ncc = idim * m
-    mx = ncc
+    ier_ = 0
 
     ifp = 1
     iz = ifp + nest
-    ia = iz + ncc
-    ib = ia + nest * k1
-    ig = ib + nest * k2
-    iq = ig + nest * k2
-    call fppara(task_, idim, m, u, mx, reshape(x, [mx]), w, ub, ue, k, s, nest, tol, maxit, k1, k2,&
-      & n, t_, ncc, c_, tck%fp, wrk_(ifp), wrk_(iz), wrk_(ia), wrk_(ib), wrk_(ig), wrk_(iq), iwrk_, ier)
+    ia1 = iz + ncc
+    ia2 = ia1 + nest * k1
+    if (per_) then
 
+      ib = ia2 + nest * k
+      ig1 = ib + nest * k2
+      ig2 = ig1 + nest * k2
+      iq = ig2 + nest * k1
+      call fpclos(task_, idim, m, u, mx, reshape(x, [mx]), w_, k_, s_, nest, tol, maxit, k1, k2, n, t_,&
+        & ncc, c_, tck%fp, wrk_(ifp), wrk_(iz), wrk_(ia1), wrk_(ia2), wrk_(ib), wrk_(ig1),&
+        &  wrk_(ig2), wrk_(iq), iwrk_, ier_)
+    else
+      ig1 = ia2 + nest * k2
+      iq = ig1 + nest * k2
+      print *, ifp, iz, ia1, iq
+      print *, iq + m * k1, "<=", size(wrk_), 'and', size(wrk_(iq:)), '>=', m * k1
+      print *, wrk_(iq)
+      call fppara(task_, idim, m, u, mx, x, w_, ub, ue, k_, s_, nest, tol, maxit, k1, k2,&
+        & n, t_, ncc, c_, tck%fp, wrk_(ifp:iz - 1), wrk_(iz:ia1 - 1), wrk_(ia1:ia2 - 1), &
+        &wrk_(ia2:ig1 - 1), wrk_(ig1:iq - 1), wrk_(iq:), iwrk_, ier_)
+    end if
+
+    print "(5(es10.3,1x))", wrk_(ifp:iz - 1)
+    print *, allocated(c_)
+    print *, allocated(t_)
+    print "(5(es9.3,1x))", u
+    print *, allocated(wrk_)
+    print *, allocated(iwrk_)
+
+    print *, ier_, size(t_)
+    print *, t_(:6)
     if (Present(ier)) ier = ier_
     tck%k = k_
 
-    ! Set the first n (number of knots) values to the output
-    ! This can be done automatically
-    ! IF (deallocated(tck%wrk)) allocate (tck%wrk(n))
-    ! IF (deallocated(tck%iwrk)) allocate (tck%iwrk(n))
-    tck%wrk = wrk_(:n)
-    tck%iwrk = iwrk_(:n)
+    ! ! Allocation may be done automatically
+    ! IF (.not. allocated(tck%wrk)) allocate (tck%wrk(n))
+    ! IF (.not. allocated(tck%iwrk)) allocate (tck%iwrk(n))
 
-    ! It may be done automatically
-    ! IF (deallocated(tck%t)) allocate (tck%t(n))
-    ! IF (deallocated(tck%t)) allocate (tck%c(n))
+    ! Save workspaces for possible future use
+    tck%wrk = wrk_
+    tck%iwrk = iwrk_
+
+    ! ! Allocation may be done automatically
+    ! IF (.not. allocated(tck%t)) allocate (tck%t(n))
+    ! IF (.not. allocated(tck%t)) allocate (tck%c(n))
+
+    ! Set the first n (number of knots) values to the output
     tck%c = c_(:n)
     tck%t = t_(:n)
 
-    deallocate (c_, t_, wrk_, iwrk_)
+    print *, size(wrk_), size(iwrk_)
+    print *, size(tck%c), size(tck%t)
+    print *, c_(:6)
+    deallocate (c_)
+    print *, "deallocated c"
+    deallocate (t_)
+    print *, "deallocated t"
+    ! deallocate (wrk_)
+    ! print *, "deallocated wrk"
+    ! deallocate (iwrk_)
+    ! print *, "deallocated iwrk"
+
+    print *, tck%c(:6)
+    print *, tck%t(:6)
 
   end subroutine splprep
 
@@ -305,8 +348,8 @@ contains
   !!
   !! Examples:
   !!
-  ! subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck, ier)
-  subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck)
+  subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck, ier)
+    ! subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Values of independent variable
     real(dp), dimension(size(x)), intent(IN) :: y !< The data points y=f(x)
@@ -349,7 +392,7 @@ contains
     !!
     !! On input the user may provide values for:
     !!    wrk, iwrk: For tasks -1, 1. (usually set by a previous call)
-    ! integer, optional, intent(OUT) :: ier !<
+    integer, optional, intent(OUT) :: ier !<
 
     real(dp), dimension(size(x)) :: w_
     real(dp), dimension(:), allocatable :: c_
@@ -438,7 +481,7 @@ contains
       call curfit(task_, m, x, y, w_, xb_, xe_, k_, s_, nest, n, t_, c_, tck%fp, wrk_, nwrk, iwrk_, ier_)
     end if
 
-    tck%ier = ier_
+    IF (Present(ier)) ier = ier_
 
     tck%k = k_
 
