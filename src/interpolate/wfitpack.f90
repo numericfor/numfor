@@ -113,7 +113,6 @@ contains
     !!    wrk, iwrk: For tasks -1, 1. (usually set by a previous call)
     integer, optional, intent(OUT) :: ier !< Error code
 
-    !  ..local scalars..
     real(8) :: tol
     integer :: i, ia, ib, ifp, ig, iq, iz, maxit, ncc
 
@@ -175,6 +174,7 @@ contains
     IF (k_ < 0 .or. k_ > 5) call print_msg('1 <= k= '//str(k_)//' <= 5 must hold', 'splprep', 10)
     IF (m <= k_) call print_msg('k= '//str(k_)//' < m ='//str(m)//' must hold', 'splprep', 10)
     k1 = k_ + 1
+    k2 = k1 + 1
 
     ! Check the task
     task_ = 0; IF (Present(task)) task_ = task
@@ -211,7 +211,7 @@ contains
     ! Set workspace
     if (task_ <= 0) then
       if (per_) then
-        nwrk = m * k1 + nest * (3 + idim + 5 * k1)
+        nwrk = m * k1 + nest * (2 + idim + 5 * k1)
       else
         nwrk = m * k1 + nest * (3 + idim + 3 * k1)
       end if
@@ -249,11 +249,28 @@ contains
     IF (ue < u(m)) call print_msg('ulim(2)='//str(ue)//' >= u(m)'//str(u(m))//' must hold', errcode=10)
     IF (any(u(1:m - 1) >= u(2:m))) call print_msg('u must be in ascending order', errcode=10)
 
+    if (task_ == -1) then      ! t(k+2:k-n-1) are provided by the user
+      n = nest
+      if (per_) then
+        Du = u(m) - u(1)
+        t(k1) = u(1); t(n - k) = u(m)
+        t(:k_) = t(:n - k1) - Du  ! ASÍ?????
+      else
+        t(1:k1) = ub
+        t(n - k:n) = ue
+        call fpchec(u, m, t, n, k, ier)
+      end if
+
+      IF (ier /= 0) &
+        & call print_msg('Knots not positioned correctly for task=-1', errcode=ier)
+    else
+      IF (s == 0._8 .and. nest < (m + k1)) call print_msg('s==0 and nest too small', errcode=10)
+    end if
+
     !  Call parcur o fppara
     ! We partition the working space and determine the spline curve.
     ncc = idim * m
     mx = ncc
-    k2 = k_ + 2
 
     ifp = 1
     iz = ifp + nest
@@ -265,7 +282,6 @@ contains
       & n, t_, ncc, c_, tck%fp, wrk_(ifp), wrk_(iz), wrk_(ia), wrk_(ib), wrk_(ig), wrk_(iq), iwrk_, ier)
 
     if (Present(ier)) ier = ier_
-
     tck%k = k_
 
     ! Set the first n (number of knots) values to the output
@@ -423,7 +439,6 @@ contains
     end if
 
     tck%ier = ier_
-    ! if (Present(ier)) ier = ier_
 
     tck%k = k_
 
