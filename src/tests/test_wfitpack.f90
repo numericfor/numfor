@@ -80,11 +80,12 @@ contains
     real(dp), dimension(:), allocatable :: phi
     real(dp), dimension(:), allocatable :: r
     real(dp), dimension(:, :), allocatable :: x
-    ! real(dp), dimension(:, :), allocatable :: new_points
+    real(dp), dimension(:, :), allocatable :: new_points
     real(dp), dimension(:), allocatable :: u
     type(UnivSpline) :: tck
     real(dp) :: s = 0._8
     integer :: Nd = 40          ! Number of points
+    integer :: n
 
     allocate (r(Nd), u(Nd), phi(Nd), x(2, Nd))
     phi = linspace(Zero, 2.*M_PI, Nd)
@@ -93,13 +94,14 @@ contains
     x(2, :) = r * sin(phi)      ! convert to cartesian
 
     call splprep(x, u, tck, s=s)
-    ! new_points = splev(u, tck)
-    print *, "OUT"
-    ! print *, tck%t(:6)
+    new_points = splevp(u, tck, idim=2)
 
-    ! fdata = 'data/fopsplev_s'//str(s)//'.dat'
-    ! header = "#   x           y"
-    ! call save_arrays(fdata, tck%t, tck%c, head=header)
+    n = size(tck%t)
+    fdata = 'data/fopsplev_s'//str(s)//'.dat'
+    ! header = "#   c[0]           c[1]"
+    header = "#   x           y"
+    ! call save_arrays(fdata, tck%c(:n), tck%c(n + 1:), head=header)
+    call save_arrays(fdata, new_points(1, :), new_points(2, :), head=header)
 
   end subroutine test_parametric_splines
   !> save_arrays
@@ -116,7 +118,7 @@ contains
     open (newunit=u, file=filename)
     write (u, "(A)") head
     do i = 1, size(x)
-      write (u, "(2(g0.14, 1x))") x(i), y(i)
+      write (u, "(2(g0.9, 1x))") x(i), y(i)
     end do
     close (u)
 

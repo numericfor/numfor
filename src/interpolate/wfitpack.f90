@@ -2,6 +2,7 @@
 module fitpack
 
   USE utils, only: dp, str, print_msg
+  ! USE fitp, only: percur, curfit, splder, fppara, fpclos, fpchep, fpchec
 
   !> Type used to keep all information on spline fitting
   !!
@@ -19,25 +20,12 @@ module fitpack
 
   character, private, parameter :: nl = new_line('a')
 
-contains
-  include "splder.f90"
-  include "percur.f90"
-  include "curfit.f90"
-  include "fpchep.f90"
-  include "fpchec.f90"
-  include "fpclos.f90"
-  include "fppara.f90"
+  interface splev
+    module procedure :: splevp
+  end interface splev
 
-  include "fpgivs.f90"
-  include "fprota.f90"
-  include "fpback.f90"
-  include "fpbacp.f90"
-  include "fpknot.f90"
-  include "fpdisc.f90"
-  include "fprati.f90"
-  include "fpbspl.f90"
-  include "fpcurf.f90"
-  include "fpperi.f90"
+contains
+
   !> splrep_msg
   !!
   !! Examples:
@@ -132,8 +120,8 @@ contains
     real(dp) :: tol
     integer :: i, ia1, ia2, ib, ifp, ig1, ig2, iq, iz, maxit, ncc
 
-    real(dp), dimension(:), allocatable :: y
-    real(dp), dimension(:), pointer :: w_
+    ! real(dp), dimension(:), allocatable :: y
+    real(dp), dimension(:), allocatable :: w_
     real(dp), dimension(:), allocatable :: c_
     real(dp), dimension(:), allocatable :: t_
     real(dp), dimension(:), allocatable :: wrk_
@@ -153,8 +141,7 @@ contains
     shx = shape(x)
     idim = shx(1)
     m = shx(2)
-    ncc = idim * m
-    mx = ncc
+    mx = idim * m
 
     ! !!!!!!!!!! Checks !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! Check dimension of space where lives the curve
@@ -168,8 +155,8 @@ contains
         ! x(:, m) = x(:, 1)
       end if
     end if
-    allocate (y(mx))            ! Not necessary?
-    y = reshape(x, [mx])
+    ! allocate (y(mx))            ! Not necessary?
+    ! y = reshape(x, [mx])
 
     ! Check parameter array u
     IF (size(u) < m) call print_msg('size(u) < size(m)', 'splprep', errcode=1)
@@ -179,7 +166,7 @@ contains
     if (Present(w)) then
       IF (size(w) /= m) call print_msg('size(w) different than size(x)='//str(m), 'splprep', 10)
       IF (any(w <= 0._8)) call print_msg('Weights values must be non-negative', 'splprep', 10)
-      w_ => w
+      w_ = w
       IF (.not. Present(s)) s_ = m - sqrt(2._dp * m)
     else
       allocate (w_(m))
@@ -208,7 +195,6 @@ contains
     if (task_ == -1) then      ! Interior knots t are given. Copy to work array
       IF (.not. Present(t)) call print_msg('Knots are required for task = -1', errcode=10)
       nest = size(t) + 2 * k_ + 2
-      ! IF (nest < 2 * k_ + 2) call print_msg('There must be at least 2*k+2 knots for task=-1', errcode=10)
       allocate (t_(nest))
       t_(k1 + 1:nest - k1) = t
     else if (task_ == 0) then      ! Reserve memory for knots t. Not initialized
@@ -225,6 +211,7 @@ contains
       t_ = t
     end if
 
+    ncc = nest * idim
     allocate (c_(ncc))
 
     ! Set workspace
@@ -301,29 +288,17 @@ contains
       ig1 = ib + nest * k2
       ig2 = ig1 + nest * k2
       iq = ig2 + nest * k1
-      call fpclos(task_, idim, m, u, mx, reshape(x, [mx]), w_, k_, s_, nest, tol, maxit, k1, k2, n, t_,&
+      call fpclos(task_, idim, m, u, mx, x, w_, k_, s_, nest, tol, maxit, k1, k2, n, t_,&
         & ncc, c_, tck%fp, wrk_(ifp), wrk_(iz), wrk_(ia1), wrk_(ia2), wrk_(ib), wrk_(ig1),&
         &  wrk_(ig2), wrk_(iq), iwrk_, ier_)
     else
       ig1 = ia2 + nest * k2
       iq = ig1 + nest * k2
-      print *, ifp, iz, ia1, iq
-      print *, iq + m * k1, "<=", size(wrk_), 'and', size(wrk_(iq:)), '>=', m * k1
-      print *, wrk_(iq)
       call fppara(task_, idim, m, u, mx, x, w_, ub, ue, k_, s_, nest, tol, maxit, k1, k2,&
-        & n, t_, ncc, c_, tck%fp, wrk_(ifp:iz - 1), wrk_(iz:ia1 - 1), wrk_(ia1:ia2 - 1), &
+        & n, t_, ncc, c_, tck%fp, wrk_(ifp:iz - 1), wrk_(iz), wrk_(ia1:ia2 - 1), &
         &wrk_(ia2:ig1 - 1), wrk_(ig1:iq - 1), wrk_(iq:), iwrk_, ier_)
     end if
 
-    print "(5(es10.3,1x))", wrk_(ifp:iz - 1)
-    print *, allocated(c_)
-    print *, allocated(t_)
-    print "(5(es9.3,1x))", u
-    print *, allocated(wrk_)
-    print *, allocated(iwrk_)
-
-    print *, ier_, size(t_)
-    print *, t_(:6)
     if (Present(ier)) ier = ier_
     tck%k = k_
 
@@ -343,21 +318,11 @@ contains
     tck%c = c_
     tck%t = t_(:n)
 
-    print *, size(wrk_), size(iwrk_)
-    print *, size(tck%c), size(tck%t)
-    print *, c_(:6)
     deallocate (c_)
-    print *, "deallocated c"
+    deallocate (w_)
     deallocate (t_)
-    print *, "deallocated t"
-    ! deallocate (wrk_)
-    ! print *, "deallocated wrk"
-    ! deallocate (iwrk_)
-    ! print *, "deallocated iwrk"
-
-    print *, tck%c(:6)
-    print *, tck%t(:6)
-
+    deallocate (wrk_)
+    deallocate (iwrk_)
   end subroutine splprep
 
   !> splrep Computes
@@ -521,7 +486,7 @@ contains
   !!
   !! Examples:
   !!
-  function splev(x, tck, der, ext, ier) result(y)
+  function splevc(x, tck, der, ext, ier) result(y)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Points at which to return the value of the smoothed spline or its derivative
     type(UnivSpline), intent(IN) :: tck !< A spline representation returned by splrep
@@ -533,6 +498,7 @@ contains
     real(dp), dimension(:), allocatable :: wrk_
 
     integer :: k, n, m, e, ier_, nu
+
     k = tck%k
     n = size(tck%t)
     m = size(x)
@@ -542,13 +508,67 @@ contains
     allocate (wrk_(size(tck%wrk)))
     wrk_ = tck%wrk
     IF ((nu < 0) .or. (nu > k)) call print_msg('Must be 0 <= der='//str(nu)//' <= k='//str(k))
-
     IF ((e < 0) .or. (e > 3)) call print_msg('ext = '//str(e)//' not one of (0, 1, 2, 3)')
+    !
     call splder(tck%t, n, tck%c, k, nu, x, y, m, e, wrk_, ier_)
-
     IF (ier_ == 10) call print_msg('Invalid input data', 'splev', errcode=0)
     IF (ier_ == 1) call print_msg('x value out of bounds and e == 2', 'splev', errcode=0)
+
     IF (Present(ier)) ier = ier_
-  end function splev
+  end function splevc
+
+  !> splev Computes a B-spline or its derivatives.
+  !! Given the knots and coefficients of a B-spline representation, evaluate
+  !! the value of the smoothing polynomial and its derivatives.  This is a
+  !! wrapper around the FORTRAN routines splev and splder of FITPACK.
+  !!
+  !! Examples:
+  !!
+  function splevp(u, tck, der, ext, idim, ier) result(y)
+    implicit none
+    real(dp), dimension(:), intent(IN) :: u !< Points at which to return the value of the smoothed spline or its derivative
+    type(UnivSpline), intent(IN) :: tck !< A spline representation returned by splrep
+    integer, optional, intent(IN) :: der !< The order of the derivative of the spline to compute (must be less than k).
+    integer, optional, intent(IN) :: ext !< Flag controling the result for  ``x`` outside the
+    integer, optional, intent(IN) :: idim !< Number of dimensions for parametric curve
+
+    integer, optional, intent(OUT) :: ier !< Flag given output status
+    real(dp), dimension(:), allocatable :: wrk_
+    ! Result
+    real(dp), dimension(:, :), allocatable :: y !< Smoothed or interpolated spline values
+
+    integer :: k, n, m, e, ier_, nu
+    integer :: idim_             ! If parametric, dimension of curve
+    integer :: i, pos
+
+    ! Dimension of the curve
+    idim_ = 1; if (Present(idim)) idim_ = idim
+
+    k = tck%k
+    n = size(tck%t)
+    m = size(u)
+    e = 0; IF (Present(ext)) e = ext
+    nu = 0; IF (Present(der)) nu = der
+
+    IF (idim_ * n /= size(tck%c)) call print_msg("In tck, c and t have not right sizes", errcode=10)
+
+    allocate (y(idim_, size(u)))
+
+    allocate (wrk_(size(tck%wrk)))
+    wrk_ = tck%wrk
+    IF ((nu < 0) .or. (nu > k)) call print_msg('Must be 0 <= der='//str(nu)//' <= k='//str(k))
+
+    IF ((e < 0) .or. (e > 3)) call print_msg('ext = '//str(e)//' not one of (0, 1, 2, 3)')
+    !
+
+    do i = 1, idim_
+      pos = (i - 1) * n + 1
+      call splder(tck%t, n, tck%c(pos:), k, nu, u, y(i, :), m, e, wrk_, ier_)
+      IF (ier_ == 10) call print_msg('Invalid input data', 'splev', errcode=0)
+      IF (ier_ == 1) call print_msg('u value out of bounds and e == 2', 'splev', errcode=0)
+    end do
+    IF (Present(ier)) ier = ier_
+
+  end function splevp
 
 end module fitpack

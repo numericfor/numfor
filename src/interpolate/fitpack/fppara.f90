@@ -87,10 +87,10 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
   nplus = nrdata(n)
   if (fp0 > s) go to 60
 50 n = nmin
-  fpold = 0.
+  fpold = 0._8
   nplus = 0
   nrdata(1) = m - 2
-  !  main loop for the different sets of knots. m is a save upper bound
+  !  main loop for the different sets of knots. m is a safe upper bound
   !  for the number of trials.
 60 do iter = 1, m
     if (n == nmin) ier = -2
@@ -101,7 +101,6 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
     nk1 = n - k1
     t(1:k1) = ub
     t(n - k:n) = ue
-
     !  compute the b-spline coefficients of the least-squares spline curve
     !  sinf(u). the observation matrix a is built up row by row and
     !  reduced to upper triangular form by givens transformations.
@@ -111,25 +110,20 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
     z(:nc) = 0._8
     a(:nk1, :k1) = 0._8
     l = k1
-    jj = 0
     do it = 1, m
       !  fetch the current data point u(it),x(it).
       ui = u(it)
       wi = w(it)
-      j = jj + idim             ! Temporary value
-      xi(1:idim) = x(jj + 1:j) * wi
-      jj = j                    ! The value of jj is preserved between loops
-
+      jj = (it - 1) * idim             ! Temporary value
+      xi(1:idim) = x(jj + 1:jj + idim) * wi
       !  search for knot interval t(l) <= ui < t(l+1).
       do while (ui >= t(l + 1) .and. l < nk1)
         l = l + 1
       end do
-
       !  evaluate the (k+1) non-zero b-splines at ui and store them in q.
       call fpbspl(t, n, k, ui, l, h)
       q(it, :k1) = h(:k1)
       h(:k1) = h(:k1) * wi
-
       !  rotate the new row of the observation matrix into triangle.
       j = l - k1
       do i = 1, k1
@@ -153,15 +147,12 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
           !  transformations to left hand side.
           call fprota(cos, sin, h(i1), a(j, i2))
         end do
-
       end do
-
       !  add contribution of this row to the sum of squares of residual
       !  right hand sides.
       do j2 = 1, idim
         fp = fp + xi(j2)**2
       end do
-
     end do
 
     if (ier == (-2)) fp0 = fp
@@ -295,9 +286,7 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
 
     do it = 1, n8
       !  the row of matrix b is rotated into triangle by givens transformation
-
       h(:k2) = b(it, :k2) * pinv
-
       xi(:idim) = 0._8
 
       inner1: do j = it, nk1
@@ -323,7 +312,6 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
 
         h(i2 + 1) = 0.
       end do inner1
-
     end do
 
     !  backward substitution to obtain the b-spline coefficients.
@@ -400,6 +388,4 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
     !  find the new value for p.
     p = fprati(p1, f1, p2, f2, p3, f3)
   end do
-
-  !  error codes and messages.
 end subroutine fppara
