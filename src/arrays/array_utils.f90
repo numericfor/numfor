@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2019-08-28 09:54:37"
+!! @date "2019-10-06 20:29:03"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -9,9 +9,50 @@ module array_utils
   implicit none
 
   private
-  public :: savetxt, mean, std, merge_sorted
+  public :: savetxt, save_array, mean, std, merge_sorted
 
 contains
+
+  !> allclose returns True if two arrays are element-wise equal within a tolerance.
+  !!
+  !! Very similar to **Numpy** allclose
+  !!
+  !! The tolerance values are positive, typically very small numbers.  The
+  !! relative difference (`rtol` * abs(`b`)) and the absolute difference
+  !! `atol` are added together to compare against the absolute difference
+  !! between `a` and `b`.
+  !!
+  !! If the following equation is element-wise True, then allclose returns
+  !! True.
+  !!
+  !!  abs(`a` - `b`) <= (`atol` + `rtol` * absolute(`b`))
+  !!
+  !! The above equation is not symmetric in `a` and `b`, so that
+  !! ``allclose(a, b)`` might be different from ``allclose(b, a)`` in
+  !! some rare cases.
+  !!
+  !! Examples:
+  !!
+  !! allclose([1e10,1e-7], [1.00001e10,1e-8])
+  !! ! .False.
+  !! allclose([1e10,1e-8], [1.00001e10,1e-9])
+  !! ! .True.
+  !! allclose([1e10,1e-8], [1.0001e10,1e-9])
+  !! ! .False.
+  !!
+  function allclose(a, b, rtol, atol) result(y)
+    implicit none
+    logical :: y !< True if the two arrays are equal within the given
+    !!    tolerance; False otherwise.
+    real(dp), dimension(:), intent(IN) :: a !< Array
+    real(dp), dimension(size(a)), intent(IN) :: b !< Array
+    real(dp), optional, intent(IN) :: rtol !< The relative tolerance parameter. Default = 1.e-5
+    real(dp), optional, intent(IN) :: atol !< The absolute tolerance parameter. Default = 1.e-8
+    real(dp) :: rtol_, atol_ !<
+    atol_ = 1.e-8_dp; IF (Present(atol)) atol_ = atol
+    rtol_ = 1.e-5_dp; IF (Present(atol)) rtol_ = rtol
+    y = all(abs(a - b) < (atol_ + rtol_ * abs(b)))
+  end function allclose
 
   !> This function creates a sorted array with values from two input sorted arrays
   !!
@@ -154,14 +195,14 @@ contains
   !! usa stdout
   !! Si se da fname el archivo se abre y cierra.
   !! Si se da unit, el archivo queda abierto
-  subroutine savetxt(a, fmt, fname, unit)
+  subroutine savetxt(X, fname, fmt, unit)
     implicit none
-    real(dp), dimension(:, :), intent(IN) :: a        !< Array a escribir a archivo de texto
-    character(len=*), optional, intent(in) :: fmt    !< formato a usar para los datos. Default 'g0.5'
-    character(len=*), optional, intent(in) :: fname  !< Nombre del archivo de salida
-    integer, optional, intent(in) :: unit            !< Unidad a escribir si el archivo está abierto
+    real(dp), dimension(:, :), intent(IN) :: X        !< Array a escribir a archivo de texto
+    character(len=*), optional, intent(IN) :: fname  !< Nombre del archivo de salida
+    character(len=*), optional, intent(IN) :: fmt    !< formato a usar para los datos. Default 'g0.5'
+    integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto
 
-    real(dp), dimension(ubound(a, 2), ubound(a, 1)) :: b
+    real(dp), dimension(ubound(X, 2), ubound(X, 1)) :: b
     integer, dimension(2) :: sh
     integer :: i
     integer :: u
@@ -174,7 +215,8 @@ contains
     ! ninguna está usa stdout
     closef = .False.
     u = stdout
-    if (present(fname)) then
+
+    if (Present(fname)) then
       if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
         open (newunit=u, file=trim(fname))
         closef = .True.
@@ -184,7 +226,7 @@ contains
       IF (unit >= 0 .and. unit <= 99) u = unit
     end if
 
-    b = transpose(a)
+    b = transpose(X)
     sh = shape(b)
 
     if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
@@ -198,14 +240,67 @@ contains
       write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(form), '&
         &,1x))'
     end if
+
     do i = 1, sh(2)
       write (u, formato) b(:, i)
     end do
 
-    ! write (u, formato) (b(:, i), i=1, sh(2))
-
     IF (closef) close (u)
   end subroutine savetxt
+
+  subroutine save_array(X, shx, fname, fmt, unit)
+    implicit none
+    real(dp), dimension(:), intent(IN) :: X        !< Array a escribir a archivo de texto
+    integer, dimension(2), intent(IN) :: shx !< Shape intended to write
+    character(len=*), optional, intent(IN) :: fname  !< Nombre del archivo de salida
+    character(len=*), optional, intent(IN) :: fmt    !< formato a usar para los datos. Default 'g0.5'
+    integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto
+
+    real(dp), dimension(:, :), allocatable :: b
+    integer :: i
+    integer :: u
+
+    character(len=32) :: form = "g0.5" ! Default
+    character(len=32) :: formato
+    logical :: closef
+
+    IF (size(X) /= product(shx)) call print_msg("Incompatible shape and size of array X for saving", "save_arrays", errcode=1)
+    ! Si fname está presente => Toma precedencia sobre unit. Si
+    ! ninguna está usa stdout
+    closef = .False.
+    u = stdout
+
+    if (Present(fname)) then
+      if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
+        open (newunit=u, file=trim(fname))
+        closef = .True.
+      end if
+    else if (present(unit)) then ! The file was already open before
+      ! invoking the function
+      IF (unit >= 0 .and. unit <= 99) u = unit
+    end if
+
+    b = reshape(X, shx)
+    b = transpose(b)
+
+    if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
+      if (index('(', fmt) == 0) then
+        write (formato, '(A,I1,A,A,A)') '(', shx(1), '(', trim(fmt), '&
+          &,1x))'
+      else
+        formato = fmt
+      end if
+    else
+      write (formato, '(A,I1,A,A,A)') '(', shx(1), '(', trim(form), '&
+        &,1x))'
+    end if
+
+    do i = 1, shx(1)
+      write (u, formato) b(:, i)
+    end do
+
+    IF (closef) close (u)
+  end subroutine save_array
 
 end module array_utils
 

@@ -2,45 +2,53 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import splrep, splev
+from scipy.interpolate import splrep, splprep, splev
 
 # pyfname = 'data/pysplrep_s{}.dat'
 # fofname = 'data/testsplrep_s{}.dat'
-pyfname = 'data/pysplrep_s{}.dat'
 fofname = 'data/testsplrep_per_s{}.dat'
-pyfdata = 'data/pysplev_s{}.dat'
 fofdata = 'data/fosplev_s{}.dat'
 
-ss = [0, 1, 2, 3]
-N = 6
-x = np.linspace(0, np.pi, N)
-y = np.sin(x)
-xnew = np.linspace(0, np.pi, 50)
 
 plt.ion()
 
 
-def create_sin_data():
-  for s in ss:
-    tck = splrep(x, y, s=s)
-    np.savetxt(pyfname.format(s), np.c_[tck[0], tck[1]], fmt="%.14g",
-               header=' t           c')
-    return tck
+def create_splrep_data(ss):
+  "Create data for comparison with numfor splrep & splev"
+  pyfname = 'data/pysplrep_s{}.dat'
+  pyfdata = 'data/pysplev_s{}.dat'
 
+  N = 6
+  Nnew = 59
+  x = np.linspace(0, np.pi, N)
+  y = np.sin(x)
+  xnew = np.linspace(0, np.pi, Nnew)
 
-def create_sin_spl():
-  for s in ss:
+  for j, s in enumerate(ss):
     tck = splrep(x, y, s=s)
     ynew = splev(xnew, tck)
-    np.savetxt(pyfname.format(s), np.c_[tck[0], tck[1]], fmt="%.14g",
-               header=' x           y')
+    head = 't c for s={}'.format(s)
+    np.savetxt(pyfname.format(s), np.c_[tck[0], tck[1]], fmt="%.14g", header=head)
+    head = 'x   y  for s={}'.format(s)
+    np.savetxt(pyfdata.format(s), np.c_[xnew, ynew], fmt="%.14g", header=head)
 
 
-def create_sin_data_per():
+def create_splprep_data(ss):
+  "Create data for comparison with numfor splprep & splev"
+  pyfname = 'data/pysplprep_s{}.dat'
+  pyfdata = 'data/pysplpev_s{}.dat'
+
+  phi = np.linspace(0, 2. * np.pi, 40)
+  r = 0.5 + np.cos(phi)         # polar coords
+  x, y = r * np.cos(phi), r * np.sin(phi)    # convert to cartesian
+
   for s in ss:
-    tck = splrep(x, y, s=s, per=True)
-    np.savetxt(pyfname.format(s), np.c_[tck[0], tck[1]], fmt="%.14g",
-               header=' t           c')
+    tck, u = splprep([x, y], s=s)
+    np.savetxt(pyfname.format(s), np.c_[tck[1][0], tck[1][1]], fmt="%.14g",
+               header=' c[0]           c[1]')
+    ynew = splev(u, tck)
+    head = 'u    x        y ,  for s={}'.format(s)
+    np.savetxt(pyfdata.format(s), np.c_[u, ynew[0], ynew[1]], fmt="%.14g", header=head)
 
 
 # Plot
@@ -73,7 +81,8 @@ def plot_sin_c():
 
 
 # create_sin_data_per()
-
+ss = [0., 0.3]
+create_splprep_data(ss)
 
 # plt.plot(x, y, 'o')
 # plt.plot(xnew, ynew)

@@ -21,7 +21,7 @@ module fitpack
   character, private, parameter :: nl = new_line('a')
 
   interface splev
-    module procedure :: splevp
+    module procedure :: splevp, splevc
   end interface splev
 
 contains
@@ -133,6 +133,7 @@ contains
     integer :: nest
     integer :: mx, k1, k2, nwrk, n
     integer, dimension(2) :: shx
+    ! integer :: pos
 
     ! Set up the parameters tol and maxit
     tol = 0.001_8
@@ -155,8 +156,6 @@ contains
         ! x(:, m) = x(:, 1)
       end if
     end if
-    ! allocate (y(mx))            ! Not necessary?
-    ! y = reshape(x, [mx])
 
     ! Check parameter array u
     IF (size(u) < m) call print_msg('size(u) < size(m)', 'splprep', errcode=1)
@@ -315,7 +314,7 @@ contains
     ! IF (.not. allocated(tck%t)) allocate (tck%c(n))
 
     ! Set the first n (number of knots) values to the output
-    tck%c = c_
+    tck%c = c_(:idim * n)
     tck%t = t_(:n)
 
     deallocate (c_)
@@ -397,6 +396,7 @@ contains
     ! Weights
     if (Present(w)) then
       IF (size(w) /= m) call print_msg('size(w) different than size(x)='//str(m), 'splrep')
+      ! allocate (w_(m))
       w_ = w
       IF (.not. Present(s)) s_ = m - sqrt(2._dp * m)
     else
@@ -474,9 +474,7 @@ contains
     allocate (tck%t(n), tck%c(n))
     tck%c = c_(:n)
     tck%t = t_(:n)
-
     deallocate (c_, t_, wrk_, iwrk_)
-
   end subroutine splrep
 
   !> splev Computes a B-spline or its derivatives.
@@ -486,15 +484,15 @@ contains
   !!
   !! Examples:
   !!
-  function splevc(x, tck, der, ext, ier) result(y)
+  subroutine splevc(x, tck, y, der, ext, ier)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Points at which to return the value of the smoothed spline or its derivative
     type(UnivSpline), intent(IN) :: tck !< A spline representation returned by splrep
+    real(dp), dimension(size(x)), intent(OUT) :: y !< Smoothed or interpolated spline values
     integer, optional, intent(IN) :: der !< The order of the derivative of the spline to compute (must be less than k).
     integer, optional, intent(IN) :: ext !< Flag controling the result for  ``x`` outside the
     integer, optional, intent(OUT) :: ier !< Flag given output status
     !! interval defined by the knot sequence.
-    real(dp), dimension(size(x)) :: y !< Smoothed or interpolated spline values
     real(dp), dimension(:), allocatable :: wrk_
 
     integer :: k, n, m, e, ier_, nu
@@ -513,9 +511,8 @@ contains
     call splder(tck%t, n, tck%c, k, nu, x, y, m, e, wrk_, ier_)
     IF (ier_ == 10) call print_msg('Invalid input data', 'splev', errcode=0)
     IF (ier_ == 1) call print_msg('x value out of bounds and e == 2', 'splev', errcode=0)
-
     IF (Present(ier)) ier = ier_
-  end function splevc
+  end subroutine splevc
 
   !> splev Computes a B-spline or its derivatives.
   !! Given the knots and coefficients of a B-spline representation, evaluate
@@ -524,35 +521,35 @@ contains
   !!
   !! Examples:
   !!
-  function splevp(u, tck, der, ext, idim, ier) result(y)
+  subroutine splevp(u, tck, y, der, ext, ier)
     implicit none
     real(dp), dimension(:), intent(IN) :: u !< Points at which to return the value of the smoothed spline or its derivative
     type(UnivSpline), intent(IN) :: tck !< A spline representation returned by splrep
     integer, optional, intent(IN) :: der !< The order of the derivative of the spline to compute (must be less than k).
     integer, optional, intent(IN) :: ext !< Flag controling the result for  ``x`` outside the
-    integer, optional, intent(IN) :: idim !< Number of dimensions for parametric curve
+    ! integer, optional, intent(IN) :: idim !< Number of dimensions for parametric curve
 
     integer, optional, intent(OUT) :: ier !< Flag given output status
     real(dp), dimension(:), allocatable :: wrk_
     ! Result
-    real(dp), dimension(:, :), allocatable :: y !< Smoothed or interpolated spline values
+    real(dp), dimension(:, :), intent(OUT) :: y !< Smoothed or interpolated spline values
 
     integer :: k, n, m, e, ier_, nu
     integer :: idim_             ! If parametric, dimension of curve
+    integer :: shy(2)
     integer :: i, pos
 
     ! Dimension of the curve
-    idim_ = 1; if (Present(idim)) idim_ = idim
 
     k = tck%k
     n = size(tck%t)
     m = size(u)
     e = 0; IF (Present(ext)) e = ext
     nu = 0; IF (Present(der)) nu = der
+    shy = shape(y)
 
-    IF (idim_ * n /= size(tck%c)) call print_msg("In tck, c and t have not right sizes", errcode=10)
-
-    allocate (y(idim_, size(u)))
+    idim_ = shy(1)
+    IF (shy(2) /= m) call print_msg('Number of points in y='//str(shy(2))//' different from number of parameters u'//str(m))
 
     allocate (wrk_(size(tck%wrk)))
     wrk_ = tck%wrk
@@ -562,13 +559,13 @@ contains
     !
 
     do i = 1, idim_
-      pos = (i - 1) * n + 1
-      call splder(tck%t, n, tck%c(pos:), k, nu, u, y(i, :), m, e, wrk_, ier_)
+      pos = (i - 1) * n
+      call splder(tck%t, n, tck%c(pos + 1:pos + n), k, nu, u, y(i, :), m, e, wrk_, ier_)
       IF (ier_ == 10) call print_msg('Invalid input data', 'splev', errcode=0)
       IF (ier_ == 1) call print_msg('u value out of bounds and e == 2', 'splev', errcode=0)
     end do
     IF (Present(ier)) ier = ier_
 
-  end function splevp
+  end subroutine splevp
 
 end module fitpack
