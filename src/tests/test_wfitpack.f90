@@ -52,10 +52,10 @@ contains
       s = ss(i)
       fofname = fname//str(s)//'.dat'
       call splrep(x, y, tck=tck, s=s)
-      call save_array([tck%t, tck%c], [size(tck%t), 2], fname=fofname)
+      call save_array([tck%t, tck%c], 2, fname=fofname)
       call splev(xnew, tck, ynew)
       fofdata = fdata//str(s)//'.dat'
-      call save_array([xnew, ynew], [size(xnew), 2], fname=fofdata)
+      call save_array([xnew, ynew], 2, fname=fofdata)
     end do
   end subroutine test_splines1
   !> test_parametric_splines
@@ -76,6 +76,7 @@ contains
     integer :: i
     character(len=:), allocatable :: fname, fofname
     character(len=:), allocatable :: fdata, fofdata
+    character(len=:), allocatable :: header
 
     fname = 'data/fosplprep_s'
     fdata = 'data/fosplpev_s'
@@ -91,12 +92,14 @@ contains
     do i = 1, size(ss)
       s = ss(i)
       fofname = fname//str(s)//'.dat'
+      header = ' c[0]           c[1]'
       call splprep(x, u, tck, s=s)
-      call save_array([tck%c, tck%c], [size(tck%c), 2], fname=fofname)
+      call save_array([tck%c(:size(tck%t)), tck%c(size(tck%t) + 1:)], 2, fname=fofname, fmt="g0.14", header=header)
 
+      header = "u       c"
       fofdata = fdata//str(s)//'.dat'
       call splevp(u, tck, new_points)
-      call save_array([u, new_points(1, :), new_points(2, :)], [size(u), 3], fofdata)
+      call save_array([u, new_points(1, :), new_points(2, :)], 3, fofdata)
     end do
   end subroutine test_parametric_splines
 end program test_wfitpack

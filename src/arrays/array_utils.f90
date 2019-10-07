@@ -1,10 +1,11 @@
 !> @file array_utils.f90
-!! @date "2019-10-06 20:29:03"
+!! @date "2019-10-07 10:41:06"
 
 !> This module provides convenience routines to operate or get information on arrays
 
 module array_utils
-  use basic, only: dp, Zero, Small, stdout, print_msg
+  USE basic, only: dp, Zero, Small, stdout, print_msg
+  USE strings, only: str
 
   implicit none
 
@@ -248,15 +249,31 @@ contains
     IF (closef) close (u)
   end subroutine savetxt
 
-  subroutine save_array(X, shx, fname, fmt, unit)
+  !> save_array Guarda un array en el formato deseado
+  !!
+  !! Examples:
+  !!```
+  !!  real(dp), dimension(20), allocatable :: x,y
+  !!  character(len=:), allocatable :: filename
+  !!  filename = "output.dat"
+  !!  x = linspace(0, 10, 20)
+  !!  y = -x**2/10
+  !!  save_array(x)  ! One array in one column to stdout
+  !!  save_array(x, 1, filename) ! One array in one column to file
+  !!  save_array([x,y], 2, filename) ! One array in one column to file
+  subroutine save_array(X, ncols, fname, fmt, header, unit)
     implicit none
     real(dp), dimension(:), intent(IN) :: X        !< Array a escribir a archivo de texto
-    integer, dimension(2), intent(IN) :: shx !< Shape intended to write
+    integer, optional, intent(IN) :: ncols !< Number of columns to write. Default 1
+
     character(len=*), optional, intent(IN) :: fname  !< Nombre del archivo de salida
     character(len=*), optional, intent(IN) :: fmt    !< formato a usar para los datos. Default 'g0.5'
-    integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto
+    character(len=*), optional, intent(IN) :: header  !< Text to write before data
+
+    integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto. Default stdout (= 6)
 
     real(dp), dimension(:, :), allocatable :: b
+    integer :: ncols_, nrows_
     integer :: i
     integer :: u
 
@@ -264,38 +281,43 @@ contains
     character(len=32) :: formato
     logical :: closef
 
-    IF (size(X) /= product(shx)) call print_msg("Incompatible shape and size of array X for saving", "save_arrays", errcode=1)
-    ! Si fname está presente => Toma precedencia sobre unit. Si
-    ! ninguna está usa stdout
+    ncols_ = 1; IF (Present(ncols)) ncols_ = ncols
+
+    nrows_ = size(X) / ncols_
+    IF (nrows_ * ncols_ /= size(X)) call print_msg("Incompatible&
+      & number of columns"//str(ncols_)//" and size(X)="//str(size(X))&
+      &//" for saving", "save_arrays", errcode=1)
+
+    ! Si fname está presente => Toma precedencia sobre unit.
     closef = .False.
-    u = stdout
+    u = stdout    ! Si no está ni fname ni unit está usa stdout
 
     if (Present(fname)) then
       if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
         open (newunit=u, file=trim(fname))
         closef = .True.
       end if
-    else if (present(unit)) then ! The file was already open before
+    else if (Present(unit)) then ! The file was already open before
       ! invoking the function
       IF (unit >= 0 .and. unit <= 99) u = unit
     end if
 
-    b = reshape(X, shx)
-    b = transpose(b)
+    b = reshape(X, [ncols_, nrows_], order=[2, 1])
 
     if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
       if (index('(', fmt) == 0) then
-        write (formato, '(A,I1,A,A,A)') '(', shx(1), '(', trim(fmt), '&
+        write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(fmt), '&
           &,1x))'
       else
         formato = fmt
       end if
     else
-      write (formato, '(A,I1,A,A,A)') '(', shx(1), '(', trim(form), '&
+      write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(form), '&
         &,1x))'
     end if
 
-    do i = 1, shx(1)
+    if (Present(header)) write (u, '(A)') "# "//trim(header)
+    do i = 1, nrows_
       write (u, formato) b(:, i)
     end do
 
