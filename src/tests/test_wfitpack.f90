@@ -7,10 +7,10 @@ program test_wfitpack
   USE fitpack
   implicit none
 
-  real(dp), dimension(1) :: ss
+  real(dp), dimension(2) :: ss
 
   ! ss = [0._dp, 0.3_dp]
-  ss = [0.3_dp]
+  ss = [Zero, 0.3_dp]
 
   print *, "1D Splines"
   call test_splines1(ss)
@@ -84,7 +84,7 @@ contains
     allocate (r(Nd), u(Nd), phi(Nd))
     allocate (x(2, Nd), new_points(2, Nd))
 
-    phi = linspace(Zero, 2.*M_PI, Nd)
+    phi = linspace(Zero, 2 * M_PI, Nd)
     r = 0.5_8 + cos(phi)        ! polar coords
     x(1, :) = r * cos(phi)      ! convert to cartesian
     x(2, :) = r * sin(phi)      ! convert to cartesian
@@ -96,10 +96,10 @@ contains
       call splprep(x, u, tck, s=s)
       call save_array([tck%c(:size(tck%t)), tck%c(size(tck%t) + 1:)], 2, fname=fofname, fmt="g0.14", header=header)
 
-      header = "u       c"
+      header = "u       x        y"
       fofdata = fdata//str(s)//'.dat'
-      call splevp(u, tck, new_points)
-      call save_array([u, new_points(1, :), new_points(2, :)], 3, fofdata)
+      call splev(u, tck, new_points)
+      call save_array([u, new_points(1, :), new_points(2, :)], 3, fofdata, header=header)
     end do
   end subroutine test_parametric_splines
 end program test_wfitpack
