@@ -1,82 +1,70 @@
 !> test_wfitpack
 program test_wfitpack
   USE utils, only: dp, Zero, M_PI, str
-  USE grids, only: linspace
+  USE arrays, only: linspace, save_array, savetxt
   USE strings, only: center
+
   USE fitpack
   implicit none
 
-  character(len=:), allocatable :: fname
-  character(len=:), allocatable :: fdata
-  character(len=:), allocatable :: header
+  real(dp), dimension(1) :: ss
 
-  call test_parametric_splines()
+  ! ss = [0._dp, 0.3_dp]
+  ss = [0.3_dp]
 
-  ! ds = 1._dp
-  ! header = '#   t           c'
-  ! do i = 1, 4
-  !   s = (i - 1) * ds
-  !   ! print *, center(' s = '//str(s)//' ', 120, '*')
-  !   fname = 'data/testsplrep_per_s'//str(s)//'.dat'
-  !   call splrep(x, y, tck=tck, s=s, per=.True.)
-  !   call save_arrays(fname, tck%t, tck%c, head=header)
-  !   ynew = splev(xnew, tck)
-  ! end do
+  print *, "1D Splines"
+  call test_splines1(ss)
+  print *, "Parametric 1D Splines"
+  call test_parametric_splines(ss)
 
 contains
   !> test_splines1
   !!
   !! Examples:
   !!
-  subroutine test_splines1()
+  subroutine test_splines1(ss)
     implicit none
 
-    real(dp), dimension(:), allocatable :: x
-    real(dp), dimension(:), allocatable :: y
-
+    real(dp), dimension(:), intent(IN) :: ss
     integer, parameter :: N = 6
     integer, parameter :: Nnew = 59
-    real(dp), dimension(Nnew) :: xnew, ynew, yd1, yd2
+    real(dp), dimension(N) :: x
+    real(dp), dimension(N) :: y
+    real(dp), dimension(Nnew) :: xnew
+    real(dp), dimension(Nnew) :: ynew
+    character(len=:), allocatable :: fname, fofname
+    character(len=:), allocatable :: fdata, fofdata
+
     integer :: i
-    real(dp) :: s, ds
+    real(dp) :: s
 
     type(UnivSpline) :: tck
 
-    allocate (x(N), y(N))
+    fname = 'data/fosplrep_s'
+    fdata = 'data/fosplev_s'
+
     x = linspace(Zero, M_PI, N)
-    xnew = linspace(-0.6_dp, M_PI, Nnew)
     y = sin(x)
-    ds = 1._dp
+    xnew = linspace(Zero, M_PI, Nnew)
 
     ! Check x,y curves
-    do i = 1, 1
-      s = (i - 1) * ds
-      ! print *, center(' s = '//str(s)//' ', 120, '*')
-      fname = 'data/testsplrep_s'//str(s)//'.dat'
+    do i = 1, size(ss)
+      s = ss(i)
+      fofname = fname//str(s)//'.dat'
       call splrep(x, y, tck=tck, s=s)
-      ynew = splev(xnew, tck)
-      yd1 = splev(xnew, tck, der=1)
-
-      yd2 = splev(xnew, tck, der=1, ext=3)
-      ! print *, ynew
-      header = '#   t           c'
-      call save_arrays(fname, tck%t, tck%c, head=header)
-      header = "#   x           y"
-      fdata = 'data/fosplev_s'//str(s)//'.dat'
-      call save_arrays(fdata, xnew, ynew, head=header)
-      fdata = 'data/fosplev1_s'//str(s)//'.dat'
-      call save_arrays(fdata, xnew, yd1, head=header)
-      fdata = 'data/fosplev2_s'//str(s)//'.dat'
-      call save_arrays(fdata, xnew, yd2, head=header)
-
+      call save_array([tck%t, tck%c], 2, fname=fofname)
+      call splev(xnew, tck, ynew)
+      fofdata = fdata//str(s)//'.dat'
+      call save_array([xnew, ynew], 2, fname=fofdata)
     end do
   end subroutine test_splines1
   !> test_parametric_splines
   !!
   !! Examples:
   !!
-  subroutine test_parametric_splines()
+  subroutine test_parametric_splines(ss)
     implicit none
+    real(dp), dimension(:), intent(IN) :: ss
     real(dp), dimension(:), allocatable :: phi
     real(dp), dimension(:), allocatable :: r
     real(dp), dimension(:, :), allocatable :: x
@@ -85,42 +73,33 @@ contains
     type(UnivSpline) :: tck
     real(dp) :: s = 0._8
     integer :: Nd = 40          ! Number of points
-    integer :: n
+    integer :: i
+    character(len=:), allocatable :: fname, fofname
+    character(len=:), allocatable :: fdata, fofdata
+    character(len=:), allocatable :: header
 
-    allocate (r(Nd), u(Nd), phi(Nd), x(2, Nd))
+    fname = 'data/fosplprep_s'
+    fdata = 'data/fosplpev_s'
+
+    allocate (r(Nd), u(Nd), phi(Nd))
+    allocate (x(2, Nd), new_points(2, Nd))
+
     phi = linspace(Zero, 2.*M_PI, Nd)
     r = 0.5_8 + cos(phi)        ! polar coords
     x(1, :) = r * cos(phi)      ! convert to cartesian
     x(2, :) = r * sin(phi)      ! convert to cartesian
 
-    call splprep(x, u, tck, s=s)
-    new_points = splevp(u, tck, idim=2)
+    do i = 1, size(ss)
+      s = ss(i)
+      fofname = fname//str(s)//'.dat'
+      header = ' c[0]           c[1]'
+      call splprep(x, u, tck, s=s)
+      call save_array([tck%c(:size(tck%t)), tck%c(size(tck%t) + 1:)], 2, fname=fofname, fmt="g0.14", header=header)
 
-    n = size(tck%t)
-    fdata = 'data/fopsplev_s'//str(s)//'.dat'
-    ! header = "#   c[0]           c[1]"
-    header = "#   x           y"
-    ! call save_arrays(fdata, tck%c(:n), tck%c(n + 1:), head=header)
-    call save_arrays(fdata, new_points(1, :), new_points(2, :), head=header)
-
-  end subroutine test_parametric_splines
-  !> save_arrays
-  !!
-  !! Examples:
-  !!
-  subroutine save_arrays(filename, x, y, head)
-    implicit none
-    real(dp), dimension(:), intent(IN) :: x !<
-    real(dp), dimension(size(x)), intent(IN) :: y !<
-    character(len=:), allocatable, intent(IN) :: filename
-    character(len=:), allocatable, intent(IN) :: head
-    integer :: i, u
-    open (newunit=u, file=filename)
-    write (u, "(A)") head
-    do i = 1, size(x)
-      write (u, "(2(g0.9, 1x))") x(i), y(i)
+      header = "u       c"
+      fofdata = fdata//str(s)//'.dat'
+      call splevp(u, tck, new_points)
+      call save_array([u, new_points(1, :), new_points(2, :)], 3, fofdata)
     end do
-    close (u)
-
-  end subroutine save_arrays
+  end subroutine test_parametric_splines
 end program test_wfitpack
