@@ -115,6 +115,7 @@ contains
   !!  ! 1.00000000000000  1.50000000000000 -0.00000000000000
   !!  !
   !!```
+  !!
   !!  Notice that (i) we force interpolation by using `s=0`,
   !!  (ii) the parameterization, ``u``, is generated automatically.
   subroutine splprep(x, u, tck, w, ulim, k, task, upar, s, t, per, ier)
@@ -356,7 +357,7 @@ contains
     deallocate (iwrk_)
   end subroutine splprep
 
-  !> splrep Find the B-spline representation of 1-D curve.
+  !> splrep Finds the B-spline representation of 1-D curve.
   !! Given the set of data points ``(x[i], y[i])`` determine a smooth spline
   !! approximation of degree k on the interval ``xb <= x <= xe``.
   !!
@@ -403,8 +404,8 @@ contains
   !!  ! 3.14159265358979  0.00000000000000
   !!  !
   !!```
+  !!
   subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck, ier)
-    ! subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Values of independent variable
     real(dp), dimension(size(x)), intent(IN) :: y !< The data points y=f(x)
