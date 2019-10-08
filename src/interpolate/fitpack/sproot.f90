@@ -1,9 +1,9 @@
-subroutine sproot(t, n, c, zero, mest, m, ier)
+subroutine sproot(t, n, c, zeros, mest, m, ier)
   !  subroutine sproot finds the zeros of a cubic spline s(x),which is
   !  given in its normalized b-spline representation.
   !
   !  calling sequence:
-  !     call sproot(t,n,c,zero,mest,m,ier)
+  !     call sproot(t,n,c,zeros,mest,m,ier)
   !
   !  input parameters:
   !    t    : real array,length n, containing the knots of s(x).
@@ -12,7 +12,7 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
   !    mest : integer, specifying the dimension of array zero.
   !
   !  output parameters:
-  !    zero : real array,length mest, containing the zeros of s(x).
+  !    zeros : real array,length mest, containing the zeros of s(x).
   !    m    : integer,giving the number of zeros.
   !    ier  : error flag:
   !      ier = 0: normal return.
@@ -37,9 +37,14 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
   !
   ! ..
   ! ..scalar arguments..
-  integer :: n, mest, m, ier
-  !  ..array arguments..
-  real(8) :: t(n), c(n), zero(mest)
+  implicit none
+  integer, intent(IN) :: n !< n = size(t)
+  real(8), dimension(n), intent(IN) :: t !< Knots
+  real(8), dimension(n), intent(IN) :: c !< Coefficients
+  integer, intent(IN) :: mest !<
+  real(8), dimension(mest), intent(OUT) :: zeros !<
+  integer, intent(OUT) :: m !<
+  integer, intent(OUT) :: ier !<
   !  ..local scalars..
   integer :: i, j, j1, l, n4
   real(8) :: ah, a0, a1, a2, a3, bh, b0, b1, c1, c2, c3, c4, c5, d4, d5, h1, h2,&
@@ -49,22 +54,22 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
   real(8) :: y(3)
   !  ..
   !  set some constants
-  two = 0.2d+01
-  three = 0.3d+01
+  two = 2._8
+  three = 3._8
   !  before starting computations a data check is made. if the input data
   !  are invalid, control is immediately repassed to the calling program.
   n4 = n - 4
   ier = 10
-  if (n < 8) go to 800
+  if (n < 8) return
   j = n
   do i = 1, 3
-    if (t(i) > t(i + 1)) go to 800
-    if (t(j) < t(j - 1)) go to 800
+    if (t(i) > t(i + 1)) return
+    if (t(j) < t(j - 1)) return
     j = j - 1
   end do
 
   do i = 4, n4
-    if (t(i) >= t(i + 1)) go to 800
+    if (t(i) >= t(i + 1)) return
   end do
 
   !  the problem considered reduces to finding the zeros of the cubic
@@ -96,7 +101,7 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
   a0 = (h2 * d4 + h1 * d5) / t2
   ah = three * (h2 * c4 + h1 * c5) / t2
   z1 = .true.
-  if (ah < 0.0d0) z1 = .false.
+  if (ah < 0._8) z1 = .false.
   nz1 = .not. z1
   m = 0
   !  main loop for the different knot intervals.
@@ -128,17 +133,17 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
     !  test whether or not pl(x) could have a zero in the range
     !  t(l) <= x <= t(l+1).
     z3 = .true.
-    if (b1 < 0.0d0) z3 = .false.
+    if (b1 < 0._8) z3 = .false.
     nz3 = .not. z3
-    if (a0 * b0 <= 0.0d0) go to 100
+    if (a0 * b0 <= 0._8) go to 100
     z0 = .true.
-    if (a0 < 0.0d0) z0 = .false.
+    if (a0 < 0._8) z0 = .false.
     nz0 = .not. z0
     z2 = .true.
     if (a2 < 0.) z2 = .false.
     nz2 = .not. z2
     z4 = .true.
-    if (3.0d0 * a3 + a2 < 0.0d0) z4 = .false.
+    if (3.0d0 * a3 + a2 < 0._8) z4 = .false.
     nz4 = .not. z4
     if (.not. ((z0 .and. (nz1 .and. (z3 .or. z2 .and. nz4) .or. nz2 .and.&
       &z3 .and. z4) .or. nz0 .and. (z1 .and. (nz3 .or. nz2 .and. z4) .or. z2 .and.&
@@ -148,11 +153,15 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
     if (j == 0) go to 200
     !  find which zeros of pl(x) are zeros of s(x).
     do i = 1, j
-      if (y(i) < 0.0d0 .or. y(i) > 1.0d0) go to 150
+      if (y(i) < 0.0_8 .or. y(i) > 1.0_8) go to 150
       !  test whether the number of zeros of s(x) exceeds mest.
-      if (m >= mest) go to 700
+      if (m >= mest) then
+        ier = 1
+        return
+      end if
+
       m = m + 1
-      zero(m) = t(l) + h1 * y(i)
+      zeros(m) = t(l) + h1 * y(i)
 150   continue
     end do
 
@@ -163,15 +172,15 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
   end do
 
   !  the zeros of s(x) are arranged in increasing order.
-  if (m < 2) go to 800
+  if (m < 2) return
   do i = 2, m
     j = i
 350 j1 = j - 1
     if (j1 == 0) go to 400
-    if (zero(j) >= zero(j1)) go to 400
-    zz = zero(j)
-    zero(j) = zero(j1)
-    zero(j1) = zz
+    if (zeros(j) >= zeros(j1)) go to 400
+    zz = zeros(j)
+    zeros(j) = zeros(j1)
+    zeros(j1) = zz
     j = j1
     go to 350
 400 continue
@@ -180,13 +189,10 @@ subroutine sproot(t, n, c, zero, mest, m, ier)
   j = m
   m = 1
   do i = 2, j
-    if (zero(i) == zero(m)) go to 500
-    m = m + 1
-    zero(m) = zero(i)
-500 continue
+    if (zeros(i) /= zeros(m)) then
+      m = m + 1
+      zeros(m) = zeros(i)
+    end if
   end do
 
-  go to 800
-700 ier = 1
-800 return
 end subroutine sproot

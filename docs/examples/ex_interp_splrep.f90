@@ -16,6 +16,7 @@ contains
     real(dp) :: s
     type(UnivSpline) :: tck
 
+    s = 0._dp
     x = linspace(Zero, M_PI, N)
     y = sin(x)
     xnew = linspace(Zero, M_PI, Nnew)

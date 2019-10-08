@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-09-25 11:09:56"
+!! @date "2019-10-08 14:33:24"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -47,7 +47,7 @@ module csplines
   end interface csplev
 
   private
-  public :: cspl_rep, csplrep, csplev, spl_clean_rep, splint, splint_square, spleps
+  public :: cspl_rep, csplrep, csplev, spl_clean_rep, spl_int, splint_square, spleps
   public :: spline_coeff, csplder
 
 contains
@@ -507,7 +507,7 @@ contains
 
 !> Definite integral of a cubic spline function.
 !!
-  function splint(xL, xU, csp) result(suma)
+  function spl_int(xL, xU, csp) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
     type(cspl_rep), intent(IN) :: csp !< Interpolating object
@@ -563,7 +563,7 @@ contains
       end associate
     end function int_single
 
-  end function splint
+  end function spl_int
 
 !> Integral of the square of a function expressed as a cubic spline.
   function splint_square(xL, xU, csp) result(suma)

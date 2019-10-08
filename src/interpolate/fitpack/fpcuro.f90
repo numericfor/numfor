@@ -22,7 +22,7 @@ subroutine fpcuro(a, b, c, d, x, n)
   real(8) :: a1, b1, c1, df, disc, d1, e3, f, four, half, ovfl, pi3, p3, q, r
   real(8) :: step, tent, three, two, u, u1, u2, y
   !  ..function references..
-  real(8) :: abs, max, datan, atan2, cos, sign, sqrt
+  ! real(8) :: abs, max, datan, atan2, cos, sign, sqrt
   !  set constants
   two = 2._8
   three = 3._8
@@ -31,7 +31,7 @@ subroutine fpcuro(a, b, c, d, x, n)
   half = 0.5_8
   tent = 0.1_8
   e3 = tent / 0.3_8
-  pi3 = datan(1._8) / 0.75_8
+  pi3 = atan(1._8) / 0.75_8
   a1 = abs(a)
   b1 = abs(b)
   c1 = abs(c)

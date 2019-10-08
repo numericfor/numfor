@@ -717,6 +717,205 @@ subroutine splder(t, n, c, k, nu, x, y, m, e, wrk, ier)
   end do
 end subroutine splder
 
+subroutine sproot(t, n, c, zeros, mest, m, ier)
+  !  subroutine sproot finds the zeros of a cubic spline s(x),which is
+  !  given in its normalized b-spline representation.
+  !
+  !  calling sequence:
+  !     call sproot(t,n,c,zeros,mest,m,ier)
+  !
+  !  input parameters:
+  !    t    : real array,length n, containing the knots of s(x).
+  !    n    : integer, containing the number of knots.  n>=8
+  !    c    : real array,length n, containing the b-spline coefficients.
+  !    mest : integer, specifying the dimension of array zero.
+  !
+  !  output parameters:
+  !    zeros : real array,length mest, containing the zeros of s(x).
+  !    m    : integer,giving the number of zeros.
+  !    ier  : error flag:
+  !      ier = 0: normal return.
+  !      ier = 1: the number of zeros exceeds mest.
+  !      ier =10: invalid input data (see restrictions).
+  !
+  !  other subroutines required: fpcuro
+  !
+  !  restrictions:
+  !    1) n>= 8.
+  !    2) t(4) < t(5) < ... < t(n-4) < t(n-3).
+  !       t(1) <= t(2) <= t(3) <= t(4)
+  !       t(n-3) <= t(n-2) <= t(n-1) <= t(n)
+  !
+  !  author :
+  !    p.dierckx
+  !    dept. computer science, k.u.leuven
+  !    celestijnenlaan 200a, b-3001 heverlee, belgium.
+  !    e-mail : Paul.Dierckx@cs.kuleuven.ac.be
+  !
+  !  latest update : march 1987
+  !
+  ! ..
+  ! ..scalar arguments..
+  implicit none
+  integer, intent(IN) :: n !< n = size(t)
+  real(8), dimension(n), intent(IN) :: t !< Knots
+  real(8), dimension(n), intent(IN) :: c !< Coefficients
+  integer, intent(IN) :: mest !<
+  real(8), dimension(mest), intent(OUT) :: zeros !<
+  integer, intent(OUT) :: m !<
+  integer, intent(OUT) :: ier !<
+  !  ..local scalars..
+  integer :: i, j, j1, l, n4
+  real(8) :: ah, a0, a1, a2, a3, bh, b0, b1, c1, c2, c3, c4, c5, d4, d5, h1, h2,&
+    &three, two, t1, t2, t3, t4, t5, zz
+  logical z0, z1, z2, z3, z4, nz0, nz1, nz2, nz3, nz4
+  !  ..local array..
+  real(8) :: y(3)
+  !  ..
+  !  set some constants
+  two = 2._8
+  three = 3._8
+  !  before starting computations a data check is made. if the input data
+  !  are invalid, control is immediately repassed to the calling program.
+  n4 = n - 4
+  ier = 10
+  if (n < 8) return
+  j = n
+  do i = 1, 3
+    if (t(i) > t(i + 1)) return
+    if (t(j) < t(j - 1)) return
+    j = j - 1
+  end do
+
+  do i = 4, n4
+    if (t(i) >= t(i + 1)) return
+  end do
+
+  !  the problem considered reduces to finding the zeros of the cubic
+  !  polynomials pl(x) which define the cubic spline in each knot
+  !  interval t(l)<=x<=t(l+1). a zero of pl(x) is also a zero of s(x) on
+  !  the condition that it belongs to the knot interval.
+  !  the cubic polynomial pl(x) is determined by computing s(t(l)),
+  !  s'(t(l)),s(t(l+1)) and s'(t(l+1)). in fact we only have to compute
+  !  s(t(l+1)) and s'(t(l+1)); because of the continuity conditions of
+  !  splines and their derivatives, the value of s(t(l)) and s'(t(l))
+  !  is already known from the foregoing knot interval.
+  ier = 0
+  !  evaluate some constants for the first knot interval
+  h1 = t(4) - t(3)
+  h2 = t(5) - t(4)
+  t1 = t(4) - t(2)
+  t2 = t(5) - t(3)
+  t3 = t(6) - t(4)
+  t4 = t(5) - t(2)
+  t5 = t(6) - t(3)
+  !  calculate a0 = s(t(4)) and ah = s'(t(4)).
+  c1 = c(1)
+  c2 = c(2)
+  c3 = c(3)
+  c4 = (c2 - c1) / t4
+  c5 = (c3 - c2) / t5
+  d4 = (h2 * c1 + t1 * c2) / t4
+  d5 = (t3 * c2 + h1 * c3) / t5
+  a0 = (h2 * d4 + h1 * d5) / t2
+  ah = three * (h2 * c4 + h1 * c5) / t2
+  z1 = .true.
+  if (ah < 0._8) z1 = .false.
+  nz1 = .not. z1
+  m = 0
+  !  main loop for the different knot intervals.
+  do l = 4, n4
+    !  evaluate some constants for the knot interval t(l) <= x <= t(l+1).
+    h1 = h2
+    h2 = t(l + 2) - t(l + 1)
+    t1 = t2
+    t2 = t3
+    t3 = t(l + 3) - t(l + 1)
+    t4 = t5
+    t5 = t(l + 3) - t(l)
+    !  find a0 = s(t(l)), ah = s'(t(l)), b0 = s(t(l+1)) and bh = s'(t(l+1)).
+    c1 = c2
+    c2 = c3
+    c3 = c(l)
+    c4 = c5
+    c5 = (c3 - c2) / t5
+    d4 = (h2 * c1 + t1 * c2) / t4
+    d5 = (h1 * c3 + t3 * c2) / t5
+    b0 = (h2 * d4 + h1 * d5) / t2
+    bh = three * (h2 * c4 + h1 * c5) / t2
+    !  calculate the coefficients a0,a1,a2 and a3 of the cubic polynomial
+    !  pl(x) = ql(y) = a0+a1*y+a2*y**2+a3*y**3 ; y = (x-t(l))/(t(l+1)-t(l)).
+    a1 = ah * h1
+    b1 = bh * h1
+    a2 = three * (b0 - a0) - b1 - two * a1
+    a3 = two * (a0 - b0) + b1 + a1
+    !  test whether or not pl(x) could have a zero in the range
+    !  t(l) <= x <= t(l+1).
+    z3 = .true.
+    if (b1 < 0._8) z3 = .false.
+    nz3 = .not. z3
+    if (a0 * b0 <= 0._8) go to 100
+    z0 = .true.
+    if (a0 < 0._8) z0 = .false.
+    nz0 = .not. z0
+    z2 = .true.
+    if (a2 < 0.) z2 = .false.
+    nz2 = .not. z2
+    z4 = .true.
+    if (3.0d0 * a3 + a2 < 0._8) z4 = .false.
+    nz4 = .not. z4
+    if (.not. ((z0 .and. (nz1 .and. (z3 .or. z2 .and. nz4) .or. nz2 .and.&
+      &z3 .and. z4) .or. nz0 .and. (z1 .and. (nz3 .or. nz2 .and. z4) .or. z2 .and.&
+      &nz3 .and. nz4)))) go to 200
+    !  find the zeros of ql(y).
+100 call fpcuro(a3, a2, a1, a0, y, j)
+    if (j == 0) go to 200
+    !  find which zeros of pl(x) are zeros of s(x).
+    do i = 1, j
+      if (y(i) < 0.0_8 .or. y(i) > 1.0_8) go to 150
+      !  test whether the number of zeros of s(x) exceeds mest.
+      if (m >= mest) then
+        ier = 1
+        return
+      end if
+
+      m = m + 1
+      zeros(m) = t(l) + h1 * y(i)
+150   continue
+    end do
+
+200 a0 = b0
+    ah = bh
+    z1 = z3
+    nz1 = nz3
+  end do
+
+  !  the zeros of s(x) are arranged in increasing order.
+  if (m < 2) return
+  do i = 2, m
+    j = i
+350 j1 = j - 1
+    if (j1 == 0) go to 400
+    if (zeros(j) >= zeros(j1)) go to 400
+    zz = zeros(j)
+    zeros(j) = zeros(j1)
+    zeros(j1) = zz
+    j = j1
+    go to 350
+400 continue
+  end do
+
+  j = m
+  m = 1
+  do i = 2, j
+    if (zeros(i) /= zeros(m)) then
+      m = m + 1
+      zeros(m) = zeros(i)
+    end if
+  end do
+
+end subroutine sproot
+
 ! !!!!!!!!!!!!!!!!!!!!  Auxiliary routines !!!!!!!!!!!!!!!!!!!!!
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3367,3 +3566,233 @@ subroutine fprota(cos, sin, a, b)
   a = cos * stor1 - sin * stor2
 end subroutine fprota
 
+subroutine fpcuro(a, b, c, d, x, n)
+  !  subroutine fpcuro finds the real zeros of a cubic polynomial
+  !  p(x) = a*x**3+b*x**2+c*x+d.
+  !
+  !  calling sequence:
+  !     call fpcuro(a,b,c,d,x,n)
+  !
+  !  input parameters:
+  !    a,b,c,d: real values, containing the coefficients of p(x).
+  !
+  !  output parameters:
+  !    x      : real array,length 3, which contains the real zeros of p(x)
+  !    n      : integer, giving the number of real zeros of p(x).
+  !  ..
+  !  ..scalar arguments..
+  real(8) :: a, b, c, d
+  integer :: n
+  !  ..array argument..
+  real(8) :: x(3)
+  !  ..local scalars..
+  integer :: i
+  real(8) :: a1, b1, c1, df, disc, d1, e3, f, four, half, ovfl, pi3, p3, q, r
+  real(8) :: step, tent, three, two, u, u1, u2, y
+  !  ..function references..
+  ! real(8) :: abs, max, datan, atan2, cos, sign, sqrt
+  !  set constants
+  two = 2._8
+  three = 3._8
+  four = 4._8
+  ovfl = 1.e+04_8
+  half = 0.5_8
+  tent = 0.1_8
+  e3 = tent / 0.3_8
+  pi3 = atan(1._8) / 0.75_8
+  a1 = abs(a)
+  b1 = abs(b)
+  c1 = abs(c)
+  d1 = abs(d)
+
+  if (max(b1, c1, d1) < a1 * ovfl) then
+    !  p(x) is a third degree polynomial.
+    b1 = b / a * e3
+    c1 = c / a
+    d1 = d / a
+    q = c1 * e3 - b1 * b1
+    r = b1 * b1 * b1 + (d1 - b1 * c1) * half
+    disc = q * q * q + r * r
+    if (disc > 0._8) then
+      u = sqrt(disc)
+      u1 = -r + u
+      u2 = -r - u
+      n = 1
+      x(1) = sign(abs(u1)**e3, u1) + sign(abs(u2)**e3, u2) - b1
+    else
+      u = sqrt(abs(q))
+      if (r < 0.) u = -u
+      p3 = atan2(sqrt(-disc), abs(r)) * e3
+      u2 = u + u
+      n = 3
+      x(1) = -u2 * cos(p3) - b1
+      x(2) = u2 * cos(pi3 - p3) - b1
+      x(3) = u2 * cos(pi3 + p3) - b1
+    end if
+
+  else if (max(c1, d1) < b1 * ovfl) then
+    !   p(x) is a second degree polynomial.
+    disc = c * c - four * b * d
+    n = 0
+    if (disc < 0._8) return
+    n = 2
+    u = sqrt(disc)
+    b1 = b + b
+    x(1) = (-c + u) / b1
+    x(2) = (-c - u) / b1
+
+  else if (d1 < c1 * ovfl) then
+    !   p(x) is a first degree polynomial.
+    n = 1
+    x(1) = -d / c
+  else
+    !  p(x) is a constant function.
+    n = 0
+    return
+  end if
+
+  !
+  !  apply a newton iteration to improve the accuracy of the roots.
+  do i = 1, n
+    y = x(i)
+    f = ((a * y + b) * y + c) * y + d
+    df = (three * a * y + two * b) * y + c
+    step = 0.
+    if (abs(f) < abs(df) * tent) step = f / df
+    x(i) = y - step
+  end do
+end subroutine fpcuro
+
+subroutine fpintb(t, n, bint, nk1, x, y)
+  implicit none
+  !  subroutine fpintb calculates integrals of the normalized b-splines
+  !  nj,k+1(x) of degree k, defined on the set of knots t(j),j=1,2,...n.
+  !  it makes use of the formulae of gaffney for the calculation of
+  !  indefinite integrals of b-splines.
+  !
+  !  calling sequence:
+  !     call fpintb(t,n,bint,nk1,x,y)
+  !
+  !  input parameters:
+  !    t    : real array,length n, containing the position of the knots.
+  !    n    : integer value, giving the number of knots.
+  !    nk1  : integer value, giving the number of b-splines of degree k,
+  !           defined on the set of knots ,i.e. nk1 = n-k-1.
+  !    x,y  : real values, containing the end points of the integration
+  !           interval.
+  !  output parameter:
+  !    bint : array,length nk1, containing the integrals of the b-splines.
+  !  ..
+  !  ..scalars arguments..
+  integer :: n, nk1
+  real(8) :: x, y
+  !  ..array arguments..
+  real(8) :: t(n), bint(nk1)
+  !  ..local scalars..
+  integer :: i, ia, ib, it, j, j1, k, k1, l, li, lj, lk
+  real(8) :: a, ak, arg, b, f, one
+  !  ..local arrays..
+  real(8) :: aint(6), h(6), h1(6)
+  logical :: minus
+  !  initialization.
+  one = 1.-8
+  k1 = n - nk1
+  ak = k1
+  k = k1 - 1
+
+  bint(:nk1) = 0._8
+
+  !  the integration limits are arranged in increasing order.
+  if (x < y) then
+    a = x; b = y
+    minus = .False.
+  else if (x > y) then
+    a = y; b = x
+    minus = .True.
+  else
+    return
+  end if
+
+  if (a < t(k1)) a = t(k1)
+  if (b > t(nk1 + 1)) b = t(nk1 + 1)
+  if (a > b) return
+  !  using the expression of gaffney for the indefinite integral of a
+  !  b-spline we find that
+  !  bint(j) = (t(j+k+1)-t(j))*(res(j,b)-res(j,a))/(k+1)
+  !    where for t(l) <= x < t(l+1)
+  !    res(j,x) = 0, j=1,2,...,l-k-1
+  !             = 1, j=l+1,l+2,...,nk1
+  !             = aint(j+k-l+1), j=l-k,l-k+1,...,l
+  !               = sumi((x-t(j+i))*nj+i,k+1-i(x)/(t(j+k+1)-t(j+i)))
+  !                 i=0,1,...,k
+  l = k1
+
+  !  set arg = a.
+  arg = a
+  do it = 1, 2
+    !  search for the knot interval t(l) <= arg < t(l+1).
+    do while (arg >= t(l + 1) .and. l /= nk1)
+      l = l + 1
+    end do
+
+    !  calculation of aint(j), j=1,2,...,k+1.
+    !  initialization.
+
+    aint(:k1) = 0._8
+    aint(1) = (arg - t(l)) / (t(l + 1) - t(l))
+    h1(1) = one
+    do j = 1, k
+      !  evaluation of the non-zero b-splines of degree j at arg,i.e.
+      !    h(i+1) = nl-j+i,j(arg), i=0,1,...,j.
+      h(1) = 0._8
+      do i = 1, j
+        li = l + i
+        lj = li - j
+        f = h1(i) / (t(li) - t(lj))
+        h(i) = h(i) + f * (t(li) - arg)
+        h(i + 1) = f * (arg - t(lj))
+      end do
+
+      !  updating of the integrals aint.
+      j1 = j + 1
+      do i = 1, j1
+        li = l + i
+        lj = li - j1
+        aint(i) = aint(i) + h(i) * (arg - t(lj)) / (t(li) - t(lj))
+        h1(i) = h(i)
+      end do
+
+    end do
+
+    if (it /= 2) exit
+    !  updating of the integrals bint
+    lk = l - k
+    ia = lk
+    do i = 1, k1
+      bint(lk) = -aint(i)
+      lk = lk + 1
+    end do
+    arg = b
+  end do
+
+  !  updating of the integrals bint.
+  lk = l - k
+  ib = lk - 1
+  do i = 1, k1
+    bint(lk) = bint(lk) + aint(i)
+    lk = lk + 1
+  end do
+
+  if (ib >= ia) bint(ia:ib) = bint(ia:ib) + one
+
+  !  the scaling factors are taken into account.
+  f = one / ak
+  do i = 1, nk1
+    j = i + k1
+    bint(i) = bint(i) * (t(j) - t(i)) * f
+  end do
+
+  !  the order of the integration limits is taken into account.
+  IF (minus) bint(:nk1) = -bint(:nk1)
+
+end subroutine fpintb

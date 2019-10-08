@@ -1,5 +1,5 @@
 !> @file histogram.f90
-!! @date "2019-08-28 08:34:37"
+!! @date "2019-10-08 10:54:03"
 
 !> The module `histograms` provides infrastructure for the calculation of histograms. i.e: a count of frequency
 !!
@@ -35,7 +35,7 @@ contains
 
   !> Computes the histogram of an array of data
   !!
-  !! @note It counts the number of occurrences in the interval [bins(i), bins(i+1) )
+  !! @note It counts the number of occurrences in the interval `[bins(i), bins(i+1) )`
   !! which is closed on the left and open on the right (does not include the upper limit)
   !! except for the last one which includes both limits
   !! @note When neither `bins` nor `Nbins` are present the routine will calculate automatically
@@ -47,27 +47,24 @@ contains
   !! h = histogram(linspace(0.5_dp, 5.5_dp, 6), Nbins=5)
   !! print "(A, 6(1x,g0.2))", 'Bin Edges:', h%bin_edges
   !! print "(A, 5(1x,g0.2))", 'Histogram:', h%hist
-  !! ```
-  !! produces:
-  !! ```
-  !!   Bin Edges: 0.50 1.5 2.5 3.5 4.5 5.5
-  !!   Histogram: 1.0 1.0 1.0 1.0 1.0
-  !! ```
-  !!
-  !! ```
+  !! ! produces:
+  !! !   Bin Edges: 0.50 1.5 2.5 3.5 4.5 5.5
+  !! !   Histogram: 1.0 1.0 1.0 1.0 1.0
+  !! !
+  !! ! and the fragment:
+  !! !
   !! h = histogram([1._dp, 2._dp, 1._dp], bins=[0._dp, 1._dp, 2._dp, 3._dp])
   !! print "(A, 4(1x,g0.2))", 'Bin Edges:', h%bin_edges
   !! print "(A, 3(1x,g0.2))", 'Histogram:', h%hist
+  !! ! produces:
+  !! !
+  !! !  Bin Edges: 0.0 1.0 2.0 3.0
+  !! !  Histogram: 0.0 2.0 1.0
+  !! !
   !! ```
-  !! produces:
-  !! ```
-  !!   Bin Edges: 0.0 1.0 2.0 3.0
-  !!   Histogram: 0.0 2.0 1.0
-  !! ```
-  !!
   function histogram(a, Nbins, bins, range, weights, density) result(h)
     implicit none
-    type(histog) :: h !< The histogram construct.
+    type(histog) :: h !< The histogram construct of type \ref histog.
     real(dp), dimension(:), target, intent(IN) :: a !< Input data
     integer, optional, intent(IN) :: Nbins !< Number of equal-width bins to use
     real(dp), dimension(:), optional, intent(IN) :: bins  !< A monotonically increasing array of bin edges,

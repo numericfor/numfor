@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2019-10-07 10:41:06"
+!! @date "2019-10-08 10:42:25"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -9,8 +9,8 @@ module array_utils
 
   implicit none
 
-  private
-  public :: savetxt, save_array, mean, std, merge_sorted
+  Private
+  PUBLIC :: allclose, savetxt, save_array, mean, std, merge_sorted
 
 contains
 
@@ -21,25 +21,26 @@ contains
   !! The tolerance values are positive, typically very small numbers.  The
   !! relative difference (`rtol` * abs(`b`)) and the absolute difference
   !! `atol` are added together to compare against the absolute difference
-  !! between `a` and `b`.
-  !!
-  !! If the following equation is element-wise True, then allclose returns
-  !! True.
-  !!
-  !!  abs(`a` - `b`) <= (`atol` + `rtol` * absolute(`b`))
+  !! between `a` and `b`.\n
+  !! If the following equation \n
+  !!  abs(`a` - `b`) <= (`atol` + `rtol` * absolute(`b`)) \n
+  !!is element-wise True, then allclose returns `.True.`
   !!
   !! The above equation is not symmetric in `a` and `b`, so that
   !! ``allclose(a, b)`` might be different from ``allclose(b, a)`` in
   !! some rare cases.
   !!
   !! Examples:
-  !!
+  !! --------
+  !! ```
   !! allclose([1e10,1e-7], [1.00001e10,1e-8])
   !! ! .False.
   !! allclose([1e10,1e-8], [1.00001e10,1e-9])
   !! ! .True.
   !! allclose([1e10,1e-8], [1.0001e10,1e-9])
   !! ! .False.
+  !! !
+  !! ```
   !!
   function allclose(a, b, rtol, atol) result(y)
     implicit none

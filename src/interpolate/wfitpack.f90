@@ -1,4 +1,5 @@
-!> fitpack provides a framework for fitting and interpolation using B-Splines
+!> fitpack provides a framework for fitting and interpolation using B-Splines.
+!! It uses routines from a slightly cleaned-up version of FITPACK by P. Diercxx
 module fitpack
   USE utils, only: dp, str, print_msg
 
@@ -15,7 +16,7 @@ module fitpack
   end type UnivSpline
 
   Private
-  Public :: UnivSpline, splrep, splprep, splev
+  Public :: UnivSpline, splrep, splprep, splev, splroot, splint
 
   character, private, parameter :: nl = new_line('a')
 
@@ -372,7 +373,7 @@ contains
   !!  real(dp), dimension(Nnew) :: xnew
   !!  real(dp), dimension(Nnew) :: ynew
   !!  character(len=:), allocatable :: header
-  !!  real(dp) :: s
+  !!  real(dp) :: s = 0._dp
   !!  type(UnivSpline) :: tck
   !!  ! Generate data
   !!  x = linspace(Zero, M_PI, N)
@@ -581,7 +582,39 @@ contains
     IF (Present(ier)) ier = ier_
   end subroutine splevc
 
-  !> splev Computes a B-spline or its derivatives.
+  !> splint Evaluates the definite integral of a B-spline.
+  !!
+  !! Given the knots and coefficients of a B-spline, evaluate the definite
+  !! integral of the smoothing polynomial between two given points.
+  !!
+  !!
+  !! Examples:
+  !!
+  subroutine splint(tck, a, b, y, wrk)
+    implicit none
+    type(UnivSpline), intent(IN) :: tck !< The object with the information on the spline
+    real(dp), intent(IN) :: a !< Lower limit of the integral
+    real(dp), intent(IN) :: b !< Upper limit of the integral
+    real(dp), intent(OUT) :: y !< Result of the integral
+    real(dp), dimension(size(tck%c)), optional, target, intent(OUT) :: wrk !< If present,
+    !! it will contain the integrals of the normalized B-splines
+    real(dp), dimension(:), pointer :: wrk_ => null()
+    integer :: n, nk1
+    n = size(tck%t)
+    nk1 = n - tck%k - 1
+    print *, n, nk1
+    print *, associated(wrk_)
+    IF (present(wrk)) wrk_ => wrk
+    IF (.not. associated(wrk_)) allocate (wrk_(n))
+    print *, associated(wrk_)
+    print *, 'size', size(wrk_)
+    call fpintb(tck%t, n, wrk_, nk1, a, b)
+    print *, wrk_(:nk1)
+    y = sum(tck%c(:nk1) * wrk_(:nk1))
+    nullify (wrk_)
+  end subroutine splint
+
+  !> splevp Computes a B-spline or its derivatives for a parametric spline.
   !! Given the knots and coefficients of a B-spline representation, evaluate
   !! the value of the smoothing polynomial and its derivatives.  This is a
   !! wrapper around the FORTRAN routines splev and splder of FITPACK.
@@ -634,6 +667,36 @@ contains
     IF (Present(ier)) ier = ier_
 
   end subroutine splevp
+
+  !> splroot Computes the roots of a cubic B-spline.
+  !!
+  function splroot(tck) result(z)
+    implicit none
+    real(dp), dimension(:), allocatable :: z !< Array with the roots of the spline
+    type(UnivSpline), intent(IN) :: tck !< UnivSpline object with knots and coefficients of spline
+    integer, parameter :: mest = 100
+    real(dp), dimension(mest) :: y !<
+    integer :: n
+    integer :: m, ier
+
+    IF (tck%k /= 3) call print_msg("works only for cubic (k=3) splines", "Splroot", 3)
+    n = size(tck%t)
+    IF (size(tck%c) /= n) call print_msg("t and c have different lengths", 'Splroot', 2)
+
+    IF (n < 8) call print_msg("The number of knots "//str(n)//"must be >=8", "Splroot", 1)
+
+    m = 0
+
+    call sproot(tck%t, n, tck%c, y, mest, m, ier)
+    IF (ier == 10) call print_msg("Invalid input data. Must be: t1<=..<=t4<t5<..<tn-3<=..<=tn.", errcode=ier)
+    if (m == 0) then
+      z = [0._8]
+    else
+      allocate (z(m))
+      z = y(:m)
+    end if
+    IF (ier == 1) call print_msg("The number of zeros exceed mest = "//str(mest), errcode=-1)
+  end function splroot
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ! We include the necessary fitpack routines
