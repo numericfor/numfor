@@ -16,7 +16,8 @@ module fitpack
     integer, dimension(:), allocatable :: iwrk
   end type UnivSpline
 
-  Public :: UnivSpline, splrep, splrep_msg
+  Private
+  Public :: UnivSpline, splrep, splprep, splev
 
   character, private, parameter :: nl = new_line('a')
 
@@ -604,5 +605,9 @@ contains
     IF (Present(ier)) ier = ier_
 
   end subroutine splevp
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! We include the necessary fitpack routines
+  include "fitp.inc"
 
 end module fitpack
