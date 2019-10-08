@@ -5,7 +5,9 @@ program test_splprep
   implicit none
 
   call test_parametric_splines()
+
 contains
+
   subroutine test_parametric_splines()
     implicit none
     real(dp), dimension(:), allocatable :: r, phi, u

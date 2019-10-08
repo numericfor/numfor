@@ -1,8 +1,6 @@
 !> fitpack provides a framework for fitting and interpolation using B-Splines
 module fitpack
-
   USE utils, only: dp, str, print_msg
-  ! USE fitp, only: percur, curfit, splder, fppara, fpclos, fpchep, fpchec
 
   !> Type used to keep all information on spline fitting
   !!
@@ -81,16 +79,20 @@ contains
   !!  real(dp), dimension(:, :), allocatable :: new_points
   !!  real(dp), dimension(:), allocatable :: u
   !!  type(UnivSpline) :: tck
+  !!  character(len=:), allocatable :: header
   !!  real(dp) :: s = 0._dp
   !!  ! Generate a discretization of a limacon curve in the polar coordinates:
   !!  phi = linspace(Zero, 2 * M_PI, Nd)
   !!  r = 0.5_8 + cos(phi)        ! polar coords
+  !!  allocate (r(Nd), u(Nd), phi(Nd))
+  !!  allocate (x(2, Nd), new_points(2, Nd))
   !!  x(1, :) = r * cos(phi)      ! convert to cartesian
   !!  x(2, :) = r * sin(phi)      ! convert to cartesian
   !!  ! interpolate
   !!  call splprep(x, u, tck, s=s)
   !!  call splevp(u, tck, new_points)
   !!  ! and write to stdout
+  !!  header = "u                    x                   y"
   !!  call save_array([u, new_points(1, :), new_points(2, :)], 3, fmt="f12.8", header=header)
   !!  ! Prints:
   !!  !
@@ -319,8 +321,8 @@ contains
     iz = ifp + nest
     ia1 = iz + ncc
     ia2 = ia1 + nest * k1
-    if (per_) then
 
+    if (per_) then              ! periodic data
       ib = ia2 + nest * k
       ig1 = ib + nest * k2
       ig2 = ig1 + nest * k2
@@ -339,17 +341,9 @@ contains
     if (Present(ier)) ier = ier_
     tck%k = k_
 
-    ! ! Allocation may be done automatically
-    ! IF (.not. allocated(tck%wrk)) allocate (tck%wrk(n))
-    ! IF (.not. allocated(tck%iwrk)) allocate (tck%iwrk(n))
-
     ! Save workspaces for possible future use
     tck%wrk = wrk_
     tck%iwrk = iwrk_
-
-    ! ! Allocation may be done automatically
-    ! IF (.not. allocated(tck%t)) allocate (tck%t(n))
-    ! IF (.not. allocated(tck%t)) allocate (tck%c(n))
 
     ! Set the first n (number of knots) values to the output
     tck%c = c_(:idim * n)
@@ -362,10 +356,53 @@ contains
     deallocate (iwrk_)
   end subroutine splprep
 
-  !> splrep Computes
+  !> splrep Find the B-spline representation of 1-D curve.
+  !! Given the set of data points ``(x[i], y[i])`` determine a smooth spline
+  !! approximation of degree k on the interval ``xb <= x <= xe``.
+  !!
   !!
   !! Examples:
-  !!
+  !! --------
+  !!```
+  !!  integer, parameter :: N = 6
+  !!  integer, parameter :: Nnew = 29
+  !!  real(dp), dimension(N) :: x
+  !!  real(dp), dimension(N) :: y
+  !!  real(dp), dimension(Nnew) :: xnew
+  !!  real(dp), dimension(Nnew) :: ynew
+  !!  character(len=:), allocatable :: header
+  !!  real(dp) :: s
+  !!  type(UnivSpline) :: tck
+  !!  ! Generate data
+  !!  x = linspace(Zero, M_PI, N)
+  !!  y = sin(x)
+  !!  ! The new array where evaluate the spline
+  !!  xnew = linspace(Zero, M_PI, Nnew)
+  !!  ! interpolate
+  !!  call splrep(x, y, tck=tck, s=s)
+  !!  call splev(xnew, tck, ynew)
+  !!  ! and write to stdout
+  !!  header = "x                   y"
+  !!  call save_array([xnew, ynew], 2, fmt="f17.14", header=header)
+  !!  ! Prints:
+  !!  !
+  !!  ! 0.00000000000000  0.00000000000000
+  !!  ! 0.11219973762821  0.11401345780438
+  !!  ! 0.22439947525641  0.22522911715938
+  !!  ! 0.33659921288462  0.33269883705930
+  !!  ! 0.44879895051283  0.43547447649845
+  !!  ! 0.56099868814103  0.53260789447113
+  !!  !  ...
+  !!  !  ...
+  !!  ! 2.46839422782055  0.62315094997166
+  !!  ! 2.58059396544876  0.53260789447113
+  !!  ! 2.69279370307697  0.43547447649845
+  !!  ! 2.80499344070517  0.33269883705930
+  !!  ! 2.91719317833338  0.22522911715938
+  !!  ! 3.02939291596159  0.11401345780438
+  !!  ! 3.14159265358979  0.00000000000000
+  !!  !
+  !!```
   subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck, ier)
     ! subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck)
     implicit none
@@ -379,38 +416,29 @@ contains
     integer, optional, intent(IN) :: k !< The degree of the spline fit. It is recommended to use cubic splines.
     !! Even values of k should be avoided especially with small s values. 1 <= k <= 5
     integer, optional, intent(IN) :: task !< {1, 0, -1},
-    !! If task==0 find t and c for a given smoothing factor, s.
-    !!
-    !! If task==1 find t and c for another value of the smoothing factor, s.
+    !! - If task==0 find t and c for a given smoothing factor, s.
+    !! - If task==1 find t and c for another value of the smoothing factor, s.
     !! There must have been a previous call with task=0 or task=1 for the same set of data (it will be stored an used internally)
-    !!
-    !!If task==-1 find the weighted least square spline for a given set of knots t.
-    !!    These should be interior knots as knots on the ends will be added automatically
-    real(dp), optional, intent(IN) :: s !< A smoothing condition. The amount of smoothness is determined by satisfying the conditions:
-    !!
+    !! - If task==-1 find the weighted least square spline for a given set of knots t.
+    !! These should be interior knots, as knots on the ends will be added automatically
+    real(dp), optional, intent(IN) :: s !< A smoothing condition. The amount of smoothness is determined by satisfying the conditions:\n
     !! `sum((w * (y - g))**2) <= s` where `g(x)` is the smoothed interpolation of `(x,y)`.
-    !!
     !!The user can use `s` to control the tradeoff between closeness and smoothness of fit. Larger `s` means more smoothing while
-    !! smaller values of `s` indicate less smoothing.  Recommended values of s depend on the weights, w.
-    !!
+    !! smaller values of `s` indicate less smoothing.  Recommended values of s depend on the weights, w.\n
     !!If the weights represent the inverse of the standard-deviation of y, then a good s value should be found in the range
-    !!(m-sqrt(2*m),m+sqrt(2*m)) where m is the number of datapoints in x, y, and w. default : \f$ s= m-\sqrt(2 m)\f$ if weights are
-    !!supplied. `s = 0.0` (interpolating) if no weights are supplied.
-
-    real(dp), optional, dimension(:), intent(IN) :: t !< Input knots (interior knots only). if task = -1. If given then task is automatically set to -1.
-
+    !!\f$ (m-\sqrt{2 m},m+\sqrt{2 m}) where m is the number of datapoints in x, y, and w. default : \f$ s= m-\sqrt{2 m}\f$ if weights are supplied. It will use `s = 0.0` (interpolating) if no weights are supplied.
+    real(dp), optional, dimension(:), intent(IN) :: t !< Input knots (interior knots only) for task = -1. If given then task is automatically set to -1.
     logical, optional, intent(IN) :: per  !< Flag indicating if data are considered periodic
     type(UnivSpline), intent(OUT) :: tck !<  Coefficients, knots, and additional information for interpolation/fitting.
     !! On output the following values will be set:
-    !!    c: coefficients
-    !!    t: knots
-    !!    k: order of splines.
-    !!    wrk, iwrk: workspace for internal use only
-    !!    fp: weighted sum of squared residuals
-    !!
-    !! On input the user may provide values for:
-    !!    wrk, iwrk: For tasks -1, 1. (usually set by a previous call)
-    integer, optional, intent(OUT) :: ier !<
+    !!   - c: coefficients
+    !!   - t: knots
+    !!   - k: order of splines.
+    !!   - wrk, iwrk: workspace arrays, for internal use only
+    !!   - fp: weighted sum of squared residuals
+    !! On input, for tasks -1, 1 the user may provide values for:
+    !!    wrk, iwrk: For tasks. (but usually are set by a previous call)
+    integer, optional, intent(OUT) :: ier !< Flag of status at output
 
     real(dp), dimension(size(x)) :: w_
     real(dp), dimension(:), allocatable :: c_
