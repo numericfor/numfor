@@ -1,5 +1,5 @@
 !> @file polynomial.f90
-!! @date "2019-08-27 13:59:25"
+!! @date "2019-10-09 01:06:10"
 
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
 !! It allows to easily evaluate, derivate, and integrate a polynomial
@@ -33,9 +33,10 @@ module polynomial
 
   USE basic, only: dp, Zero, print_msg
 
-  !> polyval Computes the value of the polynomial when applied to a number or list of numbers
+  !> Computes the value of the polynomial when applied to a number or list of numbers
   !!
   !! Examples:
+  !! --------
   !!
   !!```
   !! real(dp), dimension(5) :: p1

@@ -30,7 +30,7 @@ subroutine fpintb(t, n, bint, nk1, x, y)
   real(8) :: aint(6), h(6), h1(6)
   logical :: minus
   !  initialization.
-  one = 1.-8
+  one = 1._8
   k1 = n - nk1
   ak = k1
   k = k1 - 1
@@ -61,18 +61,18 @@ subroutine fpintb(t, n, bint, nk1, x, y)
   !               = sumi((x-t(j+i))*nj+i,k+1-i(x)/(t(j+k+1)-t(j+i)))
   !                 i=0,1,...,k
   l = k1
-
+  l0 = l + 1
   !  set arg = a.
   arg = a
   do it = 1, 2
     !  search for the knot interval t(l) <= arg < t(l+1).
     do while (arg >= t(l + 1) .and. l /= nk1)
-      l = l + 1
+      l = l0
+      l0 = l + 1
     end do
 
     !  calculation of aint(j), j=1,2,...,k+1.
     !  initialization.
-
     aint(:k1) = 0._8
     aint(1) = (arg - t(l)) / (t(l + 1) - t(l))
     h1(1) = one
@@ -99,7 +99,7 @@ subroutine fpintb(t, n, bint, nk1, x, y)
 
     end do
 
-    if (it /= 2) exit
+    if (it == 2) exit
     !  updating of the integrals bint
     lk = l - k
     ia = lk

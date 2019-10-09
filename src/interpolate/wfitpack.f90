@@ -15,14 +15,52 @@ module fitpack
     integer, dimension(:), allocatable :: iwrk
   end type UnivSpline
 
-  Private
-  Public :: UnivSpline, splrep, splprep, splev, splroot, splint
-
   character, private, parameter :: nl = new_line('a')
 
+  !> splev Computes a B-spline or its derivatives.
+  !!
+  !! Given the knots and coefficients of a B-spline representation, evaluate
+  !! the value of the smoothing polynomial and its derivatives.  This is a
+  !! wrapper around the FORTRAN routines splev and splder of FITPACK.
   interface splev
     module procedure :: splevp, splevc
   end interface splev
+
+  !> splint Evaluates the definite integral of a B-spline.
+  !!
+  !! Given the knots and coefficients of a B-spline, evaluate the definite
+  !! integral of the smoothing polynomial between two given points.
+  !!
+  !! Examples:
+  !! --------
+  !! ```
+  !! integer, parameter :: N = 6
+  !! real(dp), dimension(N) :: x
+  !! real(dp), dimension(N) :: y
+  !! real(dp) :: yI
+  !!
+  !! type(UnivSpline) :: tck
+  !!
+  !! x = linspace(Zero, M_PI, N)
+  !! y = sin(x)
+  !! call splrep(x, y, tck=tck, s=0._dp)
+  !! call splint(tck, Zero, M_PI / 2._dp, yI)
+  !! print "(A, f14.12)", 'Integral entre 0 y π/2: ', yI
+  !! call splint(tck, Zero, M_PI, yI)
+  !! print "(A, f14.12)", 'Integral entre 0 y π: ', yI
+  !! !
+  !! ! Prints:
+  !! !   Integral entre 0 y π/2: 1.000630799770
+  !! !   Integral entre 0 y π: 2.001261599540
+  !! !
+  !! ```
+  !!
+  interface splint
+    module procedure :: splint_0, splint_f
+  end interface splint
+
+  private
+  Public :: UnivSpline, splev, splint, splrep, splprep, splroot
 
 contains
 
@@ -549,9 +587,6 @@ contains
   !! Given the knots and coefficients of a B-spline representation, evaluate
   !! the value of the smoothing polynomial and its derivatives.  This is a
   !! wrapper around the FORTRAN routines splev and splder of FITPACK.
-  !!
-  !! Examples:
-  !!
   subroutine splevc(x, tck, y, der, ext, ier)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Points at which to return the value of the smoothed spline or its derivative
@@ -582,38 +617,35 @@ contains
     IF (Present(ier)) ier = ier_
   end subroutine splevc
 
-  !> splint Evaluates the definite integral of a B-spline.
-  !!
-  !! Given the knots and coefficients of a B-spline, evaluate the definite
-  !! integral of the smoothing polynomial between two given points.
-  !!
-  !!
-  !! Examples:
-  !!
-  subroutine splint(tck, a, b, y, wrk)
+  subroutine splint_0(tck, a, b, y)
     implicit none
     type(UnivSpline), intent(IN) :: tck !< The object with the information on the spline
     real(dp), intent(IN) :: a !< Lower limit of the integral
     real(dp), intent(IN) :: b !< Upper limit of the integral
     real(dp), intent(OUT) :: y !< Result of the integral
-    real(dp), dimension(size(tck%c)), optional, target, intent(OUT) :: wrk !< If present,
-    !! it will contain the integrals of the normalized B-splines
-    real(dp), dimension(:), pointer :: wrk_ => null()
+    !
+    real(dp), dimension(size(tck%c - tck%k - 1)) :: wrk
+    integer :: n, nk1
+    !
+    n = size(tck%t)
+    nk1 = n - tck%k - 1
+    call fpintb(tck%t, n, wrk, nk1, a, b)
+    y = sum(tck%c(:nk1) * wrk)
+  end subroutine splint_0
+
+  subroutine splint_f(tck, a, b, y, wrk)
+    implicit none
+    type(UnivSpline), intent(IN) :: tck !< The object with the information on the spline
+    real(dp), intent(IN) :: a !< Lower limit of the integral
+    real(dp), intent(IN) :: b !< Upper limit of the integral
+    real(dp), intent(OUT) :: y !< Result of the integral
+    real(dp), dimension(size(tck%c - tck%k - 1)), intent(OUT) :: wrk !< Integral of B-spline
     integer :: n, nk1
     n = size(tck%t)
     nk1 = n - tck%k - 1
-    print *, n, nk1
-    print *, associated(wrk_)
-    IF (present(wrk)) wrk_ => wrk
-    IF (.not. associated(wrk_)) allocate (wrk_(n))
-    print *, associated(wrk_)
-    print *, 'size', size(wrk_)
-    call fpintb(tck%t, n, wrk_, nk1, a, b)
-    print *, wrk_(:nk1)
-    y = sum(tck%c(:nk1) * wrk_(:nk1))
-    nullify (wrk_)
-  end subroutine splint
-
+    call fpintb(tck%t, n, wrk, nk1, a, b)
+    y = sum(tck%c(:nk1) * wrk)
+  end subroutine splint_f
   !> splevp Computes a B-spline or its derivatives for a parametric spline.
   !! Given the knots and coefficients of a B-spline representation, evaluate
   !! the value of the smoothing polynomial and its derivatives.  This is a
