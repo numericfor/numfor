@@ -25,6 +25,10 @@ SCRPTD:=$(top_dir)/scripts
 OBJD:=$(top_dir)/lib
 MODD:=$(top_dir)/finclude
 BIND:=$(top_dir)/bin
+# Extra documentation sources and examples
+DOCSD:=$(top_dir)/docs/sources
+EXMPD:=$(top_dir)/docs/examples
+# Directory where documentation will be built
 DOCDIR:=$(top_dir)/doc
 
 
@@ -135,7 +139,7 @@ $(BIND)/test_$(tst): $(TSTD)/test_$(tst).f90 $(OBJD)/libnumfor.a | $(BIND)
 # Default example will be ex_ftring1
 ex=ftring1
 example: $(BIND)/ex_$(ex) 
-$(BIND)/ex_$(ex): $(top_dir)/docs/examples/ex_$(ex).f90 $(OBJD)/libnumfor.a | $(BIND)
+$(BIND)/ex_$(ex): $(EXMPD)/ex_$(ex).f90 $(OBJD)/libnumfor.a | $(BIND)
 	$(FC)  $(FFLAGS) $(FFLAGS_EXTRA) $(LDFLAGS)  $< -o $@ $(LIBS)
 
 # ########################################################################
@@ -152,7 +156,7 @@ DOXYF:=$(SCRPTD)/Doxyfile
 
 doc:  $(DOCDIR)/html/index.html
 
-$(DOCDIR)/html/index.html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md
+$(DOCDIR)/html/index.html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md  $(DOCSD)/*.md
 	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 "${VERSION} ($(DATE))"|'\
             -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
 	cd $(top_dir) && doxygen $(PRJ).dox && cd -

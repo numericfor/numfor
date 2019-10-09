@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2019-10-08 10:42:25"
+!! @date "2019-10-09 16:50:41"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -10,7 +10,8 @@ module array_utils
   implicit none
 
   Private
-  PUBLIC :: allclose, savetxt, save_array, mean, std, merge_sorted
+  PUBLIC :: allclose, save_array, mean, std, merge_sorted
+  ! PUBLIC :: savetxt
 
 contains
 
@@ -190,67 +191,67 @@ contains
     y = sum(x) / size(x)
   end function mean
 
-  !> savetxt Guarda un array 2D en un archivo de texto
-  !!
-  !! @note
-  !! Si fname es "stdout" o " ", o no están presente ni fname ni unit,
-  !! usa stdout
-  !! Si se da fname el archivo se abre y cierra.
-  !! Si se da unit, el archivo queda abierto
-  subroutine savetxt(X, fname, fmt, unit)
-    implicit none
-    real(dp), dimension(:, :), intent(IN) :: X        !< Array a escribir a archivo de texto
-    character(len=*), optional, intent(IN) :: fname  !< Nombre del archivo de salida
-    character(len=*), optional, intent(IN) :: fmt    !< formato a usar para los datos. Default 'g0.5'
-    integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto
+  ! !> savetxt Guarda un array 2D en un archivo de texto
+  ! !!
+  ! !! @note
+  ! !! Si fname es "stdout" o " ", o no están presente ni fname ni unit,
+  ! !! usa stdout
+  ! !! Si se da fname el archivo se abre y cierra.
+  ! !! Si se da unit, el archivo queda abierto
+  ! subroutine savetxt(X, fname, fmt, unit)
+  !   implicit none
+  !   real(dp), dimension(:, :), intent(IN) :: X        !< Array a escribir a archivo de texto
+  !   character(len=*), optional, intent(IN) :: fname  !< Nombre del archivo de salida
+  !   character(len=*), optional, intent(IN) :: fmt    !< formato a usar para los datos. Default 'g0.5'
+  !   integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto
 
-    real(dp), dimension(ubound(X, 2), ubound(X, 1)) :: b
-    integer, dimension(2) :: sh
-    integer :: i
-    integer :: u
+  !   real(dp), dimension(ubound(X, 2), ubound(X, 1)) :: b
+  !   integer, dimension(2) :: sh
+  !   integer :: i
+  !   integer :: u
 
-    character(len=32) :: form = "g0.5" ! Default
-    character(len=32) :: formato
-    logical :: closef
+  !   character(len=32) :: form = "g0.5" ! Default
+  !   character(len=32) :: formato
+  !   logical :: closef
 
-    ! Si fname está presente => Toma precedencia sobre unit. Si
-    ! ninguna está usa stdout
-    closef = .False.
-    u = stdout
+  !   ! Si fname está presente => Toma precedencia sobre unit. Si
+  !   ! ninguna está usa stdout
+  !   closef = .False.
+  !   u = stdout
 
-    if (Present(fname)) then
-      if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
-        open (newunit=u, file=trim(fname))
-        closef = .True.
-      end if
-    else if (present(unit)) then ! The file was already open before
-      ! invoking the function
-      IF (unit >= 0 .and. unit <= 99) u = unit
-    end if
+  !   if (Present(fname)) then
+  !     if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
+  !       open (newunit=u, file=trim(fname))
+  !       closef = .True.
+  !     end if
+  !   else if (present(unit)) then ! The file was already open before
+  !     ! invoking the function
+  !     IF (unit >= 0 .and. unit <= 99) u = unit
+  !   end if
 
-    b = transpose(X)
-    sh = shape(b)
+  !   b = transpose(X)
+  !   sh = shape(b)
 
-    if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
-      if (index('(', fmt) == 0) then
-        write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(fmt), '&
-          &,1x))'
-      else
-        formato = fmt
-      end if
-    else
-      write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(form), '&
-        &,1x))'
-    end if
+  !   if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
+  !     if (index('(', fmt) == 0) then
+  !       write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(fmt), '&
+  !         &,1x))'
+  !     else
+  !       formato = fmt
+  !     end if
+  !   else
+  !     write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(form), '&
+  !       &,1x))'
+  !   end if
 
-    do i = 1, sh(2)
-      write (u, formato) b(:, i)
-    end do
+  !   do i = 1, sh(2)
+  !     write (u, formato) b(:, i)
+  !   end do
 
-    IF (closef) close (u)
-  end subroutine savetxt
+  !   IF (closef) close (u)
+  ! end subroutine savetxt
 
-  !> save_array Guarda un array en el formato deseado
+  !> save_array Stores an array to file or stdout
   !!
   !! Examples:
   !!```
@@ -262,16 +263,16 @@ contains
   !!  save_array(x)  ! One array in one column to stdout
   !!  save_array(x, 1, filename) ! One array in one column to file
   !!  save_array([x,y], 2, filename) ! One array in one column to file
+  !!```
   subroutine save_array(X, ncols, fname, fmt, header, unit)
     implicit none
-    real(dp), dimension(:), intent(IN) :: X        !< Array a escribir a archivo de texto
+    real(dp), dimension(:), intent(IN) :: X        !< Array to store
     integer, optional, intent(IN) :: ncols !< Number of columns to write. Default 1
 
-    character(len=*), optional, intent(IN) :: fname  !< Nombre del archivo de salida
-    character(len=*), optional, intent(IN) :: fmt    !< formato a usar para los datos. Default 'g0.5'
-    character(len=*), optional, intent(IN) :: header  !< Text to write before data
-
-    integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto. Default stdout (= 6)
+    character(len=*), optional, intent(IN) :: fname  !< Filename. Default: stdout
+    character(len=*), optional, intent(IN) :: fmt    !< String with format. Default 'g0.5' for each data
+    character(len=*), optional, intent(IN) :: header  !< If present, text to write before data.
+    integer, optional, intent(IN) :: unit            !< If the file is already open, the unit at which it is associated.
 
     real(dp), dimension(:, :), allocatable :: b
     integer :: ncols_, nrows_

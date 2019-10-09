@@ -1,6 +1,6 @@
 # Submodule grids {#modgrids}
 
-This module provides convenience routines to create commonly occurring grids, somewhat mimicking those appearing in `Numpy`:
+This submodule provides convenience routines to create commonly occurring grids, somewhat mimicking those appearing in `Numpy`:
 
   * `linspace()` returns evenly (linearly) spaced numbers over a specified interval.
   * `logspace()` returns logarithmically evenly spaced numbers over a specified interval.
