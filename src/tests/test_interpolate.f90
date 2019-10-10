@@ -10,8 +10,8 @@ program test_interpolate
 contains
   subroutine test_splines_1()
     integer, parameter :: Ndim = 20, Ndimnew = 4 * Ndim
-    type(cspl_rep) :: csp
-    type(cspl_rep) :: csd
+    type(CubicSpline) :: csp
+    type(CubicSpline) :: csd
     real(dp), dimension(Ndim) :: x, y, Err
     real(dp), dimension(Ndimnew) :: xnew, ynew, yint, yder
     integer :: i1
@@ -21,8 +21,12 @@ contains
     xnew = linspace(1.e-6_dp, 19.99_dp, Ndimnew)
 
     ! Notice that we know exactly the second derivative
-    call csplrep(x, y, -y(1), -y(Ndim), csp)
-    ynew = csplev(xnew, csp)
+    ! call csplrep(x, y, -y(1), -y(Ndim), csp)
+    csp = CubicSpline(x, y, -y(1), -y(Ndim))
+    ynew = csp%evaluate(xnew)
+
+    ! print *, 'single value', csp%evaluate(1.24_dp)
+
     ! yder = csplev(xnew, csp, 1)
     ! First-order derivative
     csd = csplder(csp, 1)
@@ -36,12 +40,12 @@ contains
     open (UNIT=9, file='test_splines1.dat')
     write (9, '(A)') '#    x          y=sin(x)        spl(y)      I=-cos(x) Integral(spl(y))'
     do i1 = 1, Ndimnew
-      yint(i1) = -1 + splint(xnew(1), xnew(i1), csp) ! Integrate
+      yint(i1) = -1 + csplint(xnew(1), xnew(i1), csp) ! Integrate
       write (9, '(6(ES13.5,1x))') xnew(i1), sin(xnew(i1)), ynew(i1), -cos(xnew(i1)), yint(i1), -yder(i1)
     end do
     close (9)
 
-    write (*, "((f0.5,1x))") splint_square(Zero, M_PI, csp)
+    write (*, "((f0.5,1x))") csplint_square(Zero, M_PI, csp)
     call spleps(x, y, Err)
     open (UNIT=9, file='error_splines1.dat')
     write (9, '(3(f10.5,1x))') (x(i1), y(i1), abs(Err(i1)), i1=2, Ndim - 1)
@@ -50,7 +54,7 @@ contains
 
   subroutine test_splines_2()
     integer, parameter :: Ndim = 150, Ndimnew = 4 * Ndim
-    type(cspl_rep) :: tck
+    type(CubicSpline) :: tck
     real(dp), dimension(Ndim) :: x, y
     real(dp), dimension(Ndim) :: ylog
     real(dp), dimension(Ndim) :: Err
