@@ -1,7 +1,7 @@
 !> test_interpolate
 program test_interpolate
   USE utils, only: dp, Zero, M_PI
-  USE arrays, only: linspace, geomspace
+  USE arrays, only: linspace, geomspace, allclose
   USE interpolate
   implicit none
   call test_splines_1()
@@ -24,13 +24,12 @@ contains
     ! call csplrep(x, y, -y(1), -y(Ndim), csp)
     csp = CubicSpline(x, y, -y(1), -y(Ndim))
     ynew = csp%evaluate(xnew)
+    print *, 'single value', csp%evaluate(1.24_dp)
 
-    ! print *, 'single value', csp%evaluate(1.24_dp)
-
-    ! yder = csplev(xnew, csp, 1)
     ! First-order derivative
     csd = csplder(csp, 1)
-    yder = csplev(xnew, csd)
+    yder = csd%evaluate(xnew)
+    print *, 'All derivatives equal', allclose(yder, csp%derivative(xnew))
 
     write (*, "(A)") ' '//repeat("*-*", 21)
     write (*, '(A)') '# Test 1 of splines module'
@@ -40,7 +39,8 @@ contains
     open (UNIT=9, file='test_splines1.dat')
     write (9, '(A)') '#    x          y=sin(x)        spl(y)      I=-cos(x) Integral(spl(y))'
     do i1 = 1, Ndimnew
-      yint(i1) = -1 + csplint(xnew(1), xnew(i1), csp) ! Integrate
+      ! yint(i1) = -1 + csplint(xnew(1), xnew(i1), csp) ! Integrate
+      yint(i1) = -1 + csp%integrate(xnew(1), xnew(i1)) ! Integrate
       write (9, '(6(ES13.5,1x))') xnew(i1), sin(xnew(i1)), ynew(i1), -cos(xnew(i1)), yint(i1), -yder(i1)
     end do
     close (9)

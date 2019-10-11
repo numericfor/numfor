@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-10-10 16:28:31"
+!! @date "2019-10-11 14:55:35"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -26,7 +26,7 @@
 module csplines
   USE basic, only: dp, Zero, Small, print_msg
   USE sorting, only: searchsorted
-  USE polynomial, only: polyder, polyval
+  USE polynomial, only: polyder, polyval, polyint
   implicit none
 
   !> Type used to keep all information on splines
@@ -36,9 +36,18 @@ module csplines
     real(dp), dimension(:, :), allocatable :: S
     real(dp), dimension(:), allocatable :: x
   contains
-    ! procedure, private, pass(csp) :: csplrep
+    ! Evaluation
+    procedure, pass(csp) :: interp_spl
+    procedure, pass(csp) :: interp_spl_tab
+    generic :: evaluate => interp_spl, interp_spl_tab
 
-    procedure, pass(csp) :: evaluate => interp_spl_tab
+    ! Evaluation of derivative
+    procedure, pass(csp) :: interp_devspl
+    procedure, pass(csp) :: interp_devspl_tab
+    generic :: derivative => interp_devspl, interp_devspl_tab
+
+    ! Evaluation of integral
+    procedure, pass(csp) :: integrate => csplint
 
   end type CubicSpline
 
@@ -47,17 +56,15 @@ module csplines
   interface csplev
     module procedure :: interp_spl
     module procedure :: interp_spl_tab
-    module procedure :: interp_devspl
-    module procedure :: interp_devspl_tab
   end interface csplev
 
   interface CubicSpline
     module procedure init
   end interface CubicSpline
 
-  private
-  public :: CubicSpline, csplrep, csplev, spl_clean_rep, csplint, csplint_square, spleps
-  public :: spline_coeff, csplder
+  Private
+  Public :: CubicSpline, spl_clean_rep, csplrep, csplev, csplint, csplint_square, spleps
+  Public :: csplder, csplantider
 
 contains
 
@@ -73,17 +80,9 @@ contains
     real(dp), intent(IN) :: s1              !< second derivative at x(1)
     real(dp), intent(IN) :: sn              !< second derivative at x(n) (Natural spline: s1=sn=0)
 
-    integer :: ierr
-    integer :: Nd
-    Nd = size(x)
-    IF (allocated(csp%x) .AND. size(csp%x) /= Nd) deallocate (csp%x, csp%S)
-    if (.NOT. allocated(csp%x)) then
-      allocate (csp%x(Nd), csp%S(4, Nd), STAT=ierr)
-      IF (ierr /= 0) call print_msg('Allocation error', sub='csplrep', errcode=ierr)
-    end if
-    csp%x = x
-    csp%S = spline_coeff(x, y, s1, sn, Nd)
+    call csplrep(x, y, s1, sn, csp)
   end function init
+
   !> cubic spline interpolation between tabulated data
   !! After calling this function the result may be used to evaluate the function as:
   !! `ynew= csplev(xnew, csp)`
@@ -95,7 +94,7 @@ contains
     real(dp), dimension(:), intent(IN) :: y !< corresponding function values
     real(dp), intent(IN) :: s1              !< second derivative at x(1)
     real(dp), intent(IN) :: sn              !< second derivative at x(n) (Natural spline: s1=sn=0)
-    class(CubicSpline), intent(OUT) :: csp         !< Coefficients stored in type(CubicSpline)
+    type(CubicSpline), intent(OUT) :: csp         !< Coefficients stored in type(CubicSpline)
     integer :: ierr
     integer :: Nd
     Nd = size(x)
@@ -115,12 +114,13 @@ contains
   function csplder(csp, m) result(cspd)
     implicit none
     type(CubicSpline), intent(IN) :: csp !<
-    integer, intent(IN) :: m !< order of derivation (must be 1 or 2)
-    type(CubicSpline) :: cspd    !< Spline representation of derivative
+    integer, intent(IN) :: m   !< order of derivation (must be 1 or 2)
+    type(CubicSpline) :: cspd  !< Spline representation of derivative
     integer :: Nd
     integer :: i
 
-    if ((m < 1) .or. (m > 2)) call print_msg('Not first or second derivative from cspline')
+    if ((m < 1) .or. (m > 2)) call print_msg('Not first or second derivative from cspline', &
+      &"csplder", errcode=m)
 
     Nd = size(csp%x)
     allocate (cspd%x(Nd), cspd%S(4 - m, Nd))
@@ -130,7 +130,27 @@ contains
     end do
   end function csplder
 
-  !> Clean-up a spline representation
+  !> csplader Computes the antiderivative of the CubicSpline approximation
+  !!
+  !! Examples:
+  !!
+  function csplantider(csp, m) result(cspa)
+    implicit none
+    type(CubicSpline), intent(IN) :: csp !<
+    integer, intent(IN) :: m   !< order of integration
+    type(CubicSpline) :: cspa !<
+    integer :: Nd
+    integer :: i
+
+    Nd = size(csp%x)
+    allocate (cspa%x(Nd), cspa%S(4 + m, Nd))
+    cspa%x = csp%x
+    do i = 1, Nd
+      cspa%S(:, i) = polyint(csp%S(:, i), m)
+    end do
+  end function csplantider
+
+!> Clean-up a spline representation
   subroutine spl_clean_rep(r)
     implicit none
     type(CubicSpline), intent(INOUT) :: r
@@ -143,9 +163,9 @@ contains
 
   end subroutine spl_clean_rep
 
-  !> Interpolates a function using previously calculated representation of splines
-  !!
-  !! @note Before calling this function, must be called `csplrep()`
+!> Interpolates a function using previously calculated representation of splines
+!!
+!! @note Before calling this function, must be called `csplrep()`
   function interp_spl(xc, csp) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
     class(CubicSpline), intent(IN) :: csp !<  spline coefficients
@@ -155,8 +175,8 @@ contains
     y = polyval(csp%S(:, ix), xc - csp%x(ix))
   end function interp_spl
 
-  !> \copybrief interp_spl
-  !! Works over an array of x values and returns an array of interpolated values
+!> \copybrief interp_spl
+!! Works over an array of x values and returns an array of interpolated values
   function interp_spl_tab(xnew, csp) result(y)
     class(CubicSpline), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
@@ -171,46 +191,61 @@ contains
     end do
   end function interp_spl_tab
 
-  !> Interpolates the first derivative of a function
-  !!
-  !! @note Before calling this function, must be called `csplrep()`
+!> Interpolates the first derivative of a function
+!!
+!! @note Before calling this function, must be called `csplrep()`
   function interp_devspl(xc, csp, m) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
-    type(CubicSpline), intent(IN) :: csp !<  spline coefficients
-    integer, intent(IN) :: m                      !< order of derivation
+    class(CubicSpline), intent(IN) :: csp !<  spline coefficients
+    integer, optional, intent(IN) :: m                      !< order of derivation
+    integer :: m_                      !< order of derivation
     real(dp) :: y                     !< the interpolated value
     integer :: ix
+    m_ = 1; IF (present(m)) m_ = m
     ix = searchsorted(csp%x, xc)
-    if (m /= 1 .or. m /= 2) call print_msg('Not first or second derivative from cspline')
-    y = polyval(polyder(csp%S(:, ix), m), xc - csp%x(ix))
+    if (m_ /= 1 .and. m_ /= 2) call print_msg('Not first or second derivative from cspline', &
+      & "interp_devspl", errcode=m_)
+    y = polyval(polyder(csp%S(:, ix), m_), xc - csp%x(ix))
   end function interp_devspl
 
   function interp_devspl_tab(xnew, csp, m) result(y)
-    type(CubicSpline), intent(IN) :: csp           !< spline coefficients
+    class(CubicSpline), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
     real(dp), dimension(size(xnew)) :: y
-    integer, intent(IN) :: m    !< order of derivative
-    type(CubicSpline) :: cspd
+    integer, optional, intent(IN) :: m    !< order of derivative
+
     real(dp) :: xc
     integer :: ix, i1
+    integer :: m_
+    ! Register which polynomial were already calculated
+    logical, dimension(size(csp%S(1, :))) :: tofill
+    real(dp), dimension(3, size(csp%x)) :: pol
 
-    if (m /= 1 .and. m /= 2) call print_msg('Not first or second derivative from cspline')
-    cspd = csplder(csp, m)      ! Calculate the coefficients of derivative
-    do concurrent(i1=1:size(xnew))
+    m_ = 1; IF (present(m)) m_ = m
+    if (m_ /= 1 .and. m_ /= 2) call print_msg('Not first or second derivative from cspline', &
+      &"interp_devspl_tab", errcode=m_)
+
+    tofill = .True.
+    do i1 = 1, size(xnew)
       xc = xnew(i1)
-      ix = searchsorted(cspd%x, xc)
-      y(i1) = polyval(cspd%S(:, ix), xc - csp%x(ix))
+      ix = searchsorted(csp%x, xc)
+      IF (ix < 0 .or. ix > size(csp%x)) call print_msg('Error in indice', 'interp_devspl_tab', abs(ix))
+      if (tofill(ix)) then
+        pol(:, ix) = polyder(csp%S(:, ix), m_)      ! Calculate the coefficients of derivative
+        tofill(ix) = .False.
+      end if
+      y(i1) = polyval(pol(:, ix), xc - csp%x(ix))
     end do
   end function interp_devspl_tab
 
-  !> Coefficients for cubic spline interpolation between tabulated data
-  !!
-  !! The interpolating polynomial in the i-th interval, from
-  !! x(i) to x(i+1), is
-  !!       \f$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) \f$
-  !!       \f$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) \f$
-  !!       with \f$ h = x-x(i) \f$
-  !!  Ref: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
+!> Coefficients for cubic spline interpolation between tabulated data
+!!
+!! The interpolating polynomial in the i-th interval, from
+!! x(i) to x(i+1), is
+!!       \f$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) \f$
+!!       \f$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) \f$
+!!       with \f$ h = x-x(i) \f$
+!!  Ref: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   function spline_coeff(x, y, s1, sN, nn) result(S)
     integer, intent(IN) :: nn                !< dimension of x, y
     real(dp), dimension(nn), intent(IN) :: x !< grid points
@@ -319,14 +354,18 @@ contains
 
 !> Definite integral of a cubic spline function.
 !!
-  function csplint(xL, xU, csp) result(suma)
+  function csplint(xL, xU, csp, extrapolate) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
-    type(CubicSpline), intent(IN) :: csp !< Interpolating object
+    class(CubicSpline), intent(IN) :: csp !< Interpolating object
+    logical, optional, intent(IN) :: extrapolate
     real(dp) :: suma                 !<  Value of integral
 
     real(dp) :: xll, xuu, x1, x2, sign
     integer :: iL, iU, i
+    logical :: ext_
+
+    ext_ = Present(extrapolate)
 
     if (xU > xL) then            ! Set integration limits in increasing order.
       XLL = xL; XUU = xU; sign = 1._dp
@@ -335,6 +374,8 @@ contains
     endif
 
     x2 = csp%x(size(csp%x))
+
+    ! Here fix the limits according to argument extrapolate
     IF (XLL < csp%x(1)) XLL = csp%x(1) + Small ! Check and correct integral limits.
     IF (XUU > x2) XUU = x2 - Small
 
@@ -374,7 +415,6 @@ contains
         y = xx * (A(i) + xx * (B(i) / 2 + xx * (C(i) / 3 + xx * D(i) / 4)))
       end associate
     end function int_single
-
   end function csplint
 
 !> Integral of the square of a function expressed as a cubic spline.
