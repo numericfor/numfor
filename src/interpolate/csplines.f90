@@ -1,77 +1,90 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-10-11 14:55:35"
+!! @date "2019-10-14 21:03:17"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
 !! @note Several sources were reused.
-!! Most (all) of the routines were modified from the original.
+!! All routines were modified from the original (and some heavily modified).
 !! See below for authors of original and earlier versions
 
 !> csplines implements interpolation using cubic splines
-!!
-!! @note
-!! It is recommended to use it through the standard interfaces
-!! csplrep and splev
-!!
-!! Examples of use
-!! @code
-!! USE csplines, only: CubicSpline, csplrep, splev
-!! type(CubicSpline) :: csp
-!! integer, parameter :: N = 500
-!! real(8), dimension(N) :: x, y, xnew, ynew
-!! ! fill x,y and xnew ...
-!! call csplrep(x, y, Zero, Zero, csp)
-!! ynew= csplev(xnew, csp)
 module csplines
   USE basic, only: dp, Zero, Small, print_msg
   USE sorting, only: searchsorted
   USE polynomial, only: polyder, polyval, polyint
+  USE fitpack, only: fpcuro
   implicit none
 
   !> Type used to keep all information on splines
   !!
-  !! For each interval, the value will be \f$f(t) \approx S(1) t^3 + S(2) t^2 + S(3) t + S(4)\f$
+  !! For each interval, the value will be \f$f(t) \approx S(1) t^3 + S(2) t^2 + S(3) t + S(4)\f$ where \f$t = x - x_{i}\f$ is the distance to the nearest point on the left.
   type CubicSpline
-    real(dp), dimension(:, :), allocatable :: S
-    real(dp), dimension(:), allocatable :: x
+    real(dp), dimension(:, :), allocatable :: S !<  Coefficients of the polynomial  `S(:,i)` valid for each interval i, `x(i) <= x < x(i+1)`
+    real(dp), dimension(:), allocatable :: x    !< Limits of the intervals
   contains
     ! Evaluation
-    procedure, pass(csp) :: interp_spl
-    procedure, pass(csp) :: interp_spl_tab
-    generic :: evaluate => interp_spl, interp_spl_tab
+    procedure, pass(csp) :: cspl_interp
+    procedure, pass(csp) :: cspl_interp_tab
+    generic :: evaluate => cspl_interp, cspl_interp_tab
 
     ! Evaluation of derivative
-    procedure, pass(csp) :: interp_devspl
-    procedure, pass(csp) :: interp_devspl_tab
-    generic :: derivative => interp_devspl, interp_devspl_tab
+    procedure, pass(csp) :: cspl_interpdev
+    procedure, pass(csp) :: cspl_interpdev_tab
+    generic :: derivative => cspl_interpdev, cspl_interpdev_tab
 
     ! Evaluation of integral
     procedure, pass(csp) :: integrate => csplint
 
+    ! Evaluation of root
+    procedure, pass(csp) :: roots => csplroots
+
   end type CubicSpline
 
   !> csplev Performs a spline interpolation in a point or in a table
-  !! \see interp_spl and interp_spl_tab
+  !! \see cspl_interp and cspl_interp_tab
+  !!
+  !! Example:
+  !! --------
+  !! @snippet ex_interp_csplines_fp.f90 Using eval
+  !!
   interface csplev
-    module procedure :: interp_spl
-    module procedure :: interp_spl_tab
+    module procedure :: cspl_interp
+    module procedure :: cspl_interp_tab
   end interface csplev
 
+  !> csplev Performs a spline interpolation in a point or in a table
+  !! \see cspl_interpdev and cspl_interpdev_tab
+  !!
+  !! Example:
+  !! --------
+  !! @snippet ex_interp_csplines_fp.f90 Using derivative
+  !!
+  interface csplevder
+    module procedure :: cspl_interpdev
+    module procedure :: cspl_interpdev_tab
+  end interface csplevder
+
+  !> CubicSpline is the OO interface to cubic splines interpolation
+  !!
+  !! Example:
+  !! --------
+  !! @snippet ex_interp_csplines_oo.f90 Using eval
+  !!
+  !! And to evaluate the derivative
+  !!
+  !! @snippet ex_interp_csplines_oo.f90 Using derivative
+  !!
   interface CubicSpline
-    module procedure init
+    module procedure :: init
   end interface CubicSpline
 
   Private
-  Public :: CubicSpline, spl_clean_rep, csplrep, csplev, csplint, csplint_square, spleps
+  Public :: CubicSpline, spl_clean_rep, csplrep, csplev, csplevder, csplint, csplint_square, spleps, csplroots
   Public :: csplder, csplantider
 
 contains
 
-  !> init Computes
-  !!
-  !! Examples:
-  !!
   function init(x, y, s1, sn) result(csp)
     implicit none
     type(CubicSpline) :: csp         !< Coefficients stored in type(CubicSpline)
@@ -84,8 +97,8 @@ contains
   end function init
 
   !> cubic spline interpolation between tabulated data
-  !! After calling this function the result may be used to evaluate the function as:
-  !! `ynew= csplev(xnew, csp)`
+  !! After calling this function the result may be used to evaluate the function as:\n
+  !! `ynew= csplev(xnew, csp)`\n
   !!
   !! REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   subroutine csplrep(x, y, s1, sn, csp)
@@ -94,13 +107,14 @@ contains
     real(dp), dimension(:), intent(IN) :: y !< corresponding function values
     real(dp), intent(IN) :: s1              !< second derivative at x(1)
     real(dp), intent(IN) :: sn              !< second derivative at x(n) (Natural spline: s1=sn=0)
-    type(CubicSpline), intent(OUT) :: csp         !< Coefficients stored in type(CubicSpline)
+    type(CubicSpline), intent(OUT) :: csp   !< Coefficients stored in
+
     integer :: ierr
     integer :: Nd
     Nd = size(x)
     IF (allocated(csp%x) .AND. size(csp%x) /= Nd) deallocate (csp%x, csp%S)
     if (.NOT. allocated(csp%x)) then
-      allocate (csp%x(Nd), csp%S(4, Nd), STAT=ierr)
+      allocate (csp%x(Nd), csp%S(4, Nd - 1), STAT=ierr)
       IF (ierr /= 0) call print_msg('Allocation error', sub='csplrep', errcode=ierr)
     end if
     csp%x = x
@@ -130,15 +144,15 @@ contains
     end do
   end function csplder
 
-  !> csplader Computes the antiderivative of the CubicSpline approximation
+  !> Computes the antiderivative of the CubicSpline approximation
   !!
-  !! Examples:
-  !!
+  !! The result is a CubicSpline (not exactly, it is a polynomial of order m+4)
   function csplantider(csp, m) result(cspa)
     implicit none
-    type(CubicSpline), intent(IN) :: csp !<
-    integer, intent(IN) :: m   !< order of integration
-    type(CubicSpline) :: cspa !<
+    type(CubicSpline), intent(IN) :: csp !< CubicSpline object holding the spline
+    integer, intent(IN) :: m             !< order of integration
+    type(CubicSpline) :: cspa            !< spline holding the antiderivative
+
     integer :: Nd
     integer :: i
 
@@ -150,7 +164,7 @@ contains
     end do
   end function csplantider
 
-!> Clean-up a spline representation
+  !> Clean-up a spline representation
   subroutine spl_clean_rep(r)
     implicit none
     type(CubicSpline), intent(INOUT) :: r
@@ -160,24 +174,23 @@ contains
       deallocate (r%x, r%S, STAT=ierr)
       IF (ierr /= 0) call print_msg('Deallocation error', sub='csplrep')
     end if
-
   end subroutine spl_clean_rep
 
-!> Interpolates a function using previously calculated representation of splines
-!!
-!! @note Before calling this function, must be called `csplrep()`
-  function interp_spl(xc, csp) result(y)
+  !> Interpolates a function using previously calculated representation of splines
+  !!
+  !! @note Before calling this function, must be called `csplrep()`
+  function cspl_interp(xc, csp) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
     class(CubicSpline), intent(IN) :: csp !<  spline coefficients
     real(dp) :: y                     !< the interpolated value
     integer :: ix
     ix = searchsorted(csp%x, xc)
     y = polyval(csp%S(:, ix), xc - csp%x(ix))
-  end function interp_spl
+  end function cspl_interp
 
-!> \copybrief interp_spl
-!! Works over an array of x values and returns an array of interpolated values
-  function interp_spl_tab(xnew, csp) result(y)
+  !> \copybrief cspl_interp
+  !! Works over an array of x values and returns an array of interpolated values
+  function cspl_interp_tab(xnew, csp) result(y)
     class(CubicSpline), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
     real(dp), dimension(size(xnew)) :: y
@@ -189,12 +202,12 @@ contains
       ix = searchsorted(csp%x, xc)
       y(i1) = polyval(csp%S(:, ix), xc - csp%x(ix))
     end do
-  end function interp_spl_tab
+  end function cspl_interp_tab
 
-!> Interpolates the first derivative of a function
-!!
-!! @note Before calling this function, must be called `csplrep()`
-  function interp_devspl(xc, csp, m) result(y)
+  !> Interpolates the first derivative of a function
+  !!
+  !! @note Before calling this function, must be called `csplrep()`
+  function cspl_interpdev(xc, csp, m) result(y)
     real(dp), intent(IN) :: xc !< value where evaluate the interpolation
     class(CubicSpline), intent(IN) :: csp !<  spline coefficients
     integer, optional, intent(IN) :: m                      !< order of derivation
@@ -204,11 +217,11 @@ contains
     m_ = 1; IF (present(m)) m_ = m
     ix = searchsorted(csp%x, xc)
     if (m_ /= 1 .and. m_ /= 2) call print_msg('Not first or second derivative from cspline', &
-      & "interp_devspl", errcode=m_)
+      & "cspl_interpdev", errcode=m_)
     y = polyval(polyder(csp%S(:, ix), m_), xc - csp%x(ix))
-  end function interp_devspl
+  end function cspl_interpdev
 
-  function interp_devspl_tab(xnew, csp, m) result(y)
+  function cspl_interpdev_tab(xnew, csp, m) result(y)
     class(CubicSpline), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
     real(dp), dimension(size(xnew)) :: y
@@ -223,34 +236,34 @@ contains
 
     m_ = 1; IF (present(m)) m_ = m
     if (m_ /= 1 .and. m_ /= 2) call print_msg('Not first or second derivative from cspline', &
-      &"interp_devspl_tab", errcode=m_)
+      &"cspl_interpdev_tab", errcode=m_)
 
     tofill = .True.
     do i1 = 1, size(xnew)
       xc = xnew(i1)
       ix = searchsorted(csp%x, xc)
-      IF (ix < 0 .or. ix > size(csp%x)) call print_msg('Error in indice', 'interp_devspl_tab', abs(ix))
+      IF (ix < 0 .or. ix > size(csp%x)) call print_msg('Error in indice', 'cspl_interpdev_tab', abs(ix))
       if (tofill(ix)) then
         pol(:, ix) = polyder(csp%S(:, ix), m_)      ! Calculate the coefficients of derivative
         tofill(ix) = .False.
       end if
       y(i1) = polyval(pol(:, ix), xc - csp%x(ix))
     end do
-  end function interp_devspl_tab
+  end function cspl_interpdev_tab
 
-!> Coefficients for cubic spline interpolation between tabulated data
-!!
-!! The interpolating polynomial in the i-th interval, from
-!! x(i) to x(i+1), is
-!!       \f$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) \f$
-!!       \f$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) \f$
-!!       with \f$ h = x-x(i) \f$
-!!  Ref: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
+  !> Coefficients for cubic spline interpolation between tabulated data
+  !!
+  !! The interpolating polynomial in the i-th interval, from
+  !! x(i) to x(i+1), is
+  !!       \f$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) \f$
+  !!       \f$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) \f$
+  !!       with \f$ h = x-x(i) \f$
+  !!  Ref: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   function spline_coeff(x, y, s1, sN, nn) result(S)
     integer, intent(IN) :: nn                !< dimension of x, y
     real(dp), dimension(nn), intent(IN) :: x !< grid points
     real(dp), dimension(nn), intent(IN) :: y !< values of the function at grid points x
-    real(dp), dimension(4, nn) :: S !< Coefficients, starting with the highest degree
+    real(dp), dimension(4, nn - 1) :: S !< Coefficients, starting with the highest degree
     real(dp), intent(IN) :: s1      !< second derivative at x(1)
     real(dp), intent(IN) :: sN      !< second derivative at x(N)
     real(dp) :: R, SI1, SI, hi, ih
@@ -311,19 +324,19 @@ contains
     end associate
   end function spline_coeff
 
-!> Estimates the error produced by using a spline approximation
-!!
-!! @details This subroutine estimates the error introduced by natural cubic spline
-!! interpolation in a table <code> x(i),y(i) (i=1,...,n)</code>.  the interpolation
-!! error in the vicinity of @a x(k) is approximated by the difference between y(k) and the
-!! value obtained from the spline that interpolates the table with the k-th point
-!! removed. err is the largest relative error along the table.
-!!
-!! @note Some tests seems to show that the error is about one order of magnitude better than
-!! estimated by this routine
-!! @note Modified from Salvat et al, Comp. Phys. Comm. (1995)
-!!
-!! @returns Err An array with the relative errors
+  !> Estimates the error produced by using a spline approximation
+  !!
+  !! @details This subroutine estimates the error introduced by natural cubic spline
+  !! interpolation in a table <code> x(i),y(i) (i=1,...,n)</code>.  the interpolation
+  !! error in the vicinity of @a x(k) is approximated by the difference between y(k) and the
+  !! value obtained from the spline that interpolates the table with the k-th point
+  !! removed. err is the largest relative error along the table.
+  !!
+  !! @note Some tests seems to show that the error is about one order of magnitude better than
+  !! estimated by this routine
+  !! @note Modified from Salvat et al, Comp. Phys. Comm. (1995)
+  !!
+  !! @returns Err An array with the relative errors
   subroutine spleps(x, y, Err)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< grid points
@@ -352,8 +365,8 @@ contains
     enddo
   end subroutine spleps
 
-!> Definite integral of a cubic spline function.
-!!
+  !> Definite integral of a cubic spline function.
+  !! @todo Testing when extrapolate is True
   function csplint(xL, xU, csp, extrapolate) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
@@ -365,7 +378,7 @@ contains
     integer :: iL, iU, i
     logical :: ext_
 
-    ext_ = Present(extrapolate)
+    ext_ = (Present(extrapolate) .and. (extrapolate))
 
     if (xU > xL) then            ! Set integration limits in increasing order.
       XLL = xL; XUU = xU; sign = 1._dp
@@ -373,17 +386,27 @@ contains
       XLL = xU; XUU = xL; sign = -1._dp
     endif
 
-    x2 = csp%x(size(csp%x))
+    x1 = csp%x(1)     ! Last value
+    x2 = csp%x(size(csp%x))     ! Last value
+
+    suma = Zero
 
     ! Here fix the limits according to argument extrapolate
-    IF (XLL < csp%x(1)) XLL = csp%x(1) + Small ! Check and correct integral limits.
-    IF (XUU > x2) XUU = x2 - Small
+    if (ext_) then
+      if (XLL < x1) then  ! Add interval before the first point
+        i = 1
+        suma = suma + int_single(x1) - int_single(XLL)
+        XLL = x1
+      end if
+      if (XUU > x2) then        ! Add interval after the last point
+        suma = suma + int_single(XUU) - int_single(x2)
+        XUU = x2
+      end if
+    end if
 
     ! Find involved intervals.
     iL = searchsorted(csp%x, XLL)
     iU = searchsorted(csp%x, XUU)
-
-    suma = Zero
 
     ! First interval (i = iL)
     i = iL                    ! Just to use always the same expression
@@ -417,7 +440,7 @@ contains
     end function int_single
   end function csplint
 
-!> Integral of the square of a function expressed as a cubic spline.
+  !> Integral of the square of a function expressed as a cubic spline.
   function csplint_square(xL, xU, csp) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
@@ -481,6 +504,39 @@ contains
     end function int_single
 
   end function csplint_square
+
+  !> csplroots Computes the roots of the Spline approximation
+  !!
+  !! Examples:
+  !!
+  !! @todo This routine is missing the root at the beginning of the interval
+  function csplroots(csp) result(z)
+    implicit none
+    real(dp), dimension(:), allocatable :: z !<
+    class(CubicSpline), intent(IN) :: csp !<
+    real(dp), dimension(3 * size(csp%x)) :: c
+    integer :: i, nc, n, j, k
+    real(dp), parameter :: toler = 5.e-6_8
+    nc = 0
+    c = 0._dp
+    do i = 1, size(csp%x) - 1
+      call fpcuro(csp%S(1, i), csp%S(2, i), csp%S(3, i), csp%S(4, i), c(nc + 1:nc + 3), n)
+      k = 0
+      do j = 1, n
+        IF (c(nc + j) >= -toler .and. c(nc + j) - toler < csp%x(i + 1) - csp%x(i)) then
+          k = k + 1
+          c(nc + k) = c(nc + j) + csp%x(i)
+        end IF
+        nc = nc + k
+      end do
+
+    end do
+    if (nc > 0) then
+      allocate (z(nc))
+      z(:nc) = c(:nc)
+    end if
+
+  end function csplroots
 end module csplines
 
 ! Local variables:

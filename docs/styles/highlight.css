@@ -9,7 +9,7 @@ span.keyword {
 }
 
 span.keywordtype {
-    color: #806020
+    color: #806020; font-weight: bold
 }
 
 span.keywordflow {
@@ -49,4 +49,11 @@ span.charliteral {
 /* } */
 /* .paramname code { */
         /* color: #008000 */
+/* } */
+
+div.image img {width: 50%
+}
+
+/* div.line { */
+/*     background-color: #ccdddd */
 /* } */

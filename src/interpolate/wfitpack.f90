@@ -60,7 +60,7 @@ module fitpack
   end interface splint
 
   private
-  Public :: UnivSpline, splev, splint, splrep, splprep, splroot
+  Public :: UnivSpline, splev, splint, splrep, splprep, splroot, fpcuro
 
 contains
 
@@ -108,55 +108,6 @@ contains
   !! Given a list of N rank-1 arrays, `x`, which represent a curve in N-dimensional space parametrized by `u`, find a smooth
   !! approximating spline curve g(`u`). Uses the routine parcur from (slightly modified) FITPACK.
   !!
-  !! Examples:
-  !! --------
-  !!
-  !! ```
-  !!  real(dp), dimension(:), allocatable :: phi
-  !!  real(dp), dimension(:), allocatable :: r
-  !!  real(dp), dimension(:, :), allocatable :: x
-  !!  real(dp), dimension(:, :), allocatable :: new_points
-  !!  real(dp), dimension(:), allocatable :: u
-  !!  type(UnivSpline) :: tck
-  !!  character(len=:), allocatable :: header
-  !!  real(dp) :: s = 0._dp
-  !!  ! Generate a discretization of a limacon curve in the polar coordinates:
-  !!  phi = linspace(Zero, 2 * M_PI, Nd)
-  !!  r = 0.5_8 + cos(phi)        ! polar coords
-  !!  allocate (r(Nd), u(Nd), phi(Nd))
-  !!  allocate (x(2, Nd), new_points(2, Nd))
-  !!  x(1, :) = r * cos(phi)      ! convert to cartesian
-  !!  x(2, :) = r * sin(phi)      ! convert to cartesian
-  !!  ! interpolate
-  !!  call splprep(x, u, tck, s=s)
-  !!  call splevp(u, tck, new_points)
-  !!  ! and write to stdout
-  !!  header = "u                    x                   y"
-  !!  call save_array([u, new_points(1, :), new_points(2, :)], 3, fmt="f12.8", header=header)
-  !!  ! Prints:
-  !!  !
-  !!  ! # u                    x                   y
-  !!  ! 0.00000000000000  1.50000000000000  0.00000000000000
-  !!  ! 0.03616230734577  1.46779335229253  0.23853963732962
-  !!  ! 0.07211603380768  1.37398960267532  0.45870512901973
-  !!  ! 0.10765440708122  1.22676038619218  0.64385351896871
-  !!  ! 0.14257428865429  1.03883011365998  0.78063018793468
-  !!  ! 0.17667803554905  0.82622920670009  0.86019572275769
-  !!  ! 0.20977542560675  0.60672992984431  0.87900005428954
-  !!  ! ....
-  !!  ! ....
-  !!  ! 0.79022457439325  0.60672992984431 -0.87900005428954
-  !!  ! 0.82332196445095  0.82622920670009 -0.86019572275769
-  !!  ! 0.85742571134571  1.03883011365998 -0.78063018793468
-  !!  ! 0.89234559291878  1.22676038619218 -0.64385351896871
-  !!  ! 0.92788396619232  1.37398960267532 -0.45870512901973
-  !!  ! 0.96383769265423  1.46779335229253 -0.23853963732962
-  !!  ! 1.00000000000000  1.50000000000000 -0.00000000000000
-  !!  !
-  !!```
-  !!
-  !!  Notice that (i) we force interpolation by using `s=0`,
-  !!  (ii) the parameterization, ``u``, is generated automatically.
   subroutine splprep(x, u, tck, w, ulim, k, task, upar, s, t, per, ier)
     implicit none
     real(dp), dimension(:, :), intent(IN) :: x !< 2D-Array representing the curve in an n-dimensional space
@@ -176,11 +127,11 @@ contains
     !!    These should be interior knots as knots on the ends will be added automatically
     real(dp), optional, intent(IN) :: s !< A smoothing condition. The amount of smoothness is determined by satisfying the conditions:\n
     !! `sum((w * (y - g))**2) <= s` where `g(x)` is the smoothed interpolation of `(x,y)`.\n
-    !!The user can use `s` to control the tradeoff between closeness and smoothness of fit. Larger `s` means more smoothing while
-    !! smaller values of `s` indicate less smoothing.  Recommended values of s depend on the weights, w.\n
-    !!If the weights represent the inverse of the standard-deviation of y, then a good s value should be found in the range
-    !!\f$ (m-\sqrt{2 m},m+\sqrt{2 m})\f$ where m is the number of datapoints in x, y, and w. default : \f$ s= m-\sqrt{2 m}\f$ if weights are
-    !!supplied. `s = 0.0` (interpolating) if no weights are supplied.
+    !! The user can use `s` to control the tradeoff between closeness and smoothness of fit. Larger `s` means more smoothing while
+    !! smaller values of `s` indicate less smoothing. Recommended values of `s` depend on the weights, `w`.\n
+    !! If the weights represent the inverse of the standard-deviation of y, then a good `s` value should be found in the range
+    !! \f$ (m-\sqrt{2 m},m+\sqrt{2 m})\f$ where m is the number of datapoints in x, y, and w. default : \f$ s= m-\sqrt{2 m}\f$ if weights are
+    !! supplied. `s = 0.0` (interpolating) if no weights are supplied.
 
     real(dp), optional, dimension(:), intent(IN) :: t !< Input knots (interior knots only) needed for task = -1. If given then task is automatically set to -1.
 
@@ -196,8 +147,15 @@ contains
     !!
     !! For tasks -1, or 1, on input the user may provide values for:
     !!    wrk and iwrk: (but are usually set by a previous call)
+    !!
     integer, optional, intent(OUT) :: ier !< Error code
-
+    !
+    !> Examples:
+    !! --------
+    !!
+    !! @snippet ex_interp_splprep.f90 Using it
+    !!
+    !! Full example in @subpage modinterpolate
     real(dp) :: tol
     integer :: i, ia1, ia2, ib, ifp, ig1, ig2, iq, iz, maxit, ncc
 
@@ -400,50 +358,6 @@ contains
   !! Given the set of data points ``(x[i], y[i])`` determine a smooth spline
   !! approximation of degree k on the interval ``xb <= x <= xe``.
   !!
-  !!
-  !! Examples:
-  !! --------
-  !!```
-  !!  integer, parameter :: N = 6
-  !!  integer, parameter :: Nnew = 29
-  !!  real(dp), dimension(N) :: x
-  !!  real(dp), dimension(N) :: y
-  !!  real(dp), dimension(Nnew) :: xnew
-  !!  real(dp), dimension(Nnew) :: ynew
-  !!  character(len=:), allocatable :: header
-  !!  real(dp) :: s = 0._dp
-  !!  type(UnivSpline) :: tck
-  !!  ! Generate data
-  !!  x = linspace(Zero, M_PI, N)
-  !!  y = sin(x)
-  !!  ! The new array where evaluate the spline
-  !!  xnew = linspace(Zero, M_PI, Nnew)
-  !!  ! interpolate
-  !!  call splrep(x, y, tck=tck, s=s)
-  !!  call splev(xnew, tck, ynew)
-  !!  ! and write to stdout
-  !!  header = "x                   y"
-  !!  call save_array([xnew, ynew], 2, fmt="f17.14", header=header)
-  !!  ! Prints:
-  !!  !
-  !!  ! 0.00000000000000  0.00000000000000
-  !!  ! 0.11219973762821  0.11401345780438
-  !!  ! 0.22439947525641  0.22522911715938
-  !!  ! 0.33659921288462  0.33269883705930
-  !!  ! 0.44879895051283  0.43547447649845
-  !!  ! 0.56099868814103  0.53260789447113
-  !!  !  ...
-  !!  !  ...
-  !!  ! 2.46839422782055  0.62315094997166
-  !!  ! 2.58059396544876  0.53260789447113
-  !!  ! 2.69279370307697  0.43547447649845
-  !!  ! 2.80499344070517  0.33269883705930
-  !!  ! 2.91719317833338  0.22522911715938
-  !!  ! 3.02939291596159  0.11401345780438
-  !!  ! 3.14159265358979  0.00000000000000
-  !!  !
-  !!```
-  !!
   subroutine splrep(x, y, w, xb, xe, k, task, s, t, per, tck, ier)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Values of independent variable
@@ -479,6 +393,12 @@ contains
     !! On input, for tasks -1, 1 the user may provide values for:
     !!    wrk, iwrk: For tasks. (but usually are set by a previous call)
     integer, optional, intent(OUT) :: ier !< Flag of status at output
+    !> Examples:
+    !! --------
+    !!
+    !! @snippet ex_interp_splrep.f90 Using it
+    !!
+    !! Full example in @subpage modinterpolate
 
     real(dp), dimension(size(x)) :: w_
     real(dp), dimension(:), allocatable :: c_

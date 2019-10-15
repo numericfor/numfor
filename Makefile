@@ -156,7 +156,7 @@ DOXYF:=$(SCRPTD)/Doxyfile
 
 doc:  $(DOCDIR)/html/index.html
 
-$(DOCDIR)/html/index.html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md  $(DOCSD)/*.md
+$(DOCDIR)/html/index.html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md  $(DOCSD)/*.md $(EXMPD)/*.f90
 	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 "${VERSION} ($(DATE))"|'\
             -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
 	cd $(top_dir) && doxygen $(PRJ).dox && cd -
@@ -173,7 +173,7 @@ doc-api: $(DOXYF) $(SRC)
 	cd $(top_dir) && doxygen $(PRJ)_api.dox && cd -
 
 
-view-doc: $(DOCDIR)/html
+view-doc: doc
 	gio open $(DOCDIR)/html/index.html || firefox $(DOCDIR)/html/index.html
 
 # ########################################################################
