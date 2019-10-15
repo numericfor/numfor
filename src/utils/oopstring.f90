@@ -1,7 +1,7 @@
 !> @file oopstring.f90 file provides an object-oriented type for working with string
-!! @date "2019-08-28 13:15:30"
+!! @date "2019-10-15 16:06:13"
 
-!> Module defining the `fStr` object and its methods. Documentation: @ref modfstring
+!> Module defining the `fStr` object and its methods. Documentation: @ref docutils
 module fString
   USE basic, only: dp
   USE strings, only: str,&

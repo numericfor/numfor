@@ -22,6 +22,11 @@ module fitpack
   !! Given the knots and coefficients of a B-spline representation, evaluate
   !! the value of the smoothing polynomial and its derivatives.  This is a
   !! wrapper around the FORTRAN routines splev and splder of FITPACK.
+  !!
+  !! Examples:
+  !! --------
+  !!
+  !! @snippet ex_interp_splrep.f90 Using it
   interface splev
     module procedure :: splevp, splevc
   end interface splev
@@ -65,9 +70,6 @@ module fitpack
 contains
 
   !> splrep_msg
-  !!
-  !! Examples:
-  !!
   subroutine splrep_msg(flag)
     implicit none
     integer, intent(IN) :: flag !< Value of i
@@ -566,13 +568,11 @@ contains
     call fpintb(tck%t, n, wrk, nk1, a, b)
     y = sum(tck%c(:nk1) * wrk)
   end subroutine splint_f
+
   !> splevp Computes a B-spline or its derivatives for a parametric spline.
   !! Given the knots and coefficients of a B-spline representation, evaluate
   !! the value of the smoothing polynomial and its derivatives.  This is a
   !! wrapper around the FORTRAN routines splev and splder of FITPACK.
-  !!
-  !! Examples:
-  !!
   subroutine splevp(u, tck, y, der, ext, ier)
     implicit none
     real(dp), dimension(:), intent(IN) :: u !< Points at which to return the value of the smoothed spline or its derivative

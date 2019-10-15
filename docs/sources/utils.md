@@ -4,13 +4,24 @@ The module utils defines several objects (types, constants and routines) conveni
 
 It consists of several areas:
 
-  * Basic support (basic types, error handling, timer) is provided by @subpage modbasic.
+  * Basic support (basic types, error handling, timer).
 
   * Manipulation of strings is provided in two different "flavors". Both modules provide similar functionality, and where posible they are implemented in the same code. It consists of:
-      * A framework to work in a "procedural" approach is provided by the functions and subroutines in the @subpage modstrings.
-      * An "object-oriented" framework with a new type (`fStr()`) to represent strings. It is defined in the @subpage modfstring.
+      * A framework to work in a "procedural" approach is provided.
+      * An "object-oriented" framework with a new type (`fStr()`) to represent strings.
 
+## General support
 
+  * Definitions for single precision (`sp`), double precision (`dp`) kinds
+  * A timer, with a simple interface
+  
+@include ex_timer.f90
+
+Prints:
+```{.shell-session}
+cpu time:           1.83s
+Total time: 1 s 840ms 
+```
 ## Constants
 
 
@@ -40,7 +51,7 @@ There are defined some commonly used constants (where the definition of "commonl
 
 There are also defined many @subpage physconst, like the constants defined in [scipy.constants](https://docs.scipy.org/doc/scipy/reference/constants.html).
 
-## Strings ##
+## Strings ## {#docutils}
 
 The module strings provides routines for string manipulation. It provides some functionality similar to that available to Python strings:
 

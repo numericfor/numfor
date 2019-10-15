@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-10-15 09:55:00"
+!! @date "2019-10-15 15:40:30"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -80,7 +80,7 @@ module csplines
   end interface CubicSpline
 
   Private
-  Public :: CubicSpline, spl_clean_rep, csplrep, csplev, csplevder, csplint, csplint_square, spleps, csplroots
+  Public :: CubicSpline, cspl_clean, csplrep, csplev, csplevder, csplint, csplint_square, cspleps, csplroots
   Public :: csplder, csplantider
 
 contains
@@ -165,7 +165,7 @@ contains
   end function csplantider
 
   !> Clean-up a spline representation
-  subroutine spl_clean_rep(r)
+  subroutine cspl_clean(r)
     implicit none
     type(CubicSpline), intent(INOUT) :: r
 
@@ -174,7 +174,7 @@ contains
       deallocate (r%x, r%S, STAT=ierr)
       IF (ierr /= 0) call print_msg('Deallocation error', sub='csplrep')
     end if
-  end subroutine spl_clean_rep
+  end subroutine cspl_clean
 
   !> Interpolates a function using previously calculated representation of splines
   !!
@@ -337,7 +337,7 @@ contains
   !! @note Modified from Salvat et al, Comp. Phys. Comm. (1995)
   !!
   !! @returns Err An array with the relative errors
-  subroutine spleps(x, y, Err)
+  subroutine cspleps(x, y, Err)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< grid points
     real(dp), dimension(size(x)), intent(IN) :: y !< value of function at grid points
@@ -363,7 +363,7 @@ contains
         Err(i) = YI - y(i)      ! Absolute error
       endif
     enddo
-  end subroutine spleps
+  end subroutine cspleps
 
   !> Definite integral of a cubic spline function.
   !! @todo Testing when extrapolate is True

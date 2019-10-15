@@ -91,13 +91,55 @@ The first example illustrates how to use B-Splines to interpolate a function `y=
 
 @include ex_interp_splrep.f90
 
+Prints:
+
+```{.shell-session}
+$> cat data/ex_interp_splrep1.dat
+ # x                   y
+ 0.00000000000000  0.00000000000000
+ 0.11219973762821  0.11401345780438
+ 0.22439947525641  0.22522911715938
+ 0.33659921288462  0.33269883705930
+ 0.44879895051283  0.43547447649845
+  ...
+ 2.69279370307697  0.43547447649845
+ 2.80499344070517  0.33269883705930
+ 2.91719317833338  0.22522911715938
+ 3.02939291596159  0.11401345780438
+ 3.14159265358979  0.00000000000000
+```
+
 Notice that we force interpolation by using `s=0`,
+
+@image html ex_interp_splrep1.png
+
 
 ### Use of `splprep()` with `splev()`
 This second example illustrates how to use B-Splines for a parametric curve in the plane.
 
 @include ex_interp_splprep.f90
 
+
+ Prints:
+ 
+```{.shell-session}
+$> cat data/ex_interp_splprep1.dat
+ # u                    x                   y
+ 0.00000000000000  1.50000000000000  0.00000000000000
+ 0.03616230734577  1.46779335229253  0.23853963732962
+ 0.07211603380768  1.37398960267532  0.45870512901973
+ 0.10765440708122  1.22676038619218  0.64385351896871
+ 0.14257428865429  1.03883011365998  0.78063018793468
+ ....
+ 0.85742571134571  1.03883011365998 -0.78063018793468
+ 0.89234559291878  1.22676038619218 -0.64385351896871
+ 0.92788396619232  1.37398960267532 -0.45870512901973
+ 0.96383769265423  1.46779335229253 -0.23853963732962
+ 1.00000000000000  1.50000000000000 -0.00000000000000 
+```
+
 Notice that:
   1. We force interpolation by using `s=0`,
   2. The parameterization array `u` is generated automatically.
+
+@image html ex_interp_splprep1.png

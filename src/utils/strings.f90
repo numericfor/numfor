@@ -1,8 +1,8 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-09-27 16:12:00"
+!! @date "2019-10-15 16:04:08"
 
 !> This module defines functions to manipulate strings of characters.
-!! Documentation: @ref modstrings
+!! Documentation: @ref docstrings
 module strings
   USE basic, only: sp, dp, Small
   character(*), parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
