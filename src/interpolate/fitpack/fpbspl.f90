@@ -15,7 +15,7 @@ subroutine fpbspl(t, n, k, x, l, h)
   integer, intent(IN) :: n, k, l
   !  ..array arguments..
   real(8), intent(IN), dimension(n):: t
-  real(8), intent(OUT), dimension(20) :: h
+  real(8), intent(OUT), dimension(:) :: h
   !  ..local scalars..
   real(8) :: f
   integer :: i, j, li, lj

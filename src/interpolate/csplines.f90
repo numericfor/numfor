@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-10-14 21:03:17"
+!! @date "2019-10-15 09:55:00"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -12,7 +12,7 @@
 module csplines
   USE basic, only: dp, Zero, Small, print_msg
   USE sorting, only: searchsorted
-  USE polynomial, only: polyder, polyval, polyint
+  USE polynomial, only: polyder, polyval, polyint, bisect_pol
   USE fitpack, only: fpcuro
   implicit none
 
@@ -507,16 +507,19 @@ contains
 
   !> csplroots Computes the roots of the Spline approximation
   !!
-  !! Examples:
-  !!
-  !! @todo This routine is missing the root at the beginning of the interval
   function csplroots(csp) result(z)
     implicit none
-    real(dp), dimension(:), allocatable :: z !<
-    class(CubicSpline), intent(IN) :: csp !<
+    real(dp), dimension(:), allocatable :: z !< Roots (zeros) of the spline function
+    class(CubicSpline), intent(IN) :: csp !< Spline approximation to consider
+    !! Examples:
+    !! ```
+    !!   real(dp), dimension(:), allocatable :: zeros
+    !!   zeros = csp%roots()
+    !!```
     real(dp), dimension(3 * size(csp%x)) :: c
     integer :: i, nc, n, j, k
-    real(dp), parameter :: toler = 5.e-6_8
+    real(dp), parameter :: toler = 1.e-5_8
+
     nc = 0
     c = 0._dp
     do i = 1, size(csp%x) - 1
@@ -535,8 +538,8 @@ contains
       allocate (z(nc))
       z(:nc) = c(:nc)
     end if
-
   end function csplroots
+
 end module csplines
 
 ! Local variables:

@@ -15,8 +15,6 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
   integer :: mk1, new, nk1, nmax, nmin, nplus, npl1, nrint, n8
   !  ..local arrays..
   real(8) :: h(7)
-  !  ..function references
-  real(8) :: abs, fprati
   !  ..subroutine references..
   !    fpback,fpbspl,fpgivs,fpdisc,fpknot,fprota
   !  ..
@@ -364,4 +362,3 @@ subroutine fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2,&
 430 ier = -1
 440 return
 end subroutine fpcurf
-

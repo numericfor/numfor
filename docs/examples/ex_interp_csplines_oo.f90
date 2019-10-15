@@ -6,7 +6,7 @@ program cubic_splines_oo
   type(CubicSpline) :: csp
   real(dp), dimension(Ndim) :: x, y
   real(dp), dimension(Ndimnew) :: xnew, ynew, yder
-  real(dp), dimension(:), allocatable :: ceros
+  real(dp), dimension(:), allocatable :: zeros
   character(len=:), allocatable :: header
   character(len=:), allocatable :: fname
 
@@ -38,8 +38,9 @@ program cubic_splines_oo
   print "(A,f8.6)", "Value of the function at 1.5     = ", csp%evaluate(1.5_dp)
   print "(A,f8.6)", "Value of first derivative at 1.5 = ", csp%derivative(1.5_dp)
   print "(A,f8.6)", "Value of integral from 0 to 1.5  = ", csp%integrate(0._dp, 1.5_dp)
-  ceros = csp%roots()
-  header = "There are "//str(size(ceros))//" roots. In units of π:"
-  call save_array(ceros / M_PI, 1, fmt='f13.10', header=header)
+
+  zeros = csp%roots()
+  header = "There are "//str(size(zeros))//" roots. In units of π:"
+  call save_array(zeros / M_PI, 1, fmt='f13.10', header=header)
 
 end program cubic_splines_oo

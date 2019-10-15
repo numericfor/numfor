@@ -1,5 +1,5 @@
 !> @file polynomial.f90
-!! @date "2019-10-09 01:06:10"
+!! @date "2019-10-15 10:38:32"
 
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
 !! It allows to easily evaluate, derivate, and integrate a polynomial
@@ -53,7 +53,7 @@ module polynomial
   end interface polyval
 
   private
-  public polyval, polyder, polyint
+  public polyval, polyder, polyint, bisect_pol
 
 contains
 
@@ -182,6 +182,36 @@ contains
       end do
     end do morder
   end function polyint
+
+  !> bisect_pol Classical bisection method for root finding on polynomials
+  subroutine bisect_pol(x0, dx, p, toler, x)
+    implicit none
+    real(dp), intent(IN) :: x0 !< Initial value
+    real(dp), intent(INOUT) :: dx !< range. It will probe in the range (x0-dx, x0+dx). On return it will have an estimation of error
+    real(dp), dimension(:), intent(IN) :: p !< Array with coefficients of polynomial
+    real(dp), intent(IN) :: toler           !< Tolerance in the root determination
+    real(dp), intent(OUT) :: x              !< Value of the root
+
+    real(dp) :: y0, yl, yu
+
+    x = x0
+    y0 = polyval(p, x)
+    yl = polyval(p, x - dx)
+    yu = polyval(p, x + dx)
+    IF ((yl * y0 >= 0._dp) .and. (yu * y0 >= 0._dp)) return
+
+    do while (dx > toler .and. abs(y0) > toler * 1.e-4)
+      ! do while (dx > toler)
+      dx = dx / 2
+      if (yu * y0 < 0) then
+        x = x + dx
+      else
+        x = x - dx
+        yu = y0
+      end if
+      y0 = polyval(p, x)
+    end do
+  end subroutine bisect_pol
 
 end module polynomial
 ! Local variables:

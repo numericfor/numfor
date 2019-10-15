@@ -61,14 +61,15 @@ subroutine fpintb(t, n, bint, nk1, x, y)
   !               = sumi((x-t(j+i))*nj+i,k+1-i(x)/(t(j+k+1)-t(j+i)))
   !                 i=0,1,...,k
   l = k1
-  l0 = l + 1
+  ! l0 = l + 1
   !  set arg = a.
   arg = a
   do it = 1, 2
     !  search for the knot interval t(l) <= arg < t(l+1).
     do while (arg >= t(l + 1) .and. l /= nk1)
-      l = l0
-      l0 = l + 1
+      ! l = l0
+      ! l0 = l + 1
+      l = l + 1
     end do
 
     !  calculation of aint(j), j=1,2,...,k+1.
@@ -129,5 +130,5 @@ subroutine fpintb(t, n, bint, nk1, x, y)
 
   !  the order of the integration limits is taken into account.
   IF (minus) bint(:nk1) = -bint(:nk1)
-
 end subroutine fpintb
+

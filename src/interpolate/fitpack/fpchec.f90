@@ -44,7 +44,7 @@ subroutine fpchec(x, m, t, n, k, ier)
   if (x(1) < t(k1) .or. x(m) > t(nk2)) return
   !  check condition no 5
   if (x(1) >= t(k2) .or. x(m) <= t(nk1)) return
-  i = 1
+
   l = k2
   nk3 = nk1 - 1
   if (nk3 < 2) then
@@ -52,6 +52,7 @@ subroutine fpchec(x, m, t, n, k, ier)
     return
   end if
 
+  i = 1
   do j = 2, nk3
     tj = t(j)
     l = l + 1

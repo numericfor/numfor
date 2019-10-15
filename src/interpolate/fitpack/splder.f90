@@ -172,7 +172,5 @@ subroutine splder(t, n, c, k, nu, x, y, m, e, wrk, ier)
       call fpbspl(t, n, kk, arg, l, h)
       y(i) = sum(wrk(l - k1 + 1:l - nu) * h(:k2))
     end if
-
   end do
-
 end subroutine splder

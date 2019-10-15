@@ -4,7 +4,7 @@
 FC:= gfortran
 arch:=-march=native
 
-FFLAGS:= -ffree-form $(arch) -std=f2008 \
+FFLAGS:= -cpp -ffree-form $(arch) -std=f2008 \
 	 -Wall -Werror -pedantic -Wno-trampolines -Wno-unused-function -Wno-maybe-uninitialized
 
 # Option for a shared library

@@ -1,10 +1,11 @@
-real(8) function fprati(p1, f1, p2, f2, p3, f3)
+function fprati(p1, f1, p2, f2, p3, f3) result(y)
   !  given three points (p1,f1),(p2,f2) and (p3,f3), function fprati
   !  gives the value of p such that the rational interpolating function
   !  of the form r(p) = (u*p+v)/(p+w) equals zero at p.
   !  ..
   !  ..scalar arguments..
   real(8) :: p1, f1, p2, f2, p3, f3
+  real(8) :: y
   !  ..local scalars..
   real(8) :: h1, h2, h3, p
   !  ..
@@ -27,5 +28,5 @@ real(8) function fprati(p1, f1, p2, f2, p3, f3)
     p3 = p2
     f3 = f2
   end if
-  fprati = p
+  y = p
 end function fprati

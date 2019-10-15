@@ -18,7 +18,7 @@ subroutine fpperi(iopt, x, y, w, m, k, s, nest, tol, maxit, k1, k2, n, t, c,&
   !  ..local arrays..
   real(8) :: h(6), h1(7), h2(6)
   !  ..function references..
-  real(8) :: abs, fprati
+  ! real(8) :: abs, fprati
   integer :: max0, min0
   !  ..subroutine references..
   !    fpbacp,fpbspl,fpgivs,fpdisc,fpknot,fprota

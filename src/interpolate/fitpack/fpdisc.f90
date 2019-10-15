@@ -42,6 +42,4 @@ subroutine fpdisc(t, n, k2, b, nest)
     end do
 
   end do
-
-  return
 end subroutine fpdisc

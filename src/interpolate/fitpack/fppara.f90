@@ -16,7 +16,7 @@ subroutine fppara(iopt, idim, m, u, mx, x, w, ub, ue, k, s, nest, tol, maxit,&
   !  ..local arrays..
   real(8) :: h(7), xi(10)
   !  ..function references
-  real(8) :: abs, fprati
+  ! real(8) :: abs, fprati
   !  ..subroutine references..
   !    fpback,fpbspl,fpgivs,fpdisc,fpknot,fprota
   !  ..

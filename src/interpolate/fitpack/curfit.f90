@@ -262,5 +262,4 @@ subroutine curfit(iopt, m, x, y, w, xb, xe, k, s, nest, n, t, c, fp, wrk, lwrk, 
   iq = ig + nest * k2
   call fpcurf(iopt, x, y, w, m, xb, xe, k, s, nest, tol, maxit, k1, k2, n, t, c, fp, &
     & wrk(ifp), wrk(iz), wrk(ia), wrk(ib), wrk(ig), wrk(iq), iwrk, ier)
-
 end subroutine curfit

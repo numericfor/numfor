@@ -652,6 +652,24 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ! We include the necessary fitpack routines
-  include "fitp.inc"
-
+#include "./fitpack/percur.f90"
+#include "./fitpack/curfit.f90"
+#include "./fitpack/splder.f90"
+#include "./fitpack/sproot.f90"
+#include "./fitpack/fpback.f90"
+#include "./fitpack/fpbacp.f90"
+#include "./fitpack/fpbspl.f90"
+#include "./fitpack/fpchec.f90"
+#include "./fitpack/fpchep.f90"
+#include "./fitpack/fpclos.f90"
+#include "./fitpack/fpcurf.f90"
+#include "./fitpack/fpdisc.f90"
+#include "./fitpack/fpgivs.f90"
+#include "./fitpack/fpknot.f90"
+#include "./fitpack/fppara.f90"
+#include "./fitpack/fpperi.f90"
+#include "./fitpack/fprota.f90"
+#include "./fitpack/fpcuro.f90"
+#include "./fitpack/fpintb.f90"
+#include "./fitpack/fprati.f90"
 end module fitpack

@@ -21,8 +21,7 @@ subroutine fpcuro(a, b, c, d, x, n)
   integer :: i
   real(8) :: a1, b1, c1, df, disc, d1, e3, f, four, half, ovfl, pi3, p3, q, r
   real(8) :: step, tent, three, two, u, u1, u2, y
-  !  ..function references..
-  ! real(8) :: abs, max, datan, atan2, cos, sign, sqrt
+
   !  set constants
   two = 2._8
   three = 3._8
@@ -82,16 +81,14 @@ subroutine fpcuro(a, b, c, d, x, n)
     n = 0
     return
   end if
-
-  !
   !  apply a newton iteration to improve the accuracy of the roots.
   do i = 1, n
     y = x(i)
     f = ((a * y + b) * y + c) * y + d
     df = (three * a * y + two * b) * y + c
-    step = 0.
+    step = 0._8
     if (abs(f) < abs(df) * tent) step = f / df
     x(i) = y - step
   end do
-
 end subroutine fpcuro
+

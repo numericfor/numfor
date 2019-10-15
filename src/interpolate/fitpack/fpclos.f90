@@ -18,8 +18,8 @@ subroutine fpclos(iopt, idim, m, u, mx, x, w, k, s, nest, tol, maxit, k1, k2,&
   !  ..local arrays..
   real(8) :: h(6), h1(7), h2(6), xi(10)
   !  ..function references..
-  real(8) :: abs, fprati
-  integer :: max0, min0
+  ! real(8) :: abs, fprati
+  ! integer :: max0, min0
   !  ..subroutine references..
   !    fpbacp,fpbspl,fpgivs,fpdisc,fpknot,fprota
   !  ..
@@ -431,7 +431,7 @@ subroutine fpclos(iopt, idim, m, u, mx, x, w, k, s, nest, tol, maxit, k1, k2,&
     npl1 = nplus * 2
     rn = nplus
     if (fpold - fp > acc) npl1 = int(rn * fpms / (fpold - fp))
-    nplus = min0(nplus * 2, max0(npl1, nplus / 2, 1))
+    nplus = min(nplus * 2, max(npl1, nplus / 2, 1))
     fpold = fp
     !  compute the sum of squared residuals for each knot interval
     !  t(j+k) <= ui <= t(j+k+1) and store it in fpint(j),j=1,2,...nrint.
@@ -765,14 +765,10 @@ subroutine fpclos(iopt, idim, m, u, mx, x, w, k, s, nest, tol, maxit, k1, k2,&
       j2 = j2 + 1
       c(j2) = fac
     end do
-
     j1 = j1 + n
   end do
-
   fp = fp0
   fpint(n) = fp0
   fpint(n - 1) = 0._8
   nrdata(n) = 0
-
 end subroutine fpclos
-
