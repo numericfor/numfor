@@ -13,9 +13,17 @@ The use of the object oriented CubicSplines is very convenient, as it is illustr
 
  This outputs:
 ```{.shell-session}
-  Value of the function at 1.5     = 0.993493
-  Value of first derivative at 1.5 = 0.066617
-  Value of integral from 0 to 1.5  = 0.927102
+Value of the function at 1.5     = 0.993493
+Value of first derivative at 1.5 = 0.066617
+Value of integral from 0 to 1.5  = 0.927102
+# There are 7 roots. In units of π:
+-0.0000000025
+ 0.9999594164
+ 1.9999193799
+ 2.9998803876
+ 3.9998428449
+ 4.9998041860
+ 5.9995842765
 ```
 
 and 
