@@ -1,34 +1,13 @@
 !> @file polynomial.f90
-!! @date "2019-10-15 10:38:32"
+!! @date "2019-10-16 10:46:08"
 
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
 !! It allows to easily evaluate, derivate, and integrate a polynomial
 !! Examples:
+!! -------
+!! @include ex_polynomial.f90
 !!
-!!```
-!! real(dp), dimension(5) :: p1
-!! p1 = arange(5, 1, -1)
-!! print "(A)", Evaluations
-!! print "(f0.0)", polyval(p1, -1._dp)  ! gives 3.
-!! print "(f0.0)", polyval(p1, 0._dp)   ! gives 1
-!! print "(f0.0)", polyval(p1, 1._dp)   ! gives 15
-!! print "(3(f0.0,1x))", polyval(p1, [-1._dp, 0._dp, 1._dp]) ! gives 3.,1.,15.
-!!
-!! print "(A)", Derivatives
-!! print "(3(f0.0,1x))", polyval(polyder(p1, 1), [-1._dp, 0._dp, 1._dp])
-!! print "(3(f0.0,1x))", polyval(polyder(p1, 2), [-1._dp, 0._dp, 1._dp])
-!! print "(3(f0.0,1x))", polyval(polyder(p1, 3), [-1._dp, 0._dp, 1._dp])
-!! ! gives as a result:
-!! !   -12. 2. 40.
-!! !    42. 6. 90.
-!! !   -96. 24. 144.
-!!
-!! print "(A)", Integrals
-!! print "(3(f0.0,1x))", polyval(polyint(p1, 1), [-1._dp, 0._dp, 1._dp])
-!! ! gives:
-!! !       -1. 0. 5.
-!! !
-!! ```
+!! Further description in @ref docinterpolate
 module polynomial
 
   USE basic, only: dp, Zero, print_msg
@@ -37,17 +16,7 @@ module polynomial
   !!
   !! Examples:
   !! --------
-  !!
-  !!```
-  !! real(dp), dimension(5) :: p1
-  !! p1 = arange(5, 1, -1)
-  !!
-  !! print "(f0.0)", polyval(p1, -1._dp)  ! gives 3.
-  !! print "(f0.0)", polyval(p1, 0._dp)   ! gives 1
-  !! print "(f0.0)", polyval(p1, 1._dp)   ! gives 15
-  !! print "(3(f0.0,1x))", polyval(p1, [-1._dp, 0._dp, 1._dp]) ! gives 3.,1.,15.
-  !! !
-  !! ```
+  !! @snippet ex_polynomial.f90 evaluate
   interface polyval
     module procedure :: polyval_1, polyval_v
   end interface polyval
@@ -78,6 +47,10 @@ contains
     real(dp), dimension(:), intent(IN) :: p !< Array of coefficients, from highest degree to constant term
     real(dp), dimension(:), intent(IN) :: x !< A number at which to evaluate the polynomial
     real(dp), dimension(size(x)) :: y !< Polynomial evaluated in x
+    !! Examples:
+    !! --------
+    !! @snippet ex_polynomial.f90 derivative
+
     integer :: i, j
 
     y = p(1)
@@ -89,26 +62,14 @@ contains
   end function polyval_v
 
   !> polyder Computes the derivative of a polynomial. Returns an array with the coefficients
-  !!
-  !! Examples:
-  !!```
-  !! real(dp), dimension(5) :: p1
-  !! p1 = arange(5, 1, -1)
-  !!
-  !! print "(3(f0.0,1x))", polyval(polyder(p1, 1), [-1._dp, 0._dp, 1._dp])
-  !! print "(3(f0.0,1x))", polyval(polyder(p1, 2), [-1._dp, 0._dp, 1._dp])
-  !! print "(3(f0.0,1x))", polyval(polyder(p1, 3), [-1._dp, 0._dp, 1._dp])
-  !! ! gives as a result:
-  !! !   -12. 2. 40.
-  !! !    42. 6. 90.
-  !! !   -96. 24. 144.
-  !! !
-  !! ```
   function polyder(p, m) result(Pd)
     implicit none
-    real(dp), dimension(:), intent(IN) :: p !<
-    integer, optional, intent(IN) :: m !<
-    real(dp), dimension(:), allocatable :: Pd !<
+    real(dp), dimension(:), intent(IN) :: p !< Array of coefficients, from highest degree to constant term
+    integer, optional, intent(IN) :: m !< Order of derivation
+    real(dp), dimension(:), allocatable :: Pd !< Derivative of polynomial
+    !! Examples:
+    !! --------
+    !! @snippet ex_polynomial.f90 derivative
     integer :: m_
     integer :: i, k, n
     integer :: order
@@ -139,31 +100,22 @@ contains
   end function polyder
 
   !> polyint Computes m-esima antiderivative
-  !!
-  !! Examples:
-  !!```
-  !! real(dp), dimension(5) :: p1
-  !! p1 = arange(5, 1, -1)
-  !!
-  !! print "(3(f0.0,1x))", polyval(polyint(p1, 1), [-1._dp, 0._dp, 1._dp])
-  !! !
-  !! ! gives:
-  !! !       -1. 0. 5.
-  !! !
-  !!```
   function polyint(p, m, k) result(p_I)
     implicit none
-    real(dp), dimension(:), intent(IN) :: p !<
-    integer, optional, intent(IN) :: m !<
-    real(dp), optional, intent(IN) :: k !<
-    real(dp), dimension(:), allocatable :: p_I !<
+    real(dp), dimension(:), intent(IN) :: p !< Array of coefficients, from highest degree to constant term
+    integer, optional, intent(IN) :: m !< Number of times that `p` must be integrated
+    real(dp), optional, intent(IN) :: k !< Additive Constant
+    real(dp), dimension(:), allocatable :: P_I !< Antiderivative polynomial
+    !! Examples:
+    !! --------
+    !! @snippet ex_polynomial.f90 integrate
     integer :: m_
     real(dp) :: k_
     integer :: i, j, n
     integer :: order
 
     m_ = 1; IF (present(m)) m_ = m
-    IF (m_ < 0) call print_msg('Order of derivative must be positive', errcode=0)
+    IF (m_ < 0) call print_msg('Order of antiderivative must be positive', errcode=0)
 
     k_ = Zero; IF (present(k)) k_ = k
 

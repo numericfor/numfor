@@ -7,9 +7,8 @@ program ex_timer
   integer :: i, j
   type(timer) T1
 
-  ! Start timer
-  call T1%start()
-  ! Do your operations ...
+  call T1%start()               ! Start the timer
+  ! ---- Do your operations ....
   a = 1._dp
   c = 0
   do j = 1, 2
@@ -21,9 +20,8 @@ program ex_timer
     end do
     c = -c
   end do
-  ! -----------------
-  call T1%stop()
-  call T1%show()
-
+  ! -----------------------------
+  call T1%stop()                ! Stop the timer
+  call T1%show()                ! Show the results
 end program ex_timer
 

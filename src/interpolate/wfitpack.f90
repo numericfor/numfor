@@ -1,5 +1,7 @@
 !> fitpack provides a framework for fitting and interpolation using B-Splines.
-!! It uses routines from a slightly cleaned-up version of FITPACK by P. Diercxx
+!! It uses routines from a slightly cleaned-up f90 version of FITPACK by P. Diercxx
+!!
+!! Further description in @ref docinterpolate
 module fitpack
   USE utils, only: dp, str, print_msg
 
@@ -38,28 +40,7 @@ module fitpack
   !!
   !! Examples:
   !! --------
-  !! ```
-  !! integer, parameter :: N = 6
-  !! real(dp), dimension(N) :: x
-  !! real(dp), dimension(N) :: y
-  !! real(dp) :: yI
-  !!
-  !! type(UnivSpline) :: tck
-  !!
-  !! x = linspace(Zero, M_PI, N)
-  !! y = sin(x)
-  !! call splrep(x, y, tck=tck, s=0._dp)
-  !! call splint(tck, Zero, M_PI / 2._dp, yI)
-  !! print "(A, f14.12)", 'Integral entre 0 y π/2: ', yI
-  !! call splint(tck, Zero, M_PI, yI)
-  !! print "(A, f14.12)", 'Integral entre 0 y π: ', yI
-  !! !
-  !! ! Prints:
-  !! !   Integral entre 0 y π/2: 1.000630799770
-  !! !   Integral entre 0 y π: 2.001261599540
-  !! !
-  !! ```
-  !!
+  !! @snippet ex_interp_splint.f90 integrate
   interface splint
     module procedure :: splint_0, splint_f
   end interface splint
@@ -382,7 +363,7 @@ contains
     !!The user can use `s` to control the tradeoff between closeness and smoothness of fit. Larger `s` means more smoothing while
     !! smaller values of `s` indicate less smoothing.  Recommended values of s depend on the weights, w.\n
     !!If the weights represent the inverse of the standard-deviation of y, then a good s value should be found in the range
-    !!\f$ (m-\sqrt{2 m},m+\sqrt{2 m}) where m is the number of datapoints in x, y, and w. default : \f$ s= m-\sqrt{2 m}\f$ if weights are supplied. It will use `s = 0.0` (interpolating) if no weights are supplied.
+    !!\f$ (m-\sqrt{2 m},m+\sqrt{2 m})\f$ where m is the number of datapoints in x, y, and w. default : \f$ s= m-\sqrt{2 m}\f$ if weights are supplied. It will use `s = 0.0` (interpolating) if no weights are supplied.
     real(dp), optional, dimension(:), intent(IN) :: t !< Input knots (interior knots only) for task = -1. If given then task is automatically set to -1.
     logical, optional, intent(IN) :: per  !< Flag indicating if data are considered periodic
     type(UnivSpline), intent(OUT) :: tck !<  Coefficients, knots, and additional information for interpolation/fitting.
@@ -561,7 +542,7 @@ contains
     real(dp), intent(IN) :: a !< Lower limit of the integral
     real(dp), intent(IN) :: b !< Upper limit of the integral
     real(dp), intent(OUT) :: y !< Result of the integral
-    real(dp), dimension(size(tck%c - tck%k - 1)), intent(OUT) :: wrk !< Integral of B-spline
+    real(dp), dimension(size(tck%c) - tck%k - 1), intent(OUT) :: wrk !< Integral of each B-spline for i=1,...,n-k-1
     integer :: n, nk1
     n = size(tck%t)
     nk1 = n - tck%k - 1

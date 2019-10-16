@@ -1,6 +1,6 @@
 !> @file
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-08-27 12:48:11"
+!! @date "2019-10-16 08:30:03"
 
 !> sort provides a framework for searching elements and sorting arrays
 !!
@@ -62,7 +62,7 @@ contains
   !> Routine to sort a vector
   !!
   !! Sorting routine, slightly modified from the original sources:
-  !! @ref https://github.com/jacobwilliams/fortran-search-and-sort.git
+  !!  - https://github.com/jacobwilliams/fortran-search-and-sort.git
   !!
   !! It uses a simple insertion point algorithm for small arrays (less than 20 elements)
   !! and quicksort algorithm for larger arrays.

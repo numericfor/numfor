@@ -1,8 +1,7 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-10-15 16:04:08"
+!! @date "2019-10-16 10:22:22"
 
 !> This module defines functions to manipulate strings of characters.
-!! Documentation: @ref docstrings
 module strings
   USE basic, only: sp, dp, Small
   character(*), parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
@@ -14,6 +13,7 @@ module strings
   character(*), parameter :: letters_uppercase = ascii_uppercase//accented_uppercase
 
   character(*), private, parameter :: blanks = ' '//achar(9)
+  character, private, parameter :: nl = NEW_LINE('a')
 
   Public :: str
   Public :: ascii_lowercase, ascii_uppercase, letters_lowercase, letters_uppercase
@@ -45,7 +45,7 @@ module strings
   !! !
   !! ```
   interface str
-    module procedure :: c2str, i2str, r2str, dp2str
+    module procedure :: c2str, i2str, r2str, dp2str, dparr2str, iarr2str, rarr2str
   end interface str
 
 contains
@@ -135,7 +135,9 @@ contains
   !> This function returns a copy of the string with leading chars removed
   !!
   !! If chars is not present all blank: spaces (achar(32)) and tabs (achar(9))
-  !! are removed
+  !! are removed.
+  !! @note that when used with no `chars` argument differs from intrinsic `trim`
+  !! in that it will also strip "tab" characters
   pure function lstrip(S, chars) result(Sout)
     implicit none
     character(len=*), intent(IN) :: S               !< Original string
@@ -152,13 +154,11 @@ contains
 
   !> This function returns a copy of the string with trailing chars removed
   !! @copydetails lstrip
-  !! @note that when used with no `chars` argument differs from intrinsic `trim`
-  !! in that it will also strip "tab" characters
   pure function rstrip(S, chars) result(Sout)
     implicit none
-    character(len=*), intent(IN) :: S               !< Original string
-    character(len=*), optional, intent(IN) :: chars !< chars to remove from S
-    character(len=:), allocatable :: Sout !< String with chars removed
+    character(len=*), intent(IN) :: S
+    character(len=*), optional, intent(IN) :: chars
+    character(len=:), allocatable :: Sout
     integer :: n
     character(len=:), allocatable :: ch_
 
@@ -171,9 +171,9 @@ contains
   !! @copydetails lstrip
   pure function strip(S, chars) result(Sout)
     implicit none
-    character(len=*), intent(IN) :: S               !< Original string
-    character(len=*), optional, intent(IN) :: chars !< chars to remove from S
-    character(len=:), allocatable :: Sout !< String with chars removed
+    character(len=*), intent(IN) :: S
+    character(len=*), optional, intent(IN) :: chars
+    character(len=:), allocatable :: Sout
     ! If chars is absent will also be regarded as absent in (r,l)strip
     Sout = lstrip(rstrip(S, chars), chars)
   end function strip
@@ -378,7 +378,6 @@ contains
   end function i2str
 
   ! Casts a real(dp) into an string
-  ! function dp2str(rin, fmt) result(Sout)
   function dp2str(rin) result(Sout)
     implicit none
     real(dp), intent(IN) :: rin !< number to convert
@@ -442,6 +441,24 @@ contains
       Sout = S_(:2)//decim//expo
     end if
   end function r2str
+
+  function dparr2str(vec) result(Sout)
+    implicit none
+    real(dp), dimension(:), intent(IN) :: vec !<
+    include "arr2str.inc"
+  end function dparr2str
+
+  function rarr2str(vec) result(Sout)
+    implicit none
+    real(sp), dimension(:), intent(IN) :: vec !<
+    include "arr2str.inc"
+  end function rarr2str
+
+  function iarr2str(vec) result(Sout)
+    implicit none
+    integer, dimension(:), intent(IN) :: vec !<
+    include "arr2str.inc"
+  end function iarr2str
 
 end module strings
 
