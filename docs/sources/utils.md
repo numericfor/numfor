@@ -1,4 +1,4 @@
-# Utils {#docutils}
+# Submodule Utils {#docutils}
 
 The module utils defines several objects (types, constants and routines) convenient for common tasks in programming.
 
@@ -19,8 +19,8 @@ It consists of several areas:
 
 Prints:
 ```{.shell-session}
-cpu time:           1.83s
-Total time: 1 s 840ms 
+cpu time:   7.77s
+Total time: 7 s 801ms 
 ```
 ## Constants
 
@@ -51,7 +51,7 @@ There are defined some commonly used constants (where the definition of "commonl
 
 There are also defined many @subpage physconst, like the constants defined in [scipy.constants](https://docs.scipy.org/doc/scipy/reference/constants.html).
 
-## Strings ## {#docutils}
+## Strings ##
 
 The module strings provides routines for string manipulation. It provides some functionality similar to that available to Python strings:
 

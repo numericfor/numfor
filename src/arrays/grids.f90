@@ -1,5 +1,5 @@
 !> @file grids.f90
-!! @date "2019-08-27 15:13:14"
+!! @date "2019-10-16 00:18:52"
 
 !> This module provides convenience routines to create grids
 !! Ver si otras funciones pueden ser útiles:
@@ -15,23 +15,8 @@ module grids
 
 contains
 
-  !> Return evenly spaced numbers over a specified interval
-  !!
   !! Returns `num` evenly spaced samples, calculated over the
   !! interval [`start`, `stop`].
-  !!
-  !!  Examples
-  !!  ```
-  !!  linspace(2.0, 3.0, num=5)
-  !!  ! gives:  [ 2.  ,  2.25,  2.5 ,  2.75,  3.  ]
-  !!  linspace(2.0, 3.0, num=5, endpoint=.False.)
-  !!  ! gives: [ 2. ,  2.2,  2.4,  2.6,  2.8]
-  !!  linspace(2.0, 3.0, num=5, retstep=step)
-  !!  ! gives: [ 2.  ,  2.25,  2.5 ,  2.75,  3.  ]
-  !!  ! and retstep= 0.25
-  !!  !
-  !! ```
-  !!
   function linspace(start, end, num, endpoint, retstep) result(x)
     implicit none
     real(dp), intent(IN) :: start !< The starting value of the
@@ -44,6 +29,11 @@ contains
     real(dp), optional, intent(OUT) :: retstep !< If present, return
     !the step
     real(dp), dimension(num) :: x !< An array of uniformly spaced numbers
+
+    !> Examples:
+    !! --------
+    !!  @snippet ex_linspace.f90 linspace
+
     real(dp) :: step
     integer :: i
     logical :: endpoint_
@@ -75,21 +65,6 @@ contains
   !! In linear space, the sequence starts at ``base**start``
   !! (`base` to the power of `start`) and ends with ``base**end``
   !!
-  !! Examples
-  !!
-  !! ```
-  !! logspace(2.0, 3.0, num=4)
-  !! ! gives: [  100.        ,   215.443469  ,   464.15888336,  1000.
-  !! ]
-  !! logspace(2.0, 3.0, num=4, endpoint=False)
-  !! ! gives: [ 100.        ,  177.827941  ,  316.22776602,
-  !! 562.34132519]
-  !! logspace(2.0, 3.0, num=4, base=2.0)
-  !! ! gives: array([ 4.        ,  5.0396842 ,  6.34960421,  8.
-  !! ])
-  !! !
-  !! ```
-  !!
   function logspace(start, end, num, endpoint, base) result(x)
     implicit none
     real(dp), intent(IN) :: start !< ``base**start`` is the starting value of the sequence.
@@ -97,7 +72,11 @@ contains
     integer, intent(IN) :: num !< Number of samples to generate. Must be positive.
     logical, optional, intent(IN) :: endpoint !< If True, `end` is the last sample. Otherwise, it is not included. Default is True
     real(dp), optional, intent(IN) :: base    !< The base of the log space. Default is 10.
-    real(dp), dimension(num) :: x             !< A sequence of numbers spaced evenly on a log scale.
+    real(dp), dimension(num) :: x !< A sequence of numbers spaced evenly on a log scale.
+
+    !> Examples:
+    !! --------
+    !! @snippet ex_logspace.f90 logspace
 
     real(dp) :: b_
 
@@ -113,15 +92,6 @@ contains
   !! @note: Is similar to logspace but with endpoints specified
   !! directly.
   !! Also accepts simultaneously negative `start` **and** `end`
-  !! Examples
-  !!
-  !! ```
-  !! geomspace(1, 1000.0, num=4)
-  !! ! gives: [  1.        ,   10.0  ,   100.0,  1000.  ]
-  !! geomspace(-1000, 1.0, num=4)
-  !! ! gives: [ -1000. , -100.0  , -10.0 ,  -1.0 ]
-  !! !
-  !! ```
   function geomspace(start, end, num, endpoint) result(x)
     implicit none
     real(dp), intent(IN) :: start !< ``start`` is the starting value
@@ -132,8 +102,12 @@ contains
     !be positive.
     logical, optional, intent(IN) :: endpoint !< If True, `end` is
     !the last sample. Otherwise, it is not included. Default is True
-    real(dp), dimension(num) :: x              !< A sequence of
-    !numbers spaced evenly on a log scale.
+    real(dp), dimension(num) :: x !< A sequence of numbers spaced evenly on a log scale.
+
+    !> Examples:
+    !! --------
+    !! @snippet ex_logspace.f90 geomspace
+
     real(dp) :: sgout
     real(dp) :: lstart, lstop
 

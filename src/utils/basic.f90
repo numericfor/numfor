@@ -1,5 +1,5 @@
 !> file basic.f90 contains module basic
-!! @date "2019-10-01 15:20:32"
+!! @date "2019-10-15 23:31:41"
 
 !> This module will provide some basic convenience routines
 !! It should have:
@@ -235,7 +235,7 @@ contains
     integer :: unit_
 
     unit_ = stdout; IF (present(unit)) unit_ = unit
-    write (unit_, '(A,f14.2,A)') 'cpu time: ', T%elapsed, 's'
+    write (unit_, '(A,f0.2,A)') 'cpu time:   ', T%elapsed, 's'
     write (unit_, '(A)') 'Total time: '//stamp_date_diff(T%date_elapsed)
   end subroutine print_elapsed
 
