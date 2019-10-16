@@ -1,6 +1,12 @@
 # Interpolate {#docinterpolate}
 
-This routines give a framework to interpolate/fit data using splines:
+This submodule has several related features:
+
+- A module @ref polynomial with basic features to work with polynomials
+- A module @ref fitpack to performe interpolation/fitting using an expansion in B-splines
+- A module @ref csplines to work with cubic splines, represented as piecewise cubic polynomials
+
+
 ## CubicSplines
 
  `CubicSplines` gives a frame to interpolate data using Cubic Splines. It uses an internal representation as a list of piece-wise cubic polynomials. It has a functional interface and an Object oriented interface. Both modes of use are equivalent and they rely on the same implementation.

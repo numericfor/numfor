@@ -3,11 +3,22 @@
 This module contains routines to generate and operate on arrays
 
   * Grid creation: There are a few functions to quickly create arrays. They are described in @subpage modgrids.
-  * Utilities for array manipulation and information, described in @subpage modarrut
+  * Utilities for array manipulation and information
   * Search and sort: Functions for search an element in a sorted array, and sort arrays.
   * Generation of histograms. Do we want histogram2d?
 
-## Grids
+## Submodule array_utils ##
+
+This submodule provides a few convenience routines to work with arrays
+
+  * function `allclose()`  Returns `.True.` if two arrays are element-wise equal within a tolerance.
+  * subroutine `save_array()` Stores an array to file or stdout
+  * function `mean()` Computes the arithmetic mean of the array. 
+  * function `std()` Computes the standard deviation of the array. 
+  * function `merge_sorted()` Creates a sorted array with values from two input sorted arrays
+  
+
+## Grids ##
 
 This submodule provides convenience routines to create commonly occurring grids, somewhat mimicking those appearing in `Numpy`:
 
