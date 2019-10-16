@@ -1,5 +1,5 @@
 !> @file grids.f90
-!! @date "2019-10-16 00:18:52"
+!! @date "2019-10-16 14:25:36"
 
 !> This module provides convenience routines to create grids
 !! Ver si otras funciones pueden ser útiles:
@@ -11,7 +11,7 @@ module grids
   real(dp), parameter :: def_base = 10._dp
 
   private
-  public :: linspace, logspace, geomspace, arange
+  public :: linspace, logspace, geomspace, loglinspace, arange
 
 contains
 
