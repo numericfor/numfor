@@ -1,5 +1,5 @@
 !> @file grids.f90
-!! @date "2019-10-16 14:25:36"
+!! @date "2019-10-16 17:27:56"
 
 !> This module provides convenience routines to create grids
 !! Ver si otras funciones pueden ser útiles:
@@ -133,11 +133,6 @@ contains
   !!   -# R(1)=0, R(NP)=RN,
   !!   -# A*R(I)+B*DLOG(R(I))-C= I  (I > 0),
   !!    with  A=1.0/STEP  and   B=1.0/DLOG(RATIO).
-  !!
-  !! @return The grid of dimension NP
-  !!
-  !! Examples:
-  !!
   function loglinspace(start, end, num, step, ratio) result(x)
     implicit none
     real(dp), intent(IN) :: start !< Starting value
@@ -145,7 +140,10 @@ contains
     integer, intent(IN) :: num !< Number of points
     real(dp), optional, intent(IN) :: step !< Approximated step in the linear region
     real(dp), optional, intent(IN) :: ratio !< quotient between consecutive points in the logarithmic region
-    real(dp), dimension(num) :: x !< Array of points
+    real(dp), dimension(num) :: x !< Array of points with the grid of dimension `num`
+    !!
+    !! Examples:
+    !! -------
 
     real(dp) :: a, b, c
     real(dp) :: rr, ru, rl, r_N, c_i, fu, fr
