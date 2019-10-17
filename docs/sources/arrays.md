@@ -89,6 +89,13 @@ Prints
 
 @image html ex_logspace.png
 
+
 The routine `loglinspace()` produces grids with different behavior depending on the values of `step` and `ratio`.
 
 It is nearly uniform, with spacing approximately `step` when `ratio`\f$\ll 1\f$. 
+
+@include ex_loglinspace.f90
+
+@image html ex_loglinspace.png
+
+

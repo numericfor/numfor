@@ -1,4 +1,4 @@
-program ex_linlogspace
+program ex_loglinspace
   use numfor, only: dp, Zero, str, loglinspace, save_array
   implicit none
 
@@ -22,5 +22,5 @@ program ex_linlogspace
   end do
   fname = "data/ex_loglinspace.dat"
   call save_array([a(:, 1), a(:, 2), a(:, 3), a(:, 4)], 4, fname=fname, fmt='f16.13', header=header)
-end program ex_linlogspace
+end program ex_loglinspace
 
