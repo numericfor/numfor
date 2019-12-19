@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-10-16 10:47:08"
+!! @date "2019-12-19 20:24:56"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -9,7 +9,7 @@
 !! See below for authors of original and earlier versions
 
 !> csplines implements interpolation using cubic splines
-!! Further description in @ref docinterpolate
+!! Description: @ref docinterpolate
 module csplines
   USE basic, only: dp, Zero, Small, print_msg
   USE sorting, only: searchsorted
@@ -28,12 +28,10 @@ module csplines
     procedure, pass(csp) :: cspl_interp
     procedure, pass(csp) :: cspl_interp_tab
     generic :: evaluate => cspl_interp, cspl_interp_tab
-
     ! Evaluation of derivative
     procedure, pass(csp) :: cspl_interpdev
     procedure, pass(csp) :: cspl_interpdev_tab
     generic :: derivative => cspl_interpdev, cspl_interpdev_tab
-
     ! Evaluation of integral
     procedure, pass(csp) :: integrate => csplint
 
@@ -101,7 +99,7 @@ contains
   !! After calling this function the result may be used to evaluate the function as:\n
   !! `ynew= csplev(xnew, csp)`\n
   !!
-  !! REF.: \ref M82 M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
+  !! REF.: M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982.
   subroutine csplrep(x, y, s1, sn, csp)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< independent grid points
@@ -123,12 +121,9 @@ contains
   end subroutine csplrep
 
   !> csplder Computes the derivative of the cubic spline
-  !!
-  !! Examples:
-  !!
   function csplder(csp, m) result(cspd)
     implicit none
-    type(CubicSpline), intent(IN) :: csp !<
+    type(CubicSpline), intent(IN) :: csp !< Interpolating object
     integer, intent(IN) :: m   !< order of derivation (must be 1 or 2)
     type(CubicSpline) :: cspd  !< Spline representation of derivative
     integer :: Nd
@@ -194,7 +189,7 @@ contains
   function cspl_interp_tab(xnew, csp) result(y)
     class(CubicSpline), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
-    real(dp), dimension(size(xnew)) :: y
+    real(dp), dimension(size(xnew)) :: y       !< Interpolated values at xnew positions
     real(dp) :: xc
     integer :: ix, i1
 
@@ -225,7 +220,7 @@ contains
   function cspl_interpdev_tab(xnew, csp, m) result(y)
     class(CubicSpline), intent(IN) :: csp           !< spline coefficients
     real(dp), dimension(:), intent(IN) :: xnew !<  array of x values
-    real(dp), dimension(size(xnew)) :: y
+    real(dp), dimension(size(xnew)) :: y       !< Interpolated values
     integer, optional, intent(IN) :: m    !< order of derivative
 
     real(dp) :: xc
@@ -372,7 +367,7 @@ contains
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
     class(CubicSpline), intent(IN) :: csp !< Interpolating object
-    logical, optional, intent(IN) :: extrapolate
+    logical, optional, intent(IN) :: extrapolate !< Flag signaling if we extrapolate outside interval
     real(dp) :: suma                 !<  Value of integral
 
     real(dp) :: xll, xuu, x1, x2, sign
@@ -431,22 +426,25 @@ contains
 
     ! Consider the order of the limits of integration
     suma = sign * suma
+
   contains
     function int_single(xx) result(y)
-      real(dp), intent(IN) :: xx
-      real(dp) :: y
+      real(dp), intent(IN) :: xx  ! Position of interval
+      real(dp) :: y               ! Integrate a single interval
       associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
         y = xx * (A(i) + xx * (B(i) / 2 + xx * (C(i) / 3 + xx * D(i) / 4)))
       end associate
     end function int_single
+
   end function csplint
 
   !> Integral of the square of a function expressed as a cubic spline.
+  !! @todo Testing
   function csplint_square(xL, xU, csp) result(suma)
     real(dp), intent(IN) :: xL  !<   Lower limit in the integral.
     real(dp), intent(IN) :: xU  !<   Upper limit in the integral.
     type(CubicSpline), intent(IN) :: csp !< Interpolating object
-    real(dp) :: suma                 !<  Value of integral
+    real(dp) :: suma                 !< Value of integral
 
     real(dp) :: xll, xuu, x1, x2, sign
     integer :: iL, iU, i
@@ -471,7 +469,7 @@ contains
     i = iL                    ! Just to use always the same expression
     x1 = XLL - csp%x(i)
     x2 = min(csp%x(i + 1), XUU) - csp%x(i)
-    suma = int_single(x2) - int_single(x1)
+    suma = int_single_a(x2) - int_single_a(x1)
     if (iL == iU) then ! Both limits belong to the same interval
       suma = sign * suma
       return
@@ -480,19 +478,21 @@ contains
     ! Add intermediate intervals
     do i = iL + 1, iU - 1
       x2 = csp%x(i + 1) - csp%x(i)
-      suma = suma + int_single(x2)
+      suma = suma + int_single_a(x2)
     end do
 
     ! Last interval (i = iU)
     x2 = XUU - csp%x(i)
-    suma = suma + int_single(x2)
+    suma = suma + int_single_a(x2)
 
     ! Consider the order of the limits of integration
     suma = sign * suma
 
   contains
-    function int_single(xx) result(y)
-      real(dp), intent(IN) :: xx
+
+    ! Integrate a single interval
+    function int_single_a(xx) result(y)
+      real(dp), intent(IN) :: xx ! Position of the given interval
       real(dp) :: y
       associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
         y = xx * (A(i) * (A(i) + xx * B(i))                           &
@@ -502,17 +502,18 @@ contains
           &      + xx * D(i) * (C(i) / 3._dp + xx * D(i) / 7._dp)))))
       end associate
       y = max(y, Zero)          ! If less than zero is an error
-    end function int_single
+    end function int_single_a
 
   end function csplint_square
 
   !> csplroots Computes the roots of the Spline approximation
-  !!
   function csplroots(csp) result(z)
     implicit none
-    real(dp), dimension(:), allocatable :: z !< Roots (zeros) of the spline function
     class(CubicSpline), intent(IN) :: csp !< Spline approximation to consider
+    real(dp), dimension(:), allocatable :: z !< Roots (zeros) of the spline function
+    !!
     !! Examples:
+    !! --------
     !! ```
     !!   real(dp), dimension(:), allocatable :: zeros
     !!   zeros = csp%roots()

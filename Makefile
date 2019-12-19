@@ -26,10 +26,10 @@ OBJD:=$(top_dir)/lib
 MODD:=$(top_dir)/finclude
 BIND:=$(top_dir)/bin
 # Extra documentation sources and examples
-DOCSD:=$(top_dir)/docs/sources
-EXMPD:=$(top_dir)/docs/examples
+DOCSD:=$(top_dir)/doc/sources
+EXMPD:=$(top_dir)/doc/examples
 # Directory where documentation will be built
-DOCDIR:=$(top_dir)/doc
+DOCDIR:=$(top_dir)/docs
 
 
 ######################################################################
@@ -57,7 +57,7 @@ INCLUDES:= -I $(MODD)
 LDFLAGS:=-L $(OBJD)
 
 # # ######################################################################
-MODULES := utils arrays interpolate
+MODULES := utils arrays interpolate integrate
 
 # # ######################################################################
 FMODULES =  $(addprefix $(SRCD)/,$(MODULES))
@@ -154,9 +154,9 @@ include $(SCRPTD)/install.mk
 # ######## DOCUMENTATION
 DOXYF:=$(SCRPTD)/Doxyfile
 
-doc:  $(DOCDIR)/html/index.html
+doc:  $(DOCDIR)/index.html
 
-$(DOCDIR)/html/index.html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md  $(DOCSD)/*.md $(EXMPD)/*.f90
+$(DOCDIR)/index.html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md  $(DOCSD)/*.md $(EXMPD)/*.f90
 	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 "${VERSION} ($(DATE))"|'\
             -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
 	cd $(top_dir) && doxygen $(PRJ).dox && cd -
@@ -174,7 +174,7 @@ doc-api: $(DOXYF) $(SRC)
 
 
 view-doc: doc
-	gio open $(DOCDIR)/html/index.html || firefox $(DOCDIR)/html/index.html
+	gio open $(DOCDIR)/index.html || firefox $(DOCDIR)/index.html
 
 # ########################################################################
 # ######## TAGS (for editing)

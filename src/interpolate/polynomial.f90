@@ -1,13 +1,14 @@
 !> @file polynomial.f90
-!! @date "2019-10-16 10:46:08"
+!! @date "2019-12-19 20:25:34"
 
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
+!! Further description in @ref docinterpolate
+!!
 !! It allows to easily evaluate, derivate, and integrate a polynomial
 !! Examples:
 !! -------
 !! @include ex_polynomial.f90
 !!
-!! Further description in @ref docinterpolate
 module polynomial
 
   USE basic, only: dp, Zero, print_msg

@@ -1,7 +1,8 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-10-16 10:22:22"
+!! @date "2019-12-19 20:29:41"
 
 !> This module defines functions to manipulate strings of characters.
+!! Description: @ref docutils
 module strings
   USE basic, only: sp, dp, Small
   character(*), parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
@@ -45,7 +46,8 @@ module strings
   !! !
   !! ```
   interface str
-    module procedure :: c2str, i2str, r2str, dp2str, dparr2str, iarr2str, rarr2str
+    module procedure :: c2str, i2str, r2str, dp2str, cmplx2str
+    module procedure :: dparr2str, cmplxarr2str, iarr2str, rarr2str
   end interface str
 
 contains
@@ -149,7 +151,11 @@ contains
     ch_ = blanks; IF (present(chars)) ch_ = chars
 
     n = verify(S, ch_)
-    Sout = S(n:)
+    if (n /= 0) then
+      Sout = S(n:)
+    else
+      Sout = ""
+    end if
   end function lstrip
 
   !> This function returns a copy of the string with trailing chars removed
@@ -164,7 +170,11 @@ contains
 
     ch_ = blanks; IF (present(chars)) ch_ = chars
     n = verify(S, ch_, back=.True.)
-    Sout = S(:n)
+    if (n /= 0) then
+      Sout = S(:n)
+    else
+      Sout = ""
+    end if
   end function rstrip
 
   !> This function returns a copy of the string with leading and trailing chars removed
@@ -378,30 +388,40 @@ contains
   end function i2str
 
   ! Casts a real(dp) into an string
+  !> cmplx2str gives a string representation of a complex number
+  function cmplx2str(zin) result(Sout)
+    implicit none
+    character(len=:), allocatable :: Sout !< String representation
+    character(len=:), allocatable :: Sre, Sim
+    complex(dp), intent(IN) :: zin !<
+    real(dp) :: re, im
+    character(len=1) :: sg
+    re = real(zin, kind=dp)
+    im = aimag(zin)
+    if (im < 0._dp) then
+      sg = '-'
+      im = abs(im)
+    else
+      sg = '+'
+    end if
+    Sre = dp2str(re); Sim = dp2str(im)
+    Sout = "("//Sre//sg//Sim//"j)"
+  end function cmplx2str
+
   function dp2str(rin) result(Sout)
     implicit none
     real(dp), intent(IN) :: rin !< number to convert
-    ! character(len=9), optional, intent(IN) :: fmt
     character(len=:), allocatable :: Sout !< String converted
     character(len=25) :: S_
     real(dp) :: rr
-    ! character(len=9) :: fmt_
     character(len=:), allocatable :: expo
     character(len=:), allocatable :: decim
     integer :: i
 
-    ! if (Present(fmt)) then
-    !   fmt_ = fmt
-    !   write (S_, fmt) rin
-    !   Sout = strip(lower(S_))
-    !   return
-    ! else
-    rr = rin - int(rin)
+    rr = abs(rin - int(rin))         !decimal part
     if (rr < Small) then
       Sout = i2str(int(rin))
-      ! if (rin == 0._dp) then
-      !   Sout = '0'
-    else if ((abs(rin) > 1.e-6_dp) .and. (abs(rin) < 1.e6_dp)) then
+    else if ((abs(rin) >= 1.e-4_dp) .and. (abs(rin) < 1.e4_dp)) then
       write (S_, '(f23.13)') rin
       Sout = lower(rstrip(lstrip(S_), '0 '))
 
@@ -413,7 +433,6 @@ contains
       decim = strip(S_(3:i - 1), ' 0')
       Sout = S_(:2)//decim//expo
     end if
-    ! end if
 
   end function dp2str
 
@@ -441,6 +460,12 @@ contains
       Sout = S_(:2)//decim//expo
     end if
   end function r2str
+
+  function cmplxarr2str(vec) result(Sout)
+    implicit none
+    complex(dp), dimension(:), intent(IN) :: vec !<
+    include "arr2str.inc"
+  end function cmplxarr2str
 
   function dparr2str(vec) result(Sout)
     implicit none
