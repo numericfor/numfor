@@ -24,11 +24,7 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "NuMFor", "index.html", [
-    [ "Submodule Arrays", "a00953.html", null ],
-    [ "Submodule integrate", "a00955.html", null ],
-    [ "Submodule interpolate", "a00956.html", null ],
-    [ "Description of NumFor", "a00957.html", null ],
-    [ "Submodule Utils", "a00958.html", "a00958" ],
+    [ "Numeric Modern Fortran", "index.html", "index" ],
     [ "Todo List", "a00449.html", null ],
     [ "Modules", "namespaces.html", [
       [ "Modules List", "namespaces.html", "namespaces_dup" ],
