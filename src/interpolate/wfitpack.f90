@@ -1,7 +1,7 @@
 !> fitpack provides a framework for fitting and interpolation using B-Splines.
-!! It uses routines from a slightly cleaned-up f90 version of FITPACK by P. Diercxx
-!!
 !! Description: @ref docinterpolate
+!!
+!! It uses routines from a slightly cleaned-up f90 version of FITPACK by P. Diercxx
 !!
 !! @todo Next Steps:
 !!  - Add routines for ndimensional curves

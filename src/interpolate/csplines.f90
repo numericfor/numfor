@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-12-19 20:24:56"
+!! @date "2019-12-19 20:32:49"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!

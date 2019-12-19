@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-12-19 20:29:41"
+!! @date "2019-12-19 20:34:06"
 
 !> This module defines functions to manipulate strings of characters.
 !! Description: @ref docutils
@@ -23,6 +23,7 @@ module strings
   Public :: upper, lower, swapcase, reverse, endswith, startswith
   Public :: lstrip, rstrip, strip, issub, rjust, ljust, zfill, center, find, replace
 
+  Public :: str2i
   Private :: c2str, i2str, r2str, dp2str
 
   !> `str()` converts a number (integer or real) to a string
@@ -386,6 +387,14 @@ contains
     write (S_, '(i10)') nin
     Sout = strip(S_)
   end function i2str
+
+  ! Casts a default integer into an string
+  function str2i(S_in) result(dout)
+    implicit none
+    integer :: dout !< Integer to convert
+    character(len=:), intent(IN), allocatable :: S_in !< String converted
+    read (S_in, *) dout
+  end function str2i
 
   ! Casts a real(dp) into an string
   !> cmplx2str gives a string representation of a complex number

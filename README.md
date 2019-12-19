@@ -7,10 +7,14 @@ This library consists (will consist) of several modules to ease the scientific w
 
 ## Documentation
 
+<<<<<<< HEAD
 Documentation may be found in https://numericfor.github.io/numfor/index.html
 
 
 Further information on the capabilities of the library may be learned by exploring the different modules.
+=======
+Further documentation may be found exploring the different Modules and in @subpage docnumfor
+>>>>>>> b2f6c4df44f00c705231e5cd9e21f84bfca63937
 
 
 It provides:
@@ -61,6 +65,7 @@ There are different ways to accomplish this:
   $> gfortran -c -o myprog.o -I <prefix>/include/numfor myprog.f90
   $> gfortran -o myprog -L <prefix>/lib -lnumfor myprog.o
   ```
+
 
 
 
