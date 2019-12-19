@@ -1,5 +1,5 @@
 program example_fstring1
-  USE fString, only: fStr, len
+  USE numfor, only: fStr, len
   implicit none
   type(fStr) :: dir
   type(fStr) :: rfname

@@ -1,5 +1,5 @@
 program example_strings1
-  USE strings, only: str, lower, center
+  USE numfor, only: str, lower, center
   implicit none
   character(len=1024) :: dir
   character(len=:), allocatable :: rfname

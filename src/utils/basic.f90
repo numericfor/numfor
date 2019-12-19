@@ -1,26 +1,35 @@
-!> file basic.f90 contains module basic
-!! @date "2019-10-15 23:31:41"
+!> @file basic.f90 contains module basic
+!! @date "2019-12-19 08:33:56"
 
 !> This module will provide some basic convenience routines
-!! It should have:
-!!  - types (real, double precision, etc) (?)
-!!  - Basic error handling (defining output for warning and errors)
-!!    Maybe look into https://docs.python.org/3/library/warnings.html
-!!  - Some basic file handling (some os.path functionality) (?)
-!!  - Some sys functionality (stdin, stdout, stderr)
-!!  - Timers, timestamp (?)
+!! Description: @ref docutils
+!!
+!! Eventually it will provide:
+!!  - [X] types (real, double precision, infinite, etc)
+!!  - [X] Basic error handling (defining output for warning and errors)
+!!    To improve maybe look into https://docs.python.org/3/library/warnings.html
+!!  - Some basic file handling (some os.path functionality) (Really needed?)
+!!  - [X] Some sys functionality (stdin, stdout, stderr via `iso_fortran_env`)
+!!  - [X] Timers, timestamp (a simple implementation)
+!!
+!! For numerical work we need to use specific minimal precision which is
+!! machine-and-compiler-independent. The real type definitions emphatize this.
+!! The names are `sp` and `dp` are chosen only by tradition/historic reasons.
+!! We define types with at least 15 decimal places and exponent range of 307.
+!! (see for instance http://fortranwiki.org/fortran/show/Real+precision).
+!! We also could use c_double from module iso_c_binding (fortran 2003 and later)
 !!
 module basic
-  use, intrinsic :: iso_fortran_env, only: stdin => input_unit, &
+  USE, intrinsic :: iso_fortran_env, only: stdin => input_unit, &
     stdout => output_unit, &
     stderr => error_unit
+  ! JF: Solved in ad-hoc manner. More discussion/work is needed
+  ! ! JF: This part should be optional, only when supported.
+  ! ! JF: An alternative should be provided
+  ! USE, intrinsic :: ieee_arithmetic, only: ieee_is_finite, ieee_is_negative,
+  !   & ieee_value, &
+  !   & ieee_negative_inf, ieee_positive_inf
 
-  !> For numerical work we need to use specific minimal precision which is
-  !! machine-and-compiler-independent. The real type definitions emphatize this.
-  !! The names are `sp` and `dp` are chosen only by tradition/historic reasons.
-  !! We define types with at least 15 decimal places and exponent range of 307.
-  !! @ref http://fortranwiki.org/fortran/show/Real+precision
-  !! @note: We could use c_double from module iso_c_binding (fortran 2003)
   integer, parameter :: dp = selected_real_kind(15, 307)
   integer, parameter :: sp = selected_real_kind(6, 37)
   integer, parameter :: qp = selected_real_kind(2 * precision(1.0_dp))
@@ -53,6 +62,7 @@ module basic
 
   private
   public :: sp, dp, qp, timer
+  public :: nf_minf, nf_inf, is_inf
   public :: stdout, stdin, stderr
   private :: start_timer, stop_timer, print_elapsed
   public :: print_msg
@@ -63,6 +73,9 @@ module basic
   complex(dp), public, parameter :: C_Z0 = (0._dp, 0._dp) !< Complex cero
   complex(dp), public, parameter :: C_R1 = (1._dp, 0._dp) !< Complex unit
   complex(dp), public, parameter :: C_I1 = (0._dp, 1._dp) !< Complex imaginary unit
+
+  real(dp), parameter :: nf_minf = -huge(1._dp) !< Minus infinite
+  real(dp), parameter :: nf_inf = huge(1._dp)   !< Positive infinite
 
   ! Basic mathematical constants (mostly from gsl).
   ! Many have more decimal places than needed/used
@@ -87,6 +100,23 @@ module basic
   real(dp), public, parameter :: rad2deg = 57.295779513082320876654618_dp !< 180/pi
 
 contains
+
+  ! JF: Check if this is a good solution or there are better
+  !> is_inf Checks if the argument is plus or minus infinite.
+  !!
+  function is_inf(x) result(y)
+    implicit none
+    integer :: y !< Returns 0 if is finite, -1 if is minus-infinite and +1 if is plus-infinite
+    real(dp), intent(IN) :: x !< Variable to test
+
+    if (abs(x) < HUGE(x)) then
+      y = 0
+    else if (x < 0) then
+      y = -1
+    else
+      y = 1
+    end if
+  end function is_inf
 
   ! ! ----------------------- Timer functions -----------------------
   !> Reset timer
@@ -269,8 +299,8 @@ contains
   !! ---------------
   !! ```
   !!
-  !! call print_msg("Invalid argument!") ! will stop the program with error code 1.
-  !! call print_msg("Invalid argument","my_sub")  ! will stop the program with error code 1.
+  !! call print_msg("Invalid argument!", errcode=1) ! will stop the program with error code 1.
+  !! call print_msg("Invalid argument","my_sub",1)  ! will stop the program with error code 1.
   !! call print_msg("Fishy values of argument","my_sub", errcode=3) ! will stop the program with error code 3.
   !! call print_msg("Fishy values of argument", errcode=-3) ! will **NOT** stop the program. Show error code 3.
   !! call print_msg("Fishy values of argument","my_sub", errcode=0) ! will **NOT** stop the program.
@@ -282,10 +312,10 @@ contains
   !! The last will keep running after printing the message to a previously open file.
   subroutine print_msg(msg, sub, errcode, unit)
     implicit none
-    character(len=*) :: msg     !< Message to print on stderr
-    character(len=*), optional, intent(in) :: sub !< Routine name. Default = None
-    integer, optional, intent(in) :: errcode !< Error code. Default = 0
-    integer, optional, intent(in) :: unit !< Unit to write. Default = stderr
+    character(len=*), intent(IN) :: msg     !< Message to print on stderr
+    character(len=*), optional, intent(IN) :: sub !< Routine name. Default = None
+    integer, optional, intent(IN) :: errcode !< Error code. Default = 0
+    integer, optional, intent(IN) :: unit !< Unit to write. Default = stderr
     integer :: errcode_, unit_
     character(len=2) :: tmp
 

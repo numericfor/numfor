@@ -1,13 +1,13 @@
-# Module Arrays {#docarrays}
+# Submodule Arrays {#docarrays}
 
 This module contains routines to generate and operate on arrays
 
-  * Grid creation: There are a few functions to quickly create arrays. They are described in @subpage modgrids.
+  * Grid creation: There are a few functions to quickly create arrays.
   * Utilities for array manipulation and information
   * Search and sort: Functions for search an element in a sorted array, and sort arrays.
   * Generation of histograms. Do we want histogram2d?
 
-## Submodule array_utils ##
+## array_utils ##
 
 This submodule provides a few convenience routines to work with arrays
 

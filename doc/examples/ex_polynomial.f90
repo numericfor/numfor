@@ -11,9 +11,11 @@ program ex_polynomial
   print "(A)", 'Coefficients:'//str(p1)
   print "(A)", center('Evaluations', 40, '-')
   !< [evaluate]
+  p1 = arange(5, 1, -1)
   print "(A)", "P(-1)= "//str(polyval(p1, -1._dp)) ! P(-1)= 3
   print "(A)", "P(0) = "//str(polyval(p1, 0._dp))  ! P(0) = 1
   print "(A)", "P(1) = "//str(polyval(p1, 1._dp))  ! P(1) = 15
+  ! Polynomial evaluated in an array:
   print "(A)", "P([-1,0,1]) = "//str(polyval(p1, [-1._dp, 0._dp, 1._dp]))
   ! P([-1,0,1]) = [ 3, 1, 15]
   !< [evaluate]

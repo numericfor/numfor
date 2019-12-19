@@ -1,4 +1,4 @@
-program test_spl_int
+program ex_spl_int
   USE numfor, only: dp, Zero, M_PI, linspace
   USE numfor, only: UnivSpline, splrep, splint
   implicit none
@@ -20,5 +20,5 @@ program test_spl_int
   call splint(tck, Zero, M_PI, yI)
   print "(A, f14.12)", 'Integral entre 0 y π: ', yI
   ! Integral entre 0 y π: 2.001261599540
-end program test_spl_int
+end program ex_spl_int
 

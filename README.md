@@ -1,15 +1,23 @@
-# Numeric Modern Fortran #
+
+# Numeric Modern Fortran
 
 The goal of this project is to create a Fortran library similar to [Numpy](https://www.numpy.org)/[Scipy](https://www.scipy.org) for scientific computing.
 
 This library consists (will consist) of several modules to ease the scientific work. It aims to provide user-friendly utilities and relatively-efficient routines for scientific computing, numerical and related work.
 
+## Documentation
+
+Further documentation may be found exploring the different Modules and in @subpage docnumfor
+
+
 It provides:
-  + A @subpage docutils with basic, non-specific, functionality used in many (most?) scientific programming.
+  + A @subpage docutils utils with basic, non-specific, functionality used in many (most?) scientific programming.
   + A @subpage docarrays with basic functionality to work with arrays, including generation of grids, search of elements and sorting.
   + A @subpage docinterpolate with routines to perform interpolation, fitting of data, and some work on polynomials.
+  + A @subpage docintegrate with routines to perform integration of real and complex functions, and of sampled data.
 
 
+You can also visit the [documentation for the code](namespaces.html)
 
 ## Installation ##
 
@@ -50,4 +58,6 @@ There are different ways to accomplish this:
   $> gfortran -c -o myprog.o -I <prefix>/include/numfor myprog.f90
   $> gfortran -o myprog -L <prefix>/lib -lnumfor myprog.o
   ```
+
+
 
