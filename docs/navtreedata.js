@@ -25,6 +25,7 @@ var NAVTREE =
 [
   [ "NuMFor", "index.html", [
     [ "Numeric Modern Fortran", "index.html", "index" ],
+    [ "Description of NumFor", "a00963.html", null ],
     [ "Todo List", "a00455.html", null ],
     [ "Modules", "namespaces.html", [
       [ "Modules List", "namespaces.html", "namespaces_dup" ],
