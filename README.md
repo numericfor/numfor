@@ -71,7 +71,7 @@ There are different ways to accomplish this:
 
 To build the html docs just:
 
-```.{sh}
+```{.sh}
 make doc`
 ```
 

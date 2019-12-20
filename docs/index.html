@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">b329b49 (2019-12-19)</span>
+   &#160;<span id="projectnumber">41b8b59 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -72,23 +72,8 @@ $(document).ready(function(){initNavTree('index.html','');});
 <div class="textblock"><p>The goal of this project is to create a Fortran library similar to <a href="https://www.numpy.org">Numpy</a>/<a href="https://www.scipy.org">Scipy</a> for scientific computing.</p>
 <p>This library consists (will consist) of several modules to ease the scientific work. It aims to provide user-friendly utilities and relatively-efficient routines for scientific computing, numerical and related work.</p>
 <h2>Documentation</h2>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD Documentation may be found in <a href="https://numericfor.github.io/numfor/index.html">https://numericfor.github.io/numfor/index.html</a></p>
-<h1>Further information on the capabilities of the library may be learned by exploring the different modules. </h1>
-<p>Further documentation may be found exploring the different Modules and in <a class="el" href="a00963.html">Description of NumFor</a> </p><blockquote class="doxtable">
-<blockquote class="doxtable">
-<blockquote class="doxtable">
-<blockquote class="doxtable">
-<blockquote class="doxtable">
-<blockquote class="doxtable">
-<blockquote class="doxtable">
-<p>b2f6c4df44f00c705231e5cd9e21f84bfca63937 </p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
+<p>Documentation may be found in <a href="https://numericfor.github.io/numfor/index.html">https://numericfor.github.io/numfor/index.html</a></p>
+<p>Further information on the capabilities of the library may be learned by exploring the different modules.</p>
 <p>It provides:</p><ul>
 <li>A <a class="el" href="a00964.html">Submodule Utils</a> utils with basic, non-specific, functionality used in many (most?) scientific programming.</li>
 <li>A <a class="el" href="a00959.html">Submodule Arrays</a> with basic functionality to work with arrays, including generation of grids, search of elements and sorting.</li>
@@ -114,7 +99,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </ol>
 <div class="fragment"><div class="line">$&gt; gfortran -c -o myprog.o -I &lt;prefix&gt;/include/numfor myprog.f90</div><div class="line">$&gt; gfortran -o myprog -L &lt;prefix&gt;/lib -lnumfor myprog.o</div></div><!-- fragment --><h2>Make the docs</h2>
 <p>To build the html docs just:</p>
-<p>``<code>.{sh} make doc</code> ```</p>
+<p>``<code>{.sh} make doc</code> ```</p>
 <p>Some dependencies are needed:</p>
 <ul>
 <li><a href="http://www.doxygen.nl/">Doxygen</a></li>
