@@ -1,4 +1,4 @@
 var a00460 =
 [
-    [ "searchsorted", "a00486.html", "a00486" ]
+    [ "polyval", "a00669.html", "a00669" ]
 ];

@@ -10,19 +10,14 @@ This library consists (will consist) of several modules to ease the scientific w
 
 Documentation may be found in https://numericfor.github.io/numfor/index.html
 
-
 Further information on the capabilities of the library may be learned by exploring the different modules.
 
-
-
 It provides:
-  + A @subpage docutils utils with basic, non-specific, functionality used in many (most?) scientific programming.
-  + A @subpage docarrays with basic functionality to work with arrays, including generation of grids, search of elements and sorting.
-  + A @subpage docinterpolate with routines to perform interpolation, fitting of data, and some work on polynomials.
-  + A @subpage docintegrate with routines to perform integration of real and complex functions, and of sampled data.
+  + A "submodule" **Utils** with basic, non-specific, functionality used in many (most?) scientific programs.
+  + A "submodule" **Array_utils** with basic functionality to work with arrays, including generation of grids, search of elements and sorting.
+  + A "submodule" **Interpolate** with routines to perform interpolation, fitting of data, and some work on polynomials.
+  + A "submodule" **Integrate** with routines to perform integration of real and complex functions, and of sampled data.
 
-
-You can also visit the [documentation for the code](namespaces.html)
 
 ## Installation ##
 
@@ -43,8 +38,14 @@ The installation follow the usual steps. The simpler procedure is:
 Simply compile your program with flags indicating where to find libnumfor.mod and link to libnumfor.a
 There are different ways to accomplish this:
 
+  1. Manually adding the information when compiling. For instance, when using `gfortran`
+  
+  ```bash
+  $> gfortran -c -o myprog.o -I <prefix>/include/numfor myprog.f90
+  $> gfortran -o myprog -L <prefix>/lib -lnumfor myprog.o
+  ```
 
-  1. Using `pkg-config`
+  2. Using `pkg-config`
   ```bash
   $> gfortran -c -o myprog.o $(pkg-config --cflags numfor) myprog.f90
   $> gfortran -o myprog $(pkg-config --libs numfor) myprog.o
@@ -57,26 +58,5 @@ There are different ways to accomplish this:
   ```
   You will have to open a new terminal or source the `bashrc` file before compiling your program.
   
-  2. Manually adding the information when compiling. For instance, when using `gfortran`
-  
-  ```bash
-  $> gfortran -c -o myprog.o -I <prefix>/include/numfor myprog.f90
-  $> gfortran -o myprog -L <prefix>/lib -lnumfor myprog.o
-  ```
 
 
-
-
-## Make the docs ##
-
-To build the html docs just:
-
-```bash
-$> make doc
-```
-
-Some dependencies are needed:
-
- - [Doxygen](http://www.doxygen.nl/)
- - A LaTeX distribution
- 

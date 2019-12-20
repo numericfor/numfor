@@ -1,6 +1,6 @@
 !> @file
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-10-16 08:30:03"
+!! @date "2019-12-20 16:01:08"
 
 !> sort provides a framework for searching elements and sorting arrays
 !!
@@ -141,6 +141,8 @@ contains
     include "bisection.inc"
   end function searchsorted_i
 
+  !> Search the position of a real number in an array of integer elements.
+  !! @see searchsorted documentation
   pure function searchsorted_idp(x, elem) result(n)
     implicit none
     integer, dimension(:), intent(IN) :: x !< Array sorted in ascending order
@@ -151,6 +153,8 @@ contains
     include "bisection.inc"
   end function searchsorted_idp
 
+  !> Search the position of an integer number in an array of real elements.
+  !! @see searchsorted documentation
   pure function searchsorted_dpi(x, elem) result(n)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< Array sorted in ascending order

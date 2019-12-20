@@ -2,12 +2,12 @@
 
 This module contains routines to generate and operate on arrays
 
-  * Grid creation: There are a few functions to quickly create arrays.
-  * Utilities for array manipulation and information
-  * Search and sort: Functions for search an element in a sorted array, and sort arrays.
+  * Utilities for [array manipulation](@ref descarrayutils) and simple calculations
+  * [Grid creation][@ref descgrids]: There are a few functions to quickly create arrays.
+  * [Search and sort][@ref descsorting]: Functions for search an element in a sorted array, and sort arrays.
   * Generation of histograms. Do we want histogram2d?
 
-## array_utils ##
+## @anchor descarrayutils Array utils ##
 
 This submodule provides a few convenience routines to work with arrays
 
@@ -16,17 +16,18 @@ This submodule provides a few convenience routines to work with arrays
   * function `mean()` Computes the arithmetic mean of the array. 
   * function `std()` Computes the standard deviation of the array. 
   * function `merge_sorted()` Creates a sorted array with values from two input sorted arrays
+
   
 
-## Grids ##
+## @anchor descgrids Grids ##
 
 This submodule provides convenience routines to create commonly occurring grids, somewhat mimicking those appearing in `Numpy`:
 
   * `linspace()` returns evenly (linearly) spaced numbers over a specified interval.
-  * `logspace()` returns logarithmically evenly spaced numbers over a specified interval.
+  * `logspace()` and `geomspace()` return logarithmically evenly spaced numbers over a specified interval.
   * `arange()` returns an array of **integer** numbers from a given interval.
 
-### Details ###
+### @anchor desclinspace Equally spaced grids
 
 The signature of `linspace` is:
 
@@ -59,16 +60,26 @@ Prints
 
 @image html ex_linspace.png
 
-The signature of `logspace` is:
+### @anchor desclogspace Logarithmic spaced grids
+
+There are two different functions returning grids with data equispaced in a logarithmic scale.
+
+The function `logspace()`, takes as arguments the exponents  of the endpoints, while `geomspace()` takes directly the endpoints. Their signature are:
 
 ```
-logspace(start, end, num = 50[, endpoint=.True.] [, base=10._dp] )
+logspace(start, end, num [, endpoint=.True.] [, base=10._dp] )
 ```
 
 where:
   * The interval spans between `base**start` and `base**end`
   * `endpoint` indicates if the final point `end` will be included, like in `linspace`.
   * `base` of the log space. By default is 10.
+
+```
+geomspace(start, end, num[, endpoint=.True.] [, base=10._dp] )
+```
+being the only difference that now the interval spans between `start` and `end`
+
   
 @include ex_logspace.f90
 
@@ -89,6 +100,7 @@ Prints
 
 @image html ex_logspace.png
 
+### @anchor descloglinspace Logarithmic-linearly spaced grids
 
 The routine `loglinspace()` produces grids with different behavior depending on the values of `step` and `ratio`.
 
@@ -98,4 +110,8 @@ It is nearly uniform, with spacing approximately `step` when `ratio`\f$\ll 1\f$.
 
 @image html ex_loglinspace.png
 
+
+## @anchor descsorting Search and sort of arrays
+
+There are routines implemented to [sort](@ref sort()) and [search sorted arrays](@ref searchsorted). 
 

@@ -1,4 +1,4 @@
 var a00465 =
 [
-    [ "qnthsh", "a00566.html", null ]
+    [ "timer", "a00737.html", "a00737" ]
 ];

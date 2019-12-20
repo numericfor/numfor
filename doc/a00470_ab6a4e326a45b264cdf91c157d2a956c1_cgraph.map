@@ -1,4 +1,0 @@
-<map id="zfill" name="zfill">
-<area shape="rect" id="node1" title="Pad a string with zeroes (&quot;0&quot;) to specified width. If width is &lt;= input string width,..." alt="" coords="5,5,51,32"/>
-<area shape="rect" id="node2" href="$a00470.html#aca7f468c7b25af7092b7e02165b36395" title="Return True if S starts with the specified prefix, False otherwise." alt="" coords="99,5,185,32"/>
-</map>

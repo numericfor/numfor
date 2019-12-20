@@ -1,4 +1,4 @@
-program ex_linspace
+program ex_logspace
   use numfor, only: dp, Zero, logspace, geomspace, save_array
   implicit none
 
@@ -22,5 +22,5 @@ program ex_linspace
   print "(A)", repeat('-', 20)
   a = geomspace(1.e-5_dp, 10._dp, 20)
   call save_array(a, 5, fmt='f9.6')
-end program ex_linspace
+end program ex_logspace
 

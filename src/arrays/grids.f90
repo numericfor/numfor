@@ -1,9 +1,9 @@
 !> @file grids.f90
-!! @date "2019-10-16 17:27:56"
+!! @date "2019-12-20 10:29:30"
 
 !> This module provides convenience routines to create grids
-!! Ver si otras funciones pueden ser útiles:
-!! merge_arrays?
+!! Description: @ref docarrays
+!!
 module grids
   use basic, only: dp, Zero, Small, stdout, print_msg
 
@@ -196,7 +196,6 @@ contains
   !!
   !! Values are generated within the half-open interval ``[start, end)``
   !! (in other words, the interval including `start` but excluding `end`).
-  !! @todo function is failing if `step` is not present
   function arange(start, end, step) result(x)
     implicit none
     integer, intent(IN) :: start !< the starting value of the interval.

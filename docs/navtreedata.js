@@ -25,8 +25,7 @@ var NAVTREE =
 [
   [ "NuMFor", "index.html", [
     [ "Numeric Modern Fortran", "index.html", "index" ],
-    [ "Description of NumFor", "a00963.html", null ],
-    [ "Todo List", "a00455.html", null ],
+    [ "Todo List", "a00446.html", null ],
     [ "Modules", "namespaces.html", [
       [ "Modules List", "namespaces.html", "namespaces_dup" ],
       [ "Module Members", "namespacemembers.html", [
@@ -51,8 +50,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"a00128.html",
-"a00742.html"
+"a00125.html",
+"a00733.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

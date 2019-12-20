@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NuMFor: d_qp_extra Interface Reference</title>
+<title>NuMFor: Member List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
+   &#160;<span id="projectnumber">ab0bca2 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -60,68 +60,25 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('a00658.html','');});
+$(document).ready(function(){initNavTree('a00661.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="a00655.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">d_qp_extra Interface Reference</div>  </div>
+<div class="title">csplev Member List</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Type used to pass extra (optional) information with the integration routines.  
- <a href="a00658.html#details">More...</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a8697b3cdf642c835709ba9141ae8cd81"><td class="memItemLeft" align="right" valign="top"><a id="a8697b3cdf642c835709ba9141ae8cd81"></a>
-character(len=:), allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#a8697b3cdf642c835709ba9141ae8cd81">msg</a></td></tr>
-<tr class="memdesc:a8697b3cdf642c835709ba9141ae8cd81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output status message. <br /></td></tr>
-<tr class="separator:a8697b3cdf642c835709ba9141ae8cd81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a568bfef9ee268666ba13da3c8bf72aa2"><td class="memItemLeft" align="right" valign="top"><a id="a568bfef9ee268666ba13da3c8bf72aa2"></a>
-real(dp), dimension(:), allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#a568bfef9ee268666ba13da3c8bf72aa2">alist</a></td></tr>
-<tr class="memdesc:a568bfef9ee268666ba13da3c8bf72aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of left end points of subintervals considered up to now. <br /></td></tr>
-<tr class="separator:a568bfef9ee268666ba13da3c8bf72aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76de18ff977dbd681e8b818177d26c72"><td class="memItemLeft" align="right" valign="top"><a id="a76de18ff977dbd681e8b818177d26c72"></a>
-real(dp), dimension(:), allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#a76de18ff977dbd681e8b818177d26c72">blist</a></td></tr>
-<tr class="memdesc:a76de18ff977dbd681e8b818177d26c72"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of right end points of subintervals considered up to now. <br /></td></tr>
-<tr class="separator:a76de18ff977dbd681e8b818177d26c72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71e1783271bf4c0d9378dda9c0f44415"><td class="memItemLeft" align="right" valign="top"><a id="a71e1783271bf4c0d9378dda9c0f44415"></a>
-real(dp), dimension(:), allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#a71e1783271bf4c0d9378dda9c0f44415">rlist</a></td></tr>
-<tr class="memdesc:a71e1783271bf4c0d9378dda9c0f44415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Approximation to the integral over (alist(i),blist(i)) <br /></td></tr>
-<tr class="separator:a71e1783271bf4c0d9378dda9c0f44415"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf2359643e55d33c572415aa4869f0c0"><td class="memItemLeft" align="right" valign="top"><a id="aaf2359643e55d33c572415aa4869f0c0"></a>
-real(dp), dimension(:), allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#aaf2359643e55d33c572415aa4869f0c0">elist</a></td></tr>
-<tr class="memdesc:aaf2359643e55d33c572415aa4869f0c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error estimate applying to rlist. <br /></td></tr>
-<tr class="separator:aaf2359643e55d33c572415aa4869f0c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42fd97599ed92eacb748720a23bfa1df"><td class="memItemLeft" align="right" valign="top"><a id="a42fd97599ed92eacb748720a23bfa1df"></a>
-integer, dimension(:), allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#a42fd97599ed92eacb748720a23bfa1df">iord</a></td></tr>
-<tr class="memdesc:a42fd97599ed92eacb748720a23bfa1df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of error estimation for the subintervals elist(iord(1)), ..., elist(iord(k)) with k = last if last &lt;= (limit/2+2), and k = limit+1-last otherwise, form a decreasing sequence. <br /></td></tr>
-<tr class="separator:a42fd97599ed92eacb748720a23bfa1df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a189aaf411ce619c6b3fb901d051b1ca9"><td class="memItemLeft" align="right" valign="top"><a id="a189aaf411ce619c6b3fb901d051b1ca9"></a>
-integer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#a189aaf411ce619c6b3fb901d051b1ca9">last</a></td></tr>
-<tr class="memdesc:a189aaf411ce619c6b3fb901d051b1ca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of subintervals actually produced <br /></td></tr>
-<tr class="separator:a189aaf411ce619c6b3fb901d051b1ca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6621c7fedbd7c7baa696edda1ef5aee6"><td class="memItemLeft" align="right" valign="top"><a id="a6621c7fedbd7c7baa696edda1ef5aee6"></a>
-integer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00658.html#a6621c7fedbd7c7baa696edda1ef5aee6">size</a> = 0</td></tr>
-<tr class="memdesc:a6621c7fedbd7c7baa696edda1ef5aee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of subdivisions allowed (size of arrays) <br /></td></tr>
-<tr class="separator:a6621c7fedbd7c7baa696edda1ef5aee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Type used to pass extra (optional) information with the integration routines. </p>
-</div><hr/>The documentation for this interface was generated from the following file:<ul>
-<li><a class="el" href="a00158.html">wquadpack.f90</a></li>
-</ul>
-</div><!-- contents -->
+<p>This is the complete list of members for <a class="el" href="a00661.html">csplev</a>, including all inherited members.</p>
+<table class="directory">
+  <tr class="even"><td class="entry"><a class="el" href="a00661.html#a7678b67468e51b89919953c1c0e05272">cspl_interp</a>(xc, csp)</td><td class="entry"><a class="el" href="a00661.html">csplev</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="a00661.html#abe3f0a825746de7cb5d26948d7a0e1c9">cspl_interp_tab</a>(xnew, csp)</td><td class="entry"><a class="el" href="a00661.html">csplev</a></td><td class="entry"></td></tr>
+</table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00466.html">quadpack</a></li><li class="navelem"><a class="el" href="a00658.html">d_qp_extra</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>

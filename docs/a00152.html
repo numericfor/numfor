@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NuMFor: qsimpson.f90 File Reference</title>
+<title>NuMFor: tanhsinh.f90 File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
+   &#160;<span id="projectnumber">ab0bca2 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -69,37 +69,34 @@ $(document).ready(function(){initNavTree('a00152.html','');});
 <a href="#nested-classes">Data Types</a> &#124;
 <a href="#namespaces">Modules</a>  </div>
   <div class="headertitle">
-<div class="title">qsimpson.f90 File Reference</div>  </div>
+<div class="title">tanhsinh.f90 File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>provides routines for Trapezoide and Simpson integration  
+<p>provides routines using the tanh-sinh method  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Types</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00554.html">trapz</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routine for integration of sampled values or functions by using the trapezoid rule.  <a href="a00554.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00562.html">simps</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routines for integration of sampled values or functions by using Simpson rule.  <a href="a00562.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00557.html">qnthsh</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine <code>qnthsh</code> implements integration by tanh-sinh method.  <a href="a00557.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Modules</h2></td></tr>
-<tr class="memitem:a00464"><td class="memItemLeft" align="right" valign="top">module &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00464.html">qsimpson</a></td></tr>
-<tr class="memdesc:a00464"><td class="mdescLeft">&#160;</td><td class="mdescRight">The qsimpson module provides routines for trapezoid and simpson integration of both sampled data and functions. Description: <a class="el" href="a00961.html">Submodule integrate</a>. <br /></td></tr>
+<tr class="memitem:a00456"><td class="memItemLeft" align="right" valign="top">module &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00456.html">qtanhsinh</a></td></tr>
+<tr class="memdesc:a00456"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of tanh-sinh integration method. Description: <a class="el" href="a00952.html">Submodule integrate</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>provides routines for Trapezoide and Simpson integration </p>
-<dl class="section date"><dt>Date</dt><dd>"2019-12-19 08:39:21" </dd></dl>
+<div class="textblock"><p>provides routines using the tanh-sinh method </p>
+<dl class="section date"><dt>Date</dt><dd>"2019-12-19 08:39:11" </dd></dl>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_01e7152e7a368d71afd23804e2a49c35.html">integrate</a></li><li class="navelem"><a class="el" href="a00152.html">qsimpson.f90</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_01e7152e7a368d71afd23804e2a49c35.html">integrate</a></li><li class="navelem"><a class="el" href="a00152.html">tanhsinh.f90</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NuMFor: qng Interface Reference</title>
+<title>NuMFor: Member List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
+   &#160;<span id="projectnumber">ab0bca2 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -60,54 +60,22 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('a00570.html','');});
+$(document).ready(function(){initNavTree('a00573.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="a00567.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">qng Interface Reference</div>  </div>
+<div class="title">qagp Member List</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>qng estimates an integral using non-adaptive integration.  
- <a href="a00570.html#details">More...</a></p>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>qng estimates an integral using non-adaptive integration. </p>
-<p>The routine calculates an approximation <img class="formulaInl" alt="$J$" src="form_21.png"/> to a definite integral </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\[ J \approx I =\int_{a}^{b} f(x, args) dx \]" src="form_22.png"/>
-</p>
-<p> hopefully satisfying </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\[ || I - J || \le \max ( epsabs, epsrel \cdot ||I|| ). \]" src="form_23.png"/>
-</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>The function to integrate </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">a</td><td>(real) lower limit of integration </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>(real) upper limit of integration </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>(real, array, <b>optional</b>) extra arguments (if needed) to be passed to the function <code>f</code> </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">IntVal</td><td>(same kind as <code>f</code>) Approximation to integral </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">epsabs</td><td>(real, <b>optional</b>) Absolute accuracy requested. Default = 1.e-7 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">epsrel</td><td>(real, <b>optional</b>) Relative accuracy requested. Default = 1.e-5 </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">abserr</td><td>(real, <b>optional</b>) Estimation of absolute error achieved </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">neval</td><td>(integer, <b>optional</b>) Number of function evaluations performed </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">ier</td><td>(integer <b>optional</b>) Error code</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>The routine is a simple non-adaptive automatic integrator, based on a sequence of rules with increasing degree of algebraic precision (Patterson, 1968). It applies the Gauss-Kronrod 10-point, 21-point, 43-point and 87-point integration rules in succession until an estimate of the integral is achieved within the desired absolute and relative error limits.</p>
-<h2>Example: </h2>
-<div class="fragment"><div class="line"><span class="keywordtype">  real</span>(dp) :: Integ1</div><div class="line">  <span class="keywordtype">complex(dp)</span> :: Integ2</div><div class="line">  <span class="keywordtype">intrinsic</span> dsin</div><div class="line">  print <span class="stringliteral">&quot;(A)&quot;</span>, center(<span class="stringliteral">&quot; Integrate sin(x) between 0 and pi &quot;</span>, 70, <span class="stringliteral">&#39;-&#39;</span>)</div><div class="line">  <span class="keyword">call </span>qng(dsin, zero, m_pi, integ1)</div><div class="line">  print <span class="stringliteral">&quot;(A)&quot;</span>, <span class="stringliteral">&#39;\int \sin(x) dx = &#39;</span>//str(integ1)//<span class="stringliteral">&quot; (Difference=&quot;</span>//str(abs(2 - integ1))//<span class="stringliteral">&quot;)&quot;</span></div><div class="line">  <span class="comment">! that prints:</span></div><div class="line">  <span class="comment">!------------------ Integrate sin(x) between 0 and pi -----------------</span></div><div class="line">  <span class="comment">! \int \sin(x) dx = 2 (Difference=0)</span></div></div><!-- fragment --></div><hr/>The documentation for this interface was generated from the following file:<ul>
-<li><a class="el" href="a00158.html">wquadpack.f90</a></li>
-</ul>
+<p>This is the complete list of members for <a class="el" href="a00573.html">qagp</a>, including all inherited members.</p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00466.html">quadpack</a></li><li class="navelem"><a class="el" href="a00570.html">qng</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>

@@ -1,8 +1,9 @@
 var a00134 =
 [
-    [ "arange", "a00134.html#ad819638e30590c382e0f1f9850d114d1", null ],
-    [ "geomspace", "a00134.html#abcba335d8217bfab5c47603ef6e09298", null ],
-    [ "linspace", "a00134.html#a5a8d0030be68412694c1d9b4953bc3da", null ],
-    [ "loglinspace", "a00134.html#aad1aa69ca327f85d72c64ba9c3aab2b1", null ],
-    [ "logspace", "a00134.html#a57a00528ed7d6958462826e845549860", null ]
+    [ "histog", "a00473.html", "a00473" ],
+    [ "clean_histog", "a00134.html#a7a6b7285793f760ef3d20d8060652a66", null ],
+    [ "histogram", "a00134.html#a6b8170eda8b7c6c491022f6ab549a49a", null ],
+    [ "width_doane", "a00134.html#aee3cf96f4b5bd698869cea7affa497f0", null ],
+    [ "width_rice", "a00134.html#a5625dbc1b2e027e67b3b18019918f47e", null ],
+    [ "width_sturges", "a00134.html#a22a3916c419f12f3b6a6c79d375f3763", null ]
 ];

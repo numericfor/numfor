@@ -24,6 +24,7 @@ program test
   print '(5(g8.3,1x))', a
   print '(A)', repeat('-', 65)
   print '(4(I3,1x))', arange(0, 122, 8)
+  print '(4(I3,1x))', arange(0, 12)
 
   print *, 'mean, std', mean(a), std(a)
 

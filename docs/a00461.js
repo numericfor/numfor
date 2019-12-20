@@ -1,5 +1,6 @@
 var a00461 =
 [
-    [ "nf_cfunction", "a00461.html#a00530", "a00461_a00530_dup" ],
-    [ "nf_rfunction", "a00461.html#a00526", "a00461_a00526_dup" ]
+    [ "splev", "a00677.html", "a00677" ],
+    [ "splint", "a00681.html", "a00681" ],
+    [ "univspline", "a00461.html#a00673", "a00461_a00673_dup" ]
 ];

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NuMFor: tanhsinh.f90 File Reference</title>
+<title>NuMFor: wquadpack.f90 File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
+   &#160;<span id="projectnumber">ab0bca2 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -67,36 +67,97 @@ $(document).ready(function(){initNavTree('a00155.html','');});
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Types</a> &#124;
-<a href="#namespaces">Modules</a>  </div>
+<a href="#namespaces">Modules</a> &#124;
+<a href="#func-members">Functions/Subroutines</a>  </div>
   <div class="headertitle">
-<div class="title">tanhsinh.f90 File Reference</div>  </div>
+<div class="title">wquadpack.f90 File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>provides routines using the tanh-sinh method  
+<p>provides wrapper routines for integration with QUADPACK  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Types</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00566.html">qnthsh</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine <code>qnthsh</code> implements integration by tanh-sinh method.  <a href="a00566.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00561.html">qng</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">qng estimates an integral using non-adaptive integration.  <a href="a00561.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00565.html">qag</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Globally adaptive integration routine without weights.  <a href="a00565.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00569.html">qags</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine qags is a globally adaptive, automatic interval subdivisions with epsilon extrapolation without weights.  <a href="a00569.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00573.html">qagp</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine qagi is a globally adaptive, automatic interval subdivisions with epsilon extrapolation without weights for an <b>infinite</b> interval.  <a href="a00573.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00581.html">qawo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine qawo is designed for integrands with an oscillatory factor, </p><p class="formulaDsp">
+<img class="formulaDsp" alt="\[ I= \int_{a}^{b} f(x) W(x) dx \]" src="form_54.png"/>
+</p>
+<p> where <img class="formulaInl" alt="$ W(x) = \sin(\omega x)$" src="form_55.png"/> or <img class="formulaInl" alt="$ W(x) = \cos(\omega x)$" src="form_56.png"/>.  <a href="a00581.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00585.html">qawf</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">qawf computes Fourier integrals over the interval [ A, +Infinity ).  <a href="a00585.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00589.html">qaws</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine qaws estimates integrals with algebraico-logarithmic endpoint singularities given by the weight function <img class="formulaInl" alt="$ W(x) $" src="form_60.png"/> </p><p class="formulaDsp">
+<img class="formulaDsp" alt="\[ I= \int_{a}^{b} f(x) W(x) dx \]" src="form_54.png"/>
+</p>
+<p>.  <a href="a00589.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00593.html">qawc</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine qawc computes the Cauchy principal value.  <a href="a00593.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00597.html">qgk</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routine to perform the integration of a function by Gauss-Kronrod rule.  <a href="a00597.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00625.html">qk15w</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routine to perform the integration of a weighted function by 15-points Gauss-Kronrod rule.  <a href="a00625.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00641.html">qcheb</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine qcheb computes the coefficients of the Chebyshev series expansion of degrees 12 and 24 of a function using a fast Fourier transform method </p><p class="formulaDsp">
+<img class="formulaDsp" alt="\[ f(x) = \sum_{k} (\mathrm{Cheb}(k) T_{k-1}(x) , \]" src="form_74.png"/>
+</p>
+<p> where <img class="formulaInl" alt="$ T_{k}(x)$" src="form_75.png"/> is the Chebyshev polynomial of degree k.  <a href="a00641.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00645.html">qextr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subroutine qextr carries out the Epsilon extrapolation algorithm.  <a href="a00645.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00649.html">d_qp_extra</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to pass extra (optional) information with the integration routines.  <a href="a00649.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00649.html">d_qp_extra</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to pass extra (optional) information with the integration routines.  <a href="a00649.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00653.html">c_qp_extra</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to pass extra (optional) information with the integration routines.  <a href="a00653.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00653.html">c_qp_extra</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to pass extra (optional) information with the integration routines.  <a href="a00653.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Modules</h2></td></tr>
-<tr class="memitem:a00465"><td class="memItemLeft" align="right" valign="top">module &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00465.html">qtanhsinh</a></td></tr>
-<tr class="memdesc:a00465"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of tanh-sinh integration method. Description: <a class="el" href="a00961.html">Submodule integrate</a>. <br /></td></tr>
+<tr class="memitem:a00457"><td class="memItemLeft" align="right" valign="top">module &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00457.html">quadpack</a></td></tr>
+<tr class="memdesc:a00457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper of (slightly modified) QUADPACK routines Description: <a class="el" href="a00952.html">Submodule integrate</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions/Subroutines</h2></td></tr>
+<tr class="memitem:a19d9d1d7eee3dc275b20e8fd4c6431b1"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00457.html#a19d9d1d7eee3dc275b20e8fd4c6431b1">qp_err_msg</a> (ier)</td></tr>
+<tr class="memdesc:a19d9d1d7eee3dc275b20e8fd4c6431b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">qp_err_msg Returns the error message correspondig to a given code  <a href="a00457.html#a19d9d1d7eee3dc275b20e8fd4c6431b1">More...</a><br /></td></tr>
+<tr class="separator:a19d9d1d7eee3dc275b20e8fd4c6431b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>provides routines using the tanh-sinh method </p>
-<dl class="section date"><dt>Date</dt><dd>"2019-12-19 08:39:11" </dd></dl>
+<div class="textblock"><p>provides wrapper routines for integration with QUADPACK </p>
+<dl class="section date"><dt>Date</dt><dd>"2019-12-19 08:39:35" </dd></dl>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_01e7152e7a368d71afd23804e2a49c35.html">integrate</a></li><li class="navelem"><a class="el" href="a00155.html">tanhsinh.f90</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_01e7152e7a368d71afd23804e2a49c35.html">integrate</a></li><li class="navelem"><a class="el" href="a00155.html">wquadpack.f90</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>

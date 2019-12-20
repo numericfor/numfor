@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NuMFor: grids.f90 File Reference</title>
+<title>NuMFor: histogram.f90 File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
+   &#160;<span id="projectnumber">ab0bca2 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -66,44 +66,40 @@ $(document).ready(function(){initNavTree('a00134.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Types</a> &#124;
 <a href="#namespaces">Modules</a> &#124;
 <a href="#func-members">Functions/Subroutines</a>  </div>
   <div class="headertitle">
-<div class="title">grids.f90 File Reference</div>  </div>
+<div class="title">histogram.f90 File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Types</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">type &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00473.html">histog</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">type histogram holds the data from an histogram  <a href="a00473.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Modules</h2></td></tr>
-<tr class="memitem:a00458"><td class="memItemLeft" align="right" valign="top">module &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html">grids</a></td></tr>
-<tr class="memdesc:a00458"><td class="mdescLeft">&#160;</td><td class="mdescRight">This module provides convenience routines to create grids Ver si otras funciones pueden ser útiles: merge_arrays? <br /></td></tr>
+<tr class="memitem:a00450"><td class="memItemLeft" align="right" valign="top">module &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00450.html">histograms</a></td></tr>
+<tr class="memdesc:a00450"><td class="mdescLeft">&#160;</td><td class="mdescRight">The module <code>histograms</code> provides infrastructure for the calculation of histograms. i.e: a count of frequency. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions/Subroutines</h2></td></tr>
-<tr class="memitem:a5a8d0030be68412694c1d9b4953bc3da"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a5a8d0030be68412694c1d9b4953bc3da">linspace</a> (start, end, num, endpoint, retstep)</td></tr>
-<tr class="separator:a5a8d0030be68412694c1d9b4953bc3da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57a00528ed7d6958462826e845549860"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a57a00528ed7d6958462826e845549860">logspace</a> (start, end, num, endpoint, base)</td></tr>
-<tr class="memdesc:a57a00528ed7d6958462826e845549860"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a grid with numbers spaced evenly on a log scale.  <a href="a00458.html#a57a00528ed7d6958462826e845549860">More...</a><br /></td></tr>
-<tr class="separator:a57a00528ed7d6958462826e845549860"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcba335d8217bfab5c47603ef6e09298"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#abcba335d8217bfab5c47603ef6e09298">geomspace</a> (start, end, num, endpoint)</td></tr>
-<tr class="memdesc:abcba335d8217bfab5c47603ef6e09298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a grid with numbers spaced evenly on a log scale.  <a href="a00458.html#abcba335d8217bfab5c47603ef6e09298">More...</a><br /></td></tr>
-<tr class="separator:abcba335d8217bfab5c47603ef6e09298"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad1aa69ca327f85d72c64ba9c3aab2b1"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#aad1aa69ca327f85d72c64ba9c3aab2b1">loglinspace</a> (start, end, num, step, ratio)</td></tr>
-<tr class="memdesc:aad1aa69ca327f85d72c64ba9c3aab2b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">loglinspace Computes a grid that may behave as linearly or logarithmically spaced  <a href="a00458.html#aad1aa69ca327f85d72c64ba9c3aab2b1">More...</a><br /></td></tr>
-<tr class="separator:aad1aa69ca327f85d72c64ba9c3aab2b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad819638e30590c382e0f1f9850d114d1"><td class="memItemLeft" align="right" valign="top">integer function, dimension(:), allocatable, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#ad819638e30590c382e0f1f9850d114d1">arange</a> (start, end, step)</td></tr>
-<tr class="memdesc:ad819638e30590c382e0f1f9850d114d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">arange: Return evenly spaced integer values within a given interval  <a href="a00458.html#ad819638e30590c382e0f1f9850d114d1">More...</a><br /></td></tr>
-<tr class="separator:ad819638e30590c382e0f1f9850d114d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b8170eda8b7c6c491022f6ab549a49a"><td class="memItemLeft" align="right" valign="top">type(histog) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00450.html#a6b8170eda8b7c6c491022f6ab549a49a">histogram</a> (a, Nbins, bins, range, weights, density)</td></tr>
+<tr class="memdesc:a6b8170eda8b7c6c491022f6ab549a49a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the histogram of an array of data.  <a href="a00450.html#a6b8170eda8b7c6c491022f6ab549a49a">More...</a><br /></td></tr>
+<tr class="separator:a6b8170eda8b7c6c491022f6ab549a49a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section date"><dt>Date</dt><dd>"2019-10-16 17:27:56" </dd></dl>
+<div class="textblock"><dl class="section date"><dt>Date</dt><dd>"2019-10-08 10:54:03" </dd></dl>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_8904cec4eed2f3dc922bc3f1d80b2bee.html">arrays</a></li><li class="navelem"><a class="el" href="a00134.html">grids.f90</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_8904cec4eed2f3dc922bc3f1d80b2bee.html">arrays</a></li><li class="navelem"><a class="el" href="a00134.html">histogram.f90</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>

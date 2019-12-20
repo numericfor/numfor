@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
+   &#160;<span id="projectnumber">ab0bca2 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -75,10 +75,10 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>Documentation may be found in <a href="https://numericfor.github.io/numfor/index.html">https://numericfor.github.io/numfor/index.html</a></p>
 <p>Further information on the capabilities of the library may be learned by exploring the different modules.</p>
 <p>It provides:</p><ul>
-<li>A <a class="el" href="a00964.html">Submodule Utils</a> utils with basic, non-specific, functionality used in many (most?) scientific programming.</li>
-<li>A <a class="el" href="a00959.html">Submodule Arrays</a> with basic functionality to work with arrays, including generation of grids, search of elements and sorting.</li>
-<li>A <a class="el" href="a00962.html">Submodule interpolate</a> with routines to perform interpolation, fitting of data, and some work on polynomials.</li>
-<li>A <a class="el" href="a00961.html">Submodule integrate</a> with routines to perform integration of real and complex functions, and of sampled data.</li>
+<li>A <a class="el" href="a00954.html">Submodule Utils</a> utils with basic, non-specific, functionality used in many (most?) scientific programming.</li>
+<li>A <a class="el" href="a00950.html">Submodule Arrays</a> with basic functionality to work with arrays, including generation of grids, search of elements and sorting.</li>
+<li>A <a class="el" href="a00953.html">Submodule interpolate</a> with routines to perform interpolation, fitting of data, and some work on polynomials.</li>
+<li>A <a class="el" href="a00952.html">Submodule integrate</a> with routines to perform integration of real and complex functions, and of sampled data.</li>
 </ul>
 <p>You can also visit the <a href="namespaces.html">documentation for the code</a></p>
 <h2>Installation</h2>
@@ -91,13 +91,13 @@ $(document).ready(function(){initNavTree('index.html','');});
 <h2>Use</h2>
 <p>Simply compile your program with flags indicating where to find libnumfor.mod and link to libnumfor.a There are different ways to accomplish this:</p>
 <ol type="1">
+<li>Manually adding the information when compiling. For instance, when using <code>gfortran</code></li>
+</ol>
+<div class="fragment"><div class="line">$&gt; gfortran -c -o myprog.o -I &lt;prefix&gt;/include/numfor myprog.f90</div><div class="line">$&gt; gfortran -o myprog -L &lt;prefix&gt;/lib -lnumfor myprog.o</div></div><!-- fragment --><ol type="1">
 <li>Using <code>pkg-config</code> <div class="fragment"><div class="line">$&gt; gfortran -c -o myprog.o $(pkg-config --cflags numfor) myprog.f90</div><div class="line">$&gt; gfortran -o myprog $(pkg-config --libs numfor) myprog.o</div></div><!-- fragment --> In order to work, first the environment variable PKG_CONFIG_PATH must be set. For instance, in linux you have to add to $HOME/.bashrc (or site /etc/bashrc if you install for all users) the folowing line:</li>
 </ol>
 <div class="fragment"><div class="line">export PKG_CONFIG_PATH=&quot;&lt;prefix&gt;/lib/pkgconfig:$PKG_CONFIG_PATH&quot;</div></div><!-- fragment --><p> You will have to open a new terminal or source the <code>bashrc</code> file before compiling your program.</p>
-<ol type="1">
-<li>Manually adding the information when compiling. For instance, when using <code>gfortran</code></li>
-</ol>
-<div class="fragment"><div class="line">$&gt; gfortran -c -o myprog.o -I &lt;prefix&gt;/include/numfor myprog.f90</div><div class="line">$&gt; gfortran -o myprog -L &lt;prefix&gt;/lib -lnumfor myprog.o</div></div><!-- fragment --><h2>Make the docs</h2>
+<h2>Make the docs</h2>
 <p>To build the html docs just:</p>
 <div class="fragment"><div class="line">$&gt; make doc</div></div><!-- fragment --><p>Some dependencies are needed:</p>
 <ul>

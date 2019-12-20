@@ -1,4 +1,0 @@
-<map id="rng_rand_real_array1d" name="rng_rand_real_array1d">
-<area shape="rect" id="node1" title="Obtain an array (1,...,dim) of pseudorandom real numbers in the range [0,1]." alt="" coords="5,5,173,32"/>
-<area shape="rect" id="node2" href="$a00467.html#ad9965b42d28df4b8d1445b6db1ce468b" title="Obtain the next 64&#45;bit (orig said 32??) integer in the pseudo&#45;random sequence." alt="" coords="221,5,392,32"/>
-</map>

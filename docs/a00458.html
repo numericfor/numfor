@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NuMFor: grids Module Reference</title>
+<title>NuMFor: csplines Module Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
+   &#160;<span id="projectnumber">ab0bca2 (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -66,58 +66,78 @@ $(document).ready(function(){initNavTree('a00458.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Types</a> &#124;
 <a href="#func-members">Functions/Subroutines</a>  </div>
   <div class="headertitle">
-<div class="title">grids Module Reference</div>  </div>
+<div class="title">csplines Module Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>This module provides convenience routines to create grids Ver si otras funciones pueden ser útiles: merge_arrays?  
+<p>csplines implements interpolation using cubic splines Description: <a class="el" href="a00953.html">Submodule interpolate</a>  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Types</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00661.html">csplev</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">csplev Performs a spline interpolation in a point or in a table  <a href="a00661.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00665.html">csplevder</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">csplev Performs a spline interpolation in a point or in a table  <a href="a00665.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00657.html">cubicspline</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type used to keep all information on splines.  <a href="a00657.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions/Subroutines</h2></td></tr>
-<tr class="memitem:a5a8d0030be68412694c1d9b4953bc3da"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a5a8d0030be68412694c1d9b4953bc3da">linspace</a> (start, end, num, endpoint, retstep)</td></tr>
-<tr class="separator:a5a8d0030be68412694c1d9b4953bc3da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57a00528ed7d6958462826e845549860"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a57a00528ed7d6958462826e845549860">logspace</a> (start, end, num, endpoint, base)</td></tr>
-<tr class="memdesc:a57a00528ed7d6958462826e845549860"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a grid with numbers spaced evenly on a log scale.  <a href="#a57a00528ed7d6958462826e845549860">More...</a><br /></td></tr>
-<tr class="separator:a57a00528ed7d6958462826e845549860"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcba335d8217bfab5c47603ef6e09298"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#abcba335d8217bfab5c47603ef6e09298">geomspace</a> (start, end, num, endpoint)</td></tr>
-<tr class="memdesc:abcba335d8217bfab5c47603ef6e09298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a grid with numbers spaced evenly on a log scale.  <a href="#abcba335d8217bfab5c47603ef6e09298">More...</a><br /></td></tr>
-<tr class="separator:abcba335d8217bfab5c47603ef6e09298"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad1aa69ca327f85d72c64ba9c3aab2b1"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(num), public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#aad1aa69ca327f85d72c64ba9c3aab2b1">loglinspace</a> (start, end, num, step, ratio)</td></tr>
-<tr class="memdesc:aad1aa69ca327f85d72c64ba9c3aab2b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">loglinspace Computes a grid that may behave as linearly or logarithmically spaced  <a href="#aad1aa69ca327f85d72c64ba9c3aab2b1">More...</a><br /></td></tr>
-<tr class="separator:aad1aa69ca327f85d72c64ba9c3aab2b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad819638e30590c382e0f1f9850d114d1"><td class="memItemLeft" align="right" valign="top">integer function, dimension(:), allocatable, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#ad819638e30590c382e0f1f9850d114d1">arange</a> (start, end, step)</td></tr>
-<tr class="memdesc:ad819638e30590c382e0f1f9850d114d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">arange: Return evenly spaced integer values within a given interval  <a href="#ad819638e30590c382e0f1f9850d114d1">More...</a><br /></td></tr>
-<tr class="separator:ad819638e30590c382e0f1f9850d114d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3da10b174a774b9b1aae5c401c0cf6f0"><td class="memItemLeft" align="right" valign="top">subroutine, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a3da10b174a774b9b1aae5c401c0cf6f0">csplrep</a> (x, y, s1, sn, csp)</td></tr>
+<tr class="memdesc:a3da10b174a774b9b1aae5c401c0cf6f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">cubic spline interpolation between tabulated data After calling this function the result may be used to evaluate the function as:<br />
+ <code>ynew= csplev(xnew, csp)</code><br />
+ <a href="#a3da10b174a774b9b1aae5c401c0cf6f0">More...</a><br /></td></tr>
+<tr class="separator:a3da10b174a774b9b1aae5c401c0cf6f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3060beecea64ba789802ebbec4a0cf0"><td class="memItemLeft" align="right" valign="top">type(<a class="el" href="a00657.html">cubicspline</a>) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#af3060beecea64ba789802ebbec4a0cf0">csplder</a> (csp, m)</td></tr>
+<tr class="memdesc:af3060beecea64ba789802ebbec4a0cf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">csplder Computes the derivative of the cubic spline  <a href="#af3060beecea64ba789802ebbec4a0cf0">More...</a><br /></td></tr>
+<tr class="separator:af3060beecea64ba789802ebbec4a0cf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae523d7474ebcf8602e7e1e14844df5d1"><td class="memItemLeft" align="right" valign="top">type(<a class="el" href="a00657.html">cubicspline</a>) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#ae523d7474ebcf8602e7e1e14844df5d1">csplantider</a> (csp, m)</td></tr>
+<tr class="memdesc:ae523d7474ebcf8602e7e1e14844df5d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the antiderivative of the CubicSpline approximation.  <a href="#ae523d7474ebcf8602e7e1e14844df5d1">More...</a><br /></td></tr>
+<tr class="separator:ae523d7474ebcf8602e7e1e14844df5d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0ab6b17a8307f302b4e89905555e248"><td class="memItemLeft" align="right" valign="top"><a id="ab0ab6b17a8307f302b4e89905555e248"></a>
+subroutine, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#ab0ab6b17a8307f302b4e89905555e248">cspl_clean</a> (r)</td></tr>
+<tr class="memdesc:ab0ab6b17a8307f302b4e89905555e248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean-up a spline representation. <br /></td></tr>
+<tr class="separator:ab0ab6b17a8307f302b4e89905555e248"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac336708747a6497a9f9068f9265d757"><td class="memItemLeft" align="right" valign="top">subroutine, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#aac336708747a6497a9f9068f9265d757">cspleps</a> (x, y, Err)</td></tr>
+<tr class="memdesc:aac336708747a6497a9f9068f9265d757"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates the error produced by using a spline approximation.  <a href="#aac336708747a6497a9f9068f9265d757">More...</a><br /></td></tr>
+<tr class="separator:aac336708747a6497a9f9068f9265d757"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bed8d4b2ea5572b31201e860aed7caa"><td class="memItemLeft" align="right" valign="top">real(dp) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a3bed8d4b2ea5572b31201e860aed7caa">csplint</a> (xL, xU, csp, extrapolate)</td></tr>
+<tr class="memdesc:a3bed8d4b2ea5572b31201e860aed7caa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Definite integral of a cubic spline function.  <a href="#a3bed8d4b2ea5572b31201e860aed7caa">More...</a><br /></td></tr>
+<tr class="separator:a3bed8d4b2ea5572b31201e860aed7caa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9afde5d502e4421c38ffcad869d9e368"><td class="memItemLeft" align="right" valign="top">real(dp) function, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a9afde5d502e4421c38ffcad869d9e368">csplint_square</a> (xL, xU, csp)</td></tr>
+<tr class="memdesc:a9afde5d502e4421c38ffcad869d9e368"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integral of the square of a function expressed as a cubic spline.  <a href="#a9afde5d502e4421c38ffcad869d9e368">More...</a><br /></td></tr>
+<tr class="separator:a9afde5d502e4421c38ffcad869d9e368"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e2d26fbe3cd283435e12327178769ac"><td class="memItemLeft" align="right" valign="top">real(dp) function, dimension(:), allocatable, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="a00458.html#a1e2d26fbe3cd283435e12327178769ac">csplroots</a> (csp)</td></tr>
+<tr class="memdesc:a1e2d26fbe3cd283435e12327178769ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">csplroots Computes the roots of the Spline approximation  <a href="#a1e2d26fbe3cd283435e12327178769ac">More...</a><br /></td></tr>
+<tr class="separator:a1e2d26fbe3cd283435e12327178769ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This module provides convenience routines to create grids Ver si otras funciones pueden ser útiles: merge_arrays? </p>
+<div class="textblock"><p>csplines implements interpolation using cubic splines Description: <a class="el" href="a00953.html">Submodule interpolate</a> </p>
 </div><h2 class="groupheader">Function/Subroutine Documentation</h2>
-<a id="ad819638e30590c382e0f1f9850d114d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad819638e30590c382e0f1f9850d114d1">&#9670;&nbsp;</a></span>arange()</h2>
+<a id="ae523d7474ebcf8602e7e1e14844df5d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae523d7474ebcf8602e7e1e14844df5d1">&#9670;&nbsp;</a></span>csplantider()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">integer function, dimension(:), allocatable, public grids::arange </td>
+          <td class="memname">type(<a class="el" href="a00657.html">cubicspline</a>) function, public csplines::csplantider </td>
           <td>(</td>
-          <td class="paramtype">integer, intent(in)&#160;</td>
-          <td class="paramname"><em>start</em>, </td>
+          <td class="paramtype">type(<a class="el" href="a00657.html">cubicspline</a>), intent(in)&#160;</td>
+          <td class="paramname"><em>csp</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">integer, intent(in)&#160;</td>
-          <td class="paramname"><em>end</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">integer, intent(in), optional&#160;</td>
-          <td class="paramname"><em>step</em>&#160;</td>
+          <td class="paramname"><em>m</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -127,121 +147,47 @@ Functions/Subroutines</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>arange: Return evenly spaced integer values within a given interval </p>
-<p>Values are generated within the half-open interval <code>[start, end)</code> (in other words, the interval including <code>start</code> but excluding <code>end</code>). </p><dl class="todo"><dt><b><a class="el" href="a00455.html#_todo000001">Todo:</a></b></dt><dd>function is failing if <code>step</code> is not present </dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Computes the antiderivative of the CubicSpline approximation. </p>
+<p>The result is a CubicSpline (not exactly, it is a polynomial of order m+4) </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>the starting value of the interval. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">end</td><td>the final value of the interval (not included) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step</td><td>Spacing between values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">csp</td><td>CubicSpline object holding the spline </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>order of integration </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A sequence of numbers spaced evenly </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>spline holding the antiderivative </dd></dl>
 
-</div>
-</div>
-<a id="abcba335d8217bfab5c47603ef6e09298"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcba335d8217bfab5c47603ef6e09298">&#9670;&nbsp;</a></span>geomspace()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">real(dp) function, dimension(num), public grids::geomspace </td>
-          <td>(</td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>start</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>end</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">integer, intent(in)&#160;</td>
-          <td class="paramname"><em>num</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">logical, intent(in), optional&#160;</td>
-          <td class="paramname"><em>endpoint</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Makes a grid with numbers spaced evenly on a log scale. </p>
-<dl class="section note"><dt>Note</dt><dd>: Is similar to logspace but with endpoints specified directly. Also accepts simultaneously negative <code>start</code> <b>and</b> <code>end</code> </dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td><code>start</code> is the starting value </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">end</td><td><code>end</code> is the final value of </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>Number of samples to generate. Must </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">endpoint</td><td>If True, <code>end</code> is </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A sequence of numbers spaced evenly on a log scale. </dd></dl>
-<h2>Examples: </h2>
-<div class="fragment"><div class="line">  print <span class="stringliteral">&#39;(4(f8.2,1x))&#39;</span>, geomspace(1._dp, 1000._dp, num=4)</div><div class="line">  <span class="comment">! gives:     1.00    10.00   100.00  1000.00</span></div><div class="line">  print <span class="stringliteral">&#39;(4(f8.2,1x))&#39;</span>, geomspace(-1000._dp, -1._dp, num=4)</div><div class="line">  <span class="comment">! gives: -1000.00  -100.00   -10.00    -1.00</span></div></div><!-- fragment -->
-<p class="reference">References <a class="el" href="a00458.html#a57a00528ed7d6958462826e845549860">logspace()</a>.</p>
+<p class="reference">References <a class="el" href="a00460.html#ac68153091c7dc8dd8e145e095a5718d2">polynomial::polyint()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="a00458_abcba335d8217bfab5c47603ef6e09298_cgraph.png" border="0" usemap="#a00458_abcba335d8217bfab5c47603ef6e09298_cgraph" alt=""/></div>
-<map name="a00458_abcba335d8217bfab5c47603ef6e09298_cgraph" id="a00458_abcba335d8217bfab5c47603ef6e09298_cgraph">
-<area shape="rect"  title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,5,103,32"/>
-<area shape="rect"  href="a00458.html#a57a00528ed7d6958462826e845549860" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="151,5,231,32"/>
-<area shape="rect"  href="a00458.html#a5a8d0030be68412694c1d9b4953bc3da" title=" " alt="" coords="279,5,355,32"/>
+<div class="center"><img src="a00458_ae523d7474ebcf8602e7e1e14844df5d1_cgraph.png" border="0" usemap="#a00458_ae523d7474ebcf8602e7e1e14844df5d1_cgraph" alt=""/></div>
+<map name="a00458_ae523d7474ebcf8602e7e1e14844df5d1_cgraph" id="a00458_ae523d7474ebcf8602e7e1e14844df5d1_cgraph">
+<area shape="rect"  title="Computes the antiderivative of the CubicSpline approximation." alt="" coords="5,5,100,32"/>
+<area shape="rect"  href="a00460.html#ac68153091c7dc8dd8e145e095a5718d2" title="polyint Computes m&#45;esima antiderivative" alt="" coords="148,5,296,32"/>
+<area shape="rect"  href="a00465.html#a4870a04efefc9c3f5b29fe74dce63bbe" title="Print a message, and optionally stop the program." alt="" coords="344,5,473,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a5a8d0030be68412694c1d9b4953bc3da"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a8d0030be68412694c1d9b4953bc3da">&#9670;&nbsp;</a></span>linspace()</h2>
+<a id="af3060beecea64ba789802ebbec4a0cf0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3060beecea64ba789802ebbec4a0cf0">&#9670;&nbsp;</a></span>csplder()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">real(dp) function, dimension(num), public grids::linspace </td>
+          <td class="memname">type(<a class="el" href="a00657.html">cubicspline</a>) function, public csplines::csplder </td>
           <td>(</td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>start</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>end</em>, </td>
+          <td class="paramtype">type(<a class="el" href="a00657.html">cubicspline</a>), intent(in)&#160;</td>
+          <td class="paramname"><em>csp</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">integer, intent(in)&#160;</td>
-          <td class="paramname"><em>num</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">logical, intent(in), optional&#160;</td>
-          <td class="paramname"><em>endpoint</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(out), optional&#160;</td>
-          <td class="paramname"><em>retstep</em>&#160;</td>
+          <td class="paramname"><em>m</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -250,180 +196,287 @@ Here is the call graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>csplder Computes the derivative of the cubic spline </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>The starting value of the</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">end</td><td>The end value of the sequence,</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>Number of samples to generate. Must</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">endpoint</td><td>If True, <code>end</code> is</td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">retstep</td><td>If present, return</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">csp</td><td>Interpolating object </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>order of derivation (must be 1 or 2) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An array of uniformly spaced numbers </dd></dl>
-<h2>Examples: </h2>
-<div class="fragment"><div class="line">  print <span class="stringliteral">&quot;(5(f4.2,1x))&quot;</span>, linspace(2._dp, 3.0_dp, num=5)</div><div class="line">  <span class="comment">! Gives: 2.00 2.25 2.50 2.75 3.00</span></div><div class="line">  print <span class="stringliteral">&quot;(5(f4.2,1x))&quot;</span>, linspace(2._dp, 3.0_dp, num=5, endpoint=.false.)</div><div class="line">  <span class="comment">! Gives: 2.00 2.20 2.40 2.60 2.80</span></div><div class="line">  print <span class="stringliteral">&quot;(5(f4.2,1x))&quot;</span>, linspace(2._dp, 3.0_dp, num=5, retstep=step)</div><div class="line">  <span class="comment">! Gives: 2.00 2.25 2.50 2.75 3.00</span></div></div><!-- fragment -->
-<p class="reference">References <a class="el" href="a00474.html#ae5f652a6d3a078398037227525c4fddd">basic::zero</a>.</p>
+<dl class="section return"><dt>Returns</dt><dd>Spline representation of derivative </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="a00459.html#a6b8170eda8b7c6c491022f6ab549a49a">histograms::histogram()</a>, and <a class="el" href="a00458.html#a57a00528ed7d6958462826e845549860">logspace()</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="a00458_a5a8d0030be68412694c1d9b4953bc3da_icgraph.png" border="0" usemap="#a00458_a5a8d0030be68412694c1d9b4953bc3da_icgraph" alt=""/></div>
-<map name="a00458_a5a8d0030be68412694c1d9b4953bc3da_icgraph" id="a00458_a5a8d0030be68412694c1d9b4953bc3da_icgraph">
-<area shape="rect"  title=" " alt="" coords="368,31,444,57"/>
-<area shape="rect"  href="a00459.html#a6b8170eda8b7c6c491022f6ab549a49a" title="Computes the histogram of an array of data." alt="" coords="151,5,320,32"/>
-<area shape="rect"  href="a00458.html#a57a00528ed7d6958462826e845549860" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="195,56,275,83"/>
-<area shape="rect"  href="a00458.html#abcba335d8217bfab5c47603ef6e09298" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,56,103,83"/>
-</map>
-</div>
-
-</div>
-</div>
-<a id="aad1aa69ca327f85d72c64ba9c3aab2b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad1aa69ca327f85d72c64ba9c3aab2b1">&#9670;&nbsp;</a></span>loglinspace()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">real(dp) function, dimension(num), public grids::loglinspace </td>
-          <td>(</td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>start</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>end</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">integer, intent(in)&#160;</td>
-          <td class="paramname"><em>num</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(in), optional&#160;</td>
-          <td class="paramname"><em>step</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(in), optional&#160;</td>
-          <td class="paramname"><em>ratio</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>loglinspace Computes a grid that may behave as linearly or logarithmically spaced </p>
-<p>From package RADIAL by Salvat et al 1995 Computer Physics Communications. The grid is such that:</p><ol type="1">
-<li>R(1)=0, R(NP)=RN,</li>
-<li>A*R(I)+B*DLOG(R(I))-C= I (I &gt; 0), with A=1.0/STEP and B=1.0/DLOG(RATIO). <dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>Starting value </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">end</td><td>Final value of the sequence </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>Number of points </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step</td><td>Approximated step in the linear region </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ratio</td><td>quotient between consecutive points in the logarithmic region </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Array of points with the grid of dimension <code>num</code></dd></dl>
-<h2>Examples: </h2>
-</li>
-</ol>
-
-</div>
-</div>
-<a id="a57a00528ed7d6958462826e845549860"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a57a00528ed7d6958462826e845549860">&#9670;&nbsp;</a></span>logspace()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">real(dp) function, dimension(num), public grids::logspace </td>
-          <td>(</td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>start</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>end</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">integer, intent(in)&#160;</td>
-          <td class="paramname"><em>num</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">logical, intent(in), optional&#160;</td>
-          <td class="paramname"><em>endpoint</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">real(dp), intent(in), optional&#160;</td>
-          <td class="paramname"><em>base</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Makes a grid with numbers spaced evenly on a log scale. </p>
-<p>In linear space, the sequence starts at <code>base**start</code> (<code>base</code> to the power of <code>start</code>) and ends with <code>base**end</code></p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td><code>base**start</code> is the starting value of the sequence. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">end</td><td><code>base**end</code> is the final value of the sequence. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>Number of samples to generate. Must be positive. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">endpoint</td><td>If True, <code>end</code> is the last sample. Otherwise, it is not included. Default is True </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">base</td><td>The base of the log space. Default is 10. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A sequence of numbers spaced evenly on a log scale. </dd></dl>
-<h2>Examples: </h2>
-<div class="fragment"><div class="line">  print <span class="stringliteral">&#39;(4(f8.2,1x))&#39;</span>, logspace(2._dp, 3.0_dp, num=4)</div><div class="line">  <span class="comment">! gives:  100.00   215.44   464.16  1000.00</span></div><div class="line">  print <span class="stringliteral">&#39;(4(f8.2,1x))&#39;</span>, logspace(2.0_dp, 3.0_dp, num=4, base=2.0_dp)</div><div class="line">  <span class="comment">! gives:    4.00     5.04     6.35     8.00</span></div><div class="line">  print <span class="stringliteral">&#39;(4(f8.2,1x))&#39;</span>, logspace(3._dp, zero, 4)</div><div class="line">  <span class="comment">! gives: 1000.00   100.00    10.00     1.00</span></div></div><!-- fragment -->
-<p class="reference">References <a class="el" href="a00458.html#a5a8d0030be68412694c1d9b4953bc3da">linspace()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="a00458.html#abcba335d8217bfab5c47603ef6e09298">geomspace()</a>.</p>
+<p class="reference">References <a class="el" href="a00460.html#abeed252347d91726977c4a692370a1ac">polynomial::polyder()</a>, and <a class="el" href="a00465.html#a4870a04efefc9c3f5b29fe74dce63bbe">basic::print_msg()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="a00458_a57a00528ed7d6958462826e845549860_cgraph.png" border="0" usemap="#a00458_a57a00528ed7d6958462826e845549860_cgraph" alt=""/></div>
-<map name="a00458_a57a00528ed7d6958462826e845549860_cgraph" id="a00458_a57a00528ed7d6958462826e845549860_cgraph">
-<area shape="rect"  title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,5,85,32"/>
-<area shape="rect"  href="a00458.html#a5a8d0030be68412694c1d9b4953bc3da" title=" " alt="" coords="133,5,209,32"/>
+<div class="center"><img src="a00458_af3060beecea64ba789802ebbec4a0cf0_cgraph.png" border="0" usemap="#a00458_af3060beecea64ba789802ebbec4a0cf0_cgraph" alt=""/></div>
+<map name="a00458_af3060beecea64ba789802ebbec4a0cf0_cgraph" id="a00458_af3060beecea64ba789802ebbec4a0cf0_cgraph">
+<area shape="rect"  title="csplder Computes the derivative of the cubic spline" alt="" coords="5,31,75,57"/>
+<area shape="rect"  href="a00460.html#abeed252347d91726977c4a692370a1ac" title="polyder Computes the derivative of a polynomial. Returns an array with the coefficients" alt="" coords="123,5,275,32"/>
+<area shape="rect"  href="a00465.html#a4870a04efefc9c3f5b29fe74dce63bbe" title="Print a message, and optionally stop the program." alt="" coords="323,31,452,57"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="aac336708747a6497a9f9068f9265d757"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac336708747a6497a9f9068f9265d757">&#9670;&nbsp;</a></span>cspleps()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine, public csplines::cspleps </td>
+          <td>(</td>
+          <td class="paramtype">real(dp), dimension(:), intent(in)&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(dp), dimension(size(x)), intent(in)&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(dp), dimension(size(x)), intent(out)&#160;</td>
+          <td class="paramname"><em>Err</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Estimates the error produced by using a spline approximation. </p>
+<p>This subroutine estimates the error introduced by natural cubic spline interpolation in a table <code> x(i),y(i) (i=1,...,n)</code>. the interpolation error in the vicinity of <em>x(k)</em> is approximated by the difference between y(k) and the value obtained from the spline that interpolates the table with the k-th point removed. err is the largest relative error along the table.</p>
+<dl class="section note"><dt>Note</dt><dd>Some tests seems to show that the error is about one order of magnitude better than estimated by this routine </dd>
+<dd>
+Modified from Salvat et al, Comp. Phys. Comm. (1995)</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Err An array with the relative errors </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>grid points </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">y</td><td>value of function at grid points </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">err</td><td>Vector with error estimates </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3bed8d4b2ea5572b31201e860aed7caa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bed8d4b2ea5572b31201e860aed7caa">&#9670;&nbsp;</a></span>csplint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">real(dp) function, public csplines::csplint </td>
+          <td>(</td>
+          <td class="paramtype">real(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>xL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>xU</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">class(<a class="el" href="a00657.html">cubicspline</a>), intent(in)&#160;</td>
+          <td class="paramname"><em>csp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">logical, intent(in), optional&#160;</td>
+          <td class="paramname"><em>extrapolate</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definite integral of a cubic spline function. </p>
+<dl class="todo"><dt><b><a class="el" href="a00446.html#_todo000001">Todo:</a></b></dt><dd>Testing when extrapolate is True </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">xl</td><td>Lower limit in the integral. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">xu</td><td>Upper limit in the integral. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">csp</td><td>Interpolating object </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">extrapolate</td><td>Flag signaling if we extrapolate outside interval </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of integral </dd></dl>
+
+</div>
+</div>
+<a id="a9afde5d502e4421c38ffcad869d9e368"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9afde5d502e4421c38ffcad869d9e368">&#9670;&nbsp;</a></span>csplint_square()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">real(dp) function, public csplines::csplint_square </td>
+          <td>(</td>
+          <td class="paramtype">real(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>xL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>xU</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">type(<a class="el" href="a00657.html">cubicspline</a>), intent(in)&#160;</td>
+          <td class="paramname"><em>csp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Integral of the square of a function expressed as a cubic spline. </p>
+<dl class="todo"><dt><b><a class="el" href="a00446.html#_todo000002">Todo:</a></b></dt><dd>Testing </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">xl</td><td>Lower limit in the integral. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">xu</td><td>Upper limit in the integral. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">csp</td><td>Interpolating object </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of integral </dd></dl>
+
+</div>
+</div>
+<a id="a3da10b174a774b9b1aae5c401c0cf6f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3da10b174a774b9b1aae5c401c0cf6f0">&#9670;&nbsp;</a></span>csplrep()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine, public csplines::csplrep </td>
+          <td>(</td>
+          <td class="paramtype">real(dp), dimension(:), intent(in)&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(dp), dimension(:), intent(in)&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>s1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>sn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">type(<a class="el" href="a00657.html">cubicspline</a>), intent(out)&#160;</td>
+          <td class="paramname"><em>csp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>cubic spline interpolation between tabulated data After calling this function the result may be used to evaluate the function as:<br />
+ <code>ynew= csplev(xnew, csp)</code><br />
+</p>
+<p>REF.: M.J. Maron, 'Numerical Analysis: A Practical Approach', Macmillan Publ. Co., New York 1982. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>independent grid points </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">y</td><td>corresponding function values </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s1</td><td>second derivative at x(1) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sn</td><td>second derivative at x(n) (Natural spline: s1=sn=0) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">csp</td><td>Coefficients stored in </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">References <a class="el" href="a00465.html#a4870a04efefc9c3f5b29fe74dce63bbe">basic::print_msg()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="a00657.html#a92f47da1549e70461d34e49586643fbd">cubicspline::init()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="a00458_a3da10b174a774b9b1aae5c401c0cf6f0_cgraph.png" border="0" usemap="#a00458_a3da10b174a774b9b1aae5c401c0cf6f0_cgraph" alt=""/></div>
+<map name="a00458_a3da10b174a774b9b1aae5c401c0cf6f0_cgraph" id="a00458_a3da10b174a774b9b1aae5c401c0cf6f0_cgraph">
+<area shape="rect"  title="cubic spline interpolation between tabulated data After calling this function the result may be used ..." alt="" coords="5,5,75,32"/>
+<area shape="rect"  href="a00465.html#a4870a04efefc9c3f5b29fe74dce63bbe" title="Print a message, and optionally stop the program." alt="" coords="123,5,252,32"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="a00458_a57a00528ed7d6958462826e845549860_icgraph.png" border="0" usemap="#a00458_a57a00528ed7d6958462826e845549860_icgraph" alt=""/></div>
-<map name="a00458_a57a00528ed7d6958462826e845549860_icgraph" id="a00458_a57a00528ed7d6958462826e845549860_icgraph">
-<area shape="rect"  title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="151,5,231,32"/>
-<area shape="rect"  href="a00458.html#abcba335d8217bfab5c47603ef6e09298" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,5,103,32"/>
+<div class="center"><img src="a00458_a3da10b174a774b9b1aae5c401c0cf6f0_icgraph.png" border="0" usemap="#a00458_a3da10b174a774b9b1aae5c401c0cf6f0_icgraph" alt=""/></div>
+<map name="a00458_a3da10b174a774b9b1aae5c401c0cf6f0_icgraph" id="a00458_a3da10b174a774b9b1aae5c401c0cf6f0_icgraph">
+<area shape="rect"  title="cubic spline interpolation between tabulated data After calling this function the result may be used ..." alt="" coords="209,13,279,39"/>
+<area shape="rect"  href="a00657.html#a92f47da1549e70461d34e49586643fbd" title=" " alt="" coords="5,5,161,47"/>
 </map>
 </div>
 
+</div>
+</div>
+<a id="a1e2d26fbe3cd283435e12327178769ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e2d26fbe3cd283435e12327178769ac">&#9670;&nbsp;</a></span>csplroots()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">real(dp) function, dimension(:), allocatable, public csplines::csplroots </td>
+          <td>(</td>
+          <td class="paramtype">class(<a class="el" href="a00657.html">cubicspline</a>), intent(in)&#160;</td>
+          <td class="paramname"><em>csp</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>csplroots Computes the roots of the Spline approximation </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">csp</td><td>Spline approximation to consider </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Roots (zeros) of the spline function</dd></dl>
+<h2>Examples: </h2>
+<div class="fragment"><div class="line"><span class="keywordtype">real</span>(dp), <span class="keywordtype">dimension(:)</span>, <span class="keywordtype">allocatable</span> :: zeros</div><div class="line">zeros = csp%roots()</div></div><!-- fragment --> 
 </div>
 </div>
 </div><!-- contents -->
@@ -431,7 +484,7 @@ Here is the caller graph for this function:</div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="a00458.html">grids</a></li>
+    <li class="navelem"><a class="el" href="a00458.html">csplines</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
