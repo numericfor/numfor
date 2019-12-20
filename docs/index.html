@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">41b8b59 (2019-12-20)</span>
+   &#160;<span id="projectnumber">2747f4a (2019-12-20)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -99,8 +99,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </ol>
 <div class="fragment"><div class="line">$&gt; gfortran -c -o myprog.o -I &lt;prefix&gt;/include/numfor myprog.f90</div><div class="line">$&gt; gfortran -o myprog -L &lt;prefix&gt;/lib -lnumfor myprog.o</div></div><!-- fragment --><h2>Make the docs</h2>
 <p>To build the html docs just:</p>
-<p>``<code>{.sh} make doc</code> ```</p>
-<p>Some dependencies are needed:</p>
+<div class="fragment"><div class="line">$&gt; make doc</div></div><!-- fragment --><p>Some dependencies are needed:</p>
 <ul>
 <li><a href="http://www.doxygen.nl/">Doxygen</a></li>
 <li>A LaTeX distribution </li>

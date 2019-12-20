@@ -71,8 +71,8 @@ There are different ways to accomplish this:
 
 To build the html docs just:
 
-```{.sh}
-make doc`
+```bash
+$> make doc
 ```
 
 Some dependencies are needed:
