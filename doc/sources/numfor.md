@@ -25,9 +25,14 @@ You can also visit the [documentation for the code](namespaces.html)
 
 ## Installation ##
 
+Firstly, download the library:
+
+  * `git clone https://github.com/numericfor/numfor.git`
+
 The installation follow the usual steps. The simpler procedure is:
 
-  * `make`
+  * cd `numfor`
+  *  `make`
   Builds the module information file and static library
 
   * `make tests` (optional, not yet fully implemented)
@@ -36,23 +41,28 @@ The installation follow the usual steps. The simpler procedure is:
   * `make install`
   Installs the library, modules and documentation into `<prefix>` path
 
+
 ## Use ##
 
 Simply compile your program with flags indicating where to find libnumfor.mod and link to libnumfor.a
 There are different ways to accomplish this:
 
   1. Manually adding the information when compiling. For instance, when using `gfortran`
-  
-  ```bash
-  $> gfortran -c -o myprog.o -I <prefix>/include/numfor myprog.f90
-  $> gfortran -o myprog -L <prefix>/lib -lnumfor myprog.o
+   ```bash
+  gfortran -c -o myprog.o -I <prefix>/include/numfor myprog.f90
+  gfortran -o myprog -L <prefix>/lib -lnumfor myprog.o
   ```
 
   2. Using `pkg-config`
   ```bash
-  $> gfortran -c -o myprog.o $(pkg-config --cflags numfor) myprog.f90
-  $> gfortran -o myprog $(pkg-config --libs numfor) myprog.o
+  gfortran -c -o myprog.o $(pkg-config --cflags numfor) myprog.f90
+  gfortran -o myprog $(pkg-config --libs numfor) myprog.o
   ``` 
+  or, simply in one step:
+  ```bash
+  gfortran [your FFLAGS] -o myprog $(pkg-config --cflags numfor) myprog.f90 $(pkg-config --libs numfor)
+  ``` 
+
   In order to work, first the environment variable PKG_CONFIG_PATH must be set. 
   For instance, in linux you have to add to $HOME/.bashrc (or site /etc/bashrc if you install for all users) the folowing line:
   
@@ -67,7 +77,7 @@ There are different ways to accomplish this:
 To build the html docs just:
 
 ```bash
-$> make doc
+make doc
 ```
 
 Some dependencies are needed:

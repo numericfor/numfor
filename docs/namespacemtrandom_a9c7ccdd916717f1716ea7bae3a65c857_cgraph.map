@@ -1,0 +1,4 @@
+<map id="rng_rand" name="rng_rand">
+<area shape="rect" id="node1" title="Obtain the next 32&#45;bit integer in the pseudo&#45;random sequence." alt="" coords="5,5,84,32"/>
+<area shape="rect" id="node2" href="$namespacemtrandom.html#ad9965b42d28df4b8d1445b6db1ce468b" title="Obtain the next 64&#45;bit (orig said 32??) integer in the pseudo&#45;random sequence." alt="" coords="132,5,227,32"/>
+</map>

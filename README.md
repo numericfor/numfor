@@ -3,14 +3,14 @@
 
 The goal of this project is to create a Fortran library similar to [Numpy](https://www.numpy.org)/[Scipy](https://www.scipy.org) for scientific computing.
 
-This library consists (will consist) of several modules to ease the scientific work. It aims to provide user-friendly utilities and relatively-efficient routines for scientific computing, numerical and related work.
+This library consists (or rather will eventually consist) of several modules to ease the scientific work. It aims to provide user-friendly utilities and relatively-efficient routines for scientific computing, numerical and related work.
 
 ## Documentation
 
 
 Documentation may be found in https://numericfor.github.io/numfor/index.html
 
-Further information on the capabilities of the library may be learned by exploring the different modules.
+Further information on the capabilities of the library may be learned by exploring the different [modules](https://numericfor.github.io/numfor/namespaces.html).
 
 It provides:
   + A "submodule" **Utils** with basic, non-specific, functionality used in many (most?) scientific programs.
@@ -21,9 +21,14 @@ It provides:
 
 ## Installation ##
 
+Firstly, download the library:
+
+  * `git clone https://github.com/numericfor/numfor.git`
+
 The installation follow the usual steps. The simpler procedure is:
 
-  * `make`
+  * cd `numfor`
+  *  `make`
   Builds the module information file and static library
 
   * `make tests` (optional, not yet fully implemented)
@@ -47,10 +52,16 @@ There are different ways to accomplish this:
 
   2. Using `pkg-config`
   ```bash
-  $> gfortran -c -o myprog.o $(pkg-config --cflags numfor) myprog.f90
-  $> gfortran -o myprog $(pkg-config --libs numfor) myprog.o
+  $> gfortran [your FFLAGS] -c -o myprog.o $(pkg-config --cflags numfor) myprog.f90
+  $> gfortran -o myprog myprog.o $(pkg-config --libs numfor)
   ``` 
-  In order to work, first the environment variable PKG_CONFIG_PATH must be set. 
+  or, simply in one step:
+  
+  ```bash
+  $> gfortran [your FFLAGS] -o myprog $(pkg-config --cflags numfor) myprog.f90 $(pkg-config --libs numfor)
+  ``` 
+ 
+ In order to work, first the environment variable PKG_CONFIG_PATH must be set. 
   For instance, in linux you have to add to $HOME/.bashrc (or site /etc/bashrc if you install for all users) the folowing line:
   
   ```bash

@@ -1,0 +1,4 @@
+<map id="polyint" name="polyint">
+<area shape="rect" id="node1" title="polyint Computes m&#45;esima antiderivative" alt="" coords="208,5,275,32"/>
+<area shape="rect" id="node2" href="$namespacecsplines.html#ae523d7474ebcf8602e7e1e14844df5d1" title="Computes the antiderivative of the CubicSpline approximation." alt="" coords="5,5,160,32"/>
+</map>
