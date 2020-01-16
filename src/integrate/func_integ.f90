@@ -1,3 +1,4 @@
+!> @ingroup integrate
 !> Definition of integrable functions
 !! Description: @ref docintegrate
 module func_integ

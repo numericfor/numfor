@@ -1,8 +1,9 @@
 !> @file basic.f90 contains module basic
-!! @date "2019-12-28 10:54:45"
+!! @date "2020-01-09 12:41:59"
 
+!> @ingroup utils
 !> This module will provide some basic convenience routines
-!! Description: @ref docutils
+!! [Description](@ref docutils)
 !!
 !! Eventually it will provide:
 !!  - [X] types (real, double precision, infinite, etc)
@@ -21,18 +22,28 @@
 !!
 module basic
   USE, intrinsic :: iso_fortran_env, only: stdin => input_unit, &
-    stdout => output_unit, &
-    stderr => error_unit
+    stdout => output_unit, stderr => error_unit,&
+    &  int64, real32, real64, real128
+
+  implicit none
+
   ! JF: Solved in ad-hoc manner. More discussion/work is needed
-  ! ! JF: This part should be optional, only when supported.
-  ! ! JF: An alternative should be provided
+  ! ! JF: An alternative should be provided, may be something like
   ! USE, intrinsic :: ieee_arithmetic, only: ieee_is_finite, ieee_is_negative,
   !   & ieee_value, &
   !   & ieee_negative_inf, ieee_positive_inf
 
-  integer, parameter :: dp = selected_real_kind(15, 307)
-  integer, parameter :: sp = selected_real_kind(6, 37)
-  integer, parameter :: qp = selected_real_kind(2 * precision(1.0_dp))
+  ! integer, parameter :: dp = selected_real_kind(15, 307)
+  ! integer, parameter :: i8 = selected_int_kind(9, 307)
+  ! integer, parameter :: sp = selected_real_kind(6, 37)
+  ! integer, parameter :: qp = selected_real_kind(2 * precision(1._dp))
+
+  ! integer, parameter :: i4 = int32
+  integer, parameter :: i8 = int64
+  integer, parameter :: dp = real64
+  integer, parameter :: r8 = real64
+  integer, parameter :: sp = real32
+  integer, parameter :: qp = real128
 
   integer, private, dimension(7), parameter :: time_factors = [0, 12, 30, 24, 60, 60, 1000] ! Factors to convert to higher time-unit
 
@@ -61,7 +72,7 @@ module basic
   end type timer
 
   private
-  public :: sp, dp, qp, timer
+  public :: i8, sp, dp, r8, qp, timer
   public :: nf_minf, nf_inf, is_inf
   public :: stdout, stdin, stderr
   private :: start_timer, stop_timer, print_elapsed
@@ -215,9 +226,6 @@ contains
   end subroutine stop_timer
 
   !> add_timers Computes
-  !!
-  !! Examples:
-  !!
   function add_timers(T1, T2) result(T)
     implicit none
     class(timer), intent(IN) :: T1 !<

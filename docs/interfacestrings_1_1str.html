@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">NuMFor
-   &#160;<span id="projectnumber">1ee2f27 (2019-12-28)</span>
+   &#160;<span id="projectnumber">92fa575 (2019-12-28)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -86,9 +86,17 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a324fd4b6dc7f6f4856440c7917214803"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1543a8b2e88c9e10a7734e303bb7ff1"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacestrings_1_1str.html#af1543a8b2e88c9e10a7734e303bb7ff1">dp2str</a> (rin)</td></tr>
 <tr class="separator:af1543a8b2e88c9e10a7734e303bb7ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37b6cbb6356e9fdaf325ca0b603064fa"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacestrings_1_1str.html#a37b6cbb6356e9fdaf325ca0b603064fa">cmplx2str</a> (zin)</td></tr>
-<tr class="memdesc:a37b6cbb6356e9fdaf325ca0b603064fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">cmplx2str gives a string representation of a complex number  <a href="#a37b6cbb6356e9fdaf325ca0b603064fa">More...</a><br /></td></tr>
-<tr class="separator:a37b6cbb6356e9fdaf325ca0b603064fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae51bcf1400c1008f75042fee8d940098"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacestrings_1_1str.html#ae51bcf1400c1008f75042fee8d940098">z2str</a> (zin)</td></tr>
+<tr class="memdesc:ae51bcf1400c1008f75042fee8d940098"><td class="mdescLeft">&#160;</td><td class="mdescRight">z2str gives a string representation of a complex number  <a href="#ae51bcf1400c1008f75042fee8d940098">More...</a><br /></td></tr>
+<tr class="separator:ae51bcf1400c1008f75042fee8d940098"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9eed44f35b430debabdb340712dad5a"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacestrings_1_1str.html#ab9eed44f35b430debabdb340712dad5a">dparr2d2str</a> (vec)</td></tr>
+<tr class="separator:ab9eed44f35b430debabdb340712dad5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9495d3db9c618a0026f8b5e7950e4c5"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacestrings_1_1str.html#ae9495d3db9c618a0026f8b5e7950e4c5">zarr2d2str</a> (vec)</td></tr>
+<tr class="separator:ae9495d3db9c618a0026f8b5e7950e4c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaed626c462bd770e08822a64b1b992d9"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacestrings_1_1str.html#aaed626c462bd770e08822a64b1b992d9">iarr2d2str</a> (vec)</td></tr>
+<tr class="separator:aaed626c462bd770e08822a64b1b992d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77bb1c5f94b68cd37829edfc9d646881"><td class="memItemLeft" align="right" valign="top">character(len=:) function, allocatable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacestrings_1_1str.html#a77bb1c5f94b68cd37829edfc9d646881">rarr2d2str</a> (vec)</td></tr>
+<tr class="separator:a77bb1c5f94b68cd37829edfc9d646881"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><code>str()</code> converts a number (integer or real) to a string </p>
@@ -115,27 +123,6 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>String converted </dd></dl>
-
-</div>
-</div>
-<a id="a37b6cbb6356e9fdaf325ca0b603064fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37b6cbb6356e9fdaf325ca0b603064fa">&#9670;&nbsp;</a></span>cmplx2str()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">character(len=:) function, allocatable cmplx2str </td>
-          <td>(</td>
-          <td class="paramtype">complex(dp), intent(in)&#160;</td>
-          <td class="paramname"><em>zin</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>cmplx2str gives a string representation of a complex number </p>
-<dl class="section return"><dt>Returns</dt><dd>String representation </dd></dl>
 
 </div>
 </div>
@@ -179,6 +166,25 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
+<a id="ab9eed44f35b430debabdb340712dad5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9eed44f35b430debabdb340712dad5a">&#9670;&nbsp;</a></span>dparr2d2str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable dparr2d2str </td>
+          <td>(</td>
+          <td class="paramtype">real(dp), dimension(:, :), intent(in)&#160;</td>
+          <td class="paramname"><em>vec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>String created </dd></dl>
+
+</div>
+</div>
 <a id="ac2d68b92f3e32db83211477ca2d2aa38"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2d68b92f3e32db83211477ca2d2aa38">&#9670;&nbsp;</a></span>i2str()</h2>
 
@@ -214,6 +220,25 @@ Here is the call graph for this function:</div>
 <area shape="rect"  href="namespacestrings.html#a34f882b33fedd7afee64b8dfb2877958" title="This function returns a copy of the string with trailing chars removed." alt="" coords="255,56,363,83"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="aaed626c462bd770e08822a64b1b992d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaed626c462bd770e08822a64b1b992d9">&#9670;&nbsp;</a></span>iarr2d2str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable iarr2d2str </td>
+          <td>(</td>
+          <td class="paramtype">integer, dimension(:, :), intent(in)&#160;</td>
+          <td class="paramname"><em>vec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>String created </dd></dl>
 
 </div>
 </div>
@@ -254,6 +279,65 @@ Here is the call graph for this function:</div>
 <area shape="rect"  href="namespacestrings.html#aaba2d0c1a30cc93ff90e4043ce484f1f" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="109,157,212,184"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="a77bb1c5f94b68cd37829edfc9d646881"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77bb1c5f94b68cd37829edfc9d646881">&#9670;&nbsp;</a></span>rarr2d2str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable rarr2d2str </td>
+          <td>(</td>
+          <td class="paramtype">real(sp), dimension(:, :), intent(in)&#160;</td>
+          <td class="paramname"><em>vec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>String created </dd></dl>
+
+</div>
+</div>
+<a id="ae51bcf1400c1008f75042fee8d940098"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae51bcf1400c1008f75042fee8d940098">&#9670;&nbsp;</a></span>z2str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable z2str </td>
+          <td>(</td>
+          <td class="paramtype">complex(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>zin</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>z2str gives a string representation of a complex number </p>
+<dl class="section return"><dt>Returns</dt><dd>String representation </dd></dl>
+
+</div>
+</div>
+<a id="ae9495d3db9c618a0026f8b5e7950e4c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9495d3db9c618a0026f8b5e7950e4c5">&#9670;&nbsp;</a></span>zarr2d2str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">character(len=:) function, allocatable zarr2d2str </td>
+          <td>(</td>
+          <td class="paramtype">complex(dp), dimension(:, :), intent(in)&#160;</td>
+          <td class="paramname"><em>vec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>String created </dd></dl>
 
 </div>
 </div>

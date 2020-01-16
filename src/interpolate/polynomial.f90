@@ -1,6 +1,7 @@
 !> @file polynomial.f90
-!! @date "2019-12-19 20:33:12"
+!! @date "2020-01-09 12:43:31"
 
+!> @ingroup interpolate
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
 !! Further description in @ref docinterpolate
 !!

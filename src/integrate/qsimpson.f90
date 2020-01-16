@@ -1,6 +1,7 @@
 !> @file qsimpson.f90 provides routines for Trapezoide and Simpson integration
-!! @date "2019-12-19 08:39:21"
+!! @date "2020-01-09 12:47:43 fiol"
 
+!> @ingroup integrate
 !> The qsimpson module provides routines for trapezoid and simpson integration of both sampled data and functions.
 !! Description: @ref docintegrate
 module qsimpson

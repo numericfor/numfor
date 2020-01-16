@@ -83,4 +83,12 @@
 \form#82:$ h = x-x(i) $
 \form#83:$ (m-\sqrt{2 m},m+\sqrt{2 m})$
 \form#84:$ s= m-\sqrt{2 m}$
-\form#85:$ \pi $
+\form#85:$x_{0}$
+\form#86:$\sigma$
+\form#87:\[ p(x) dx = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-(x-x_{0})^2 / 2\sigma^2) dx \]
+\form#88:$[a, b)$
+\form#89:$b > a$
+\form#90:$(b-a)$
+\form#91:$ \pi $
+\form#92:$\mu$
+\form#93:\[ p(x) dx = {1 \over \mu} \exp(-x/\mu) dx \quad, \qquad x \ge 0 \]

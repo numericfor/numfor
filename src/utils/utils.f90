@@ -1,3 +1,4 @@
+!> @defgroup utils Basic Utilities
 module utils
   USE basic
   USE strings

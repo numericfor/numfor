@@ -1,6 +1,7 @@
 !> @file qadaptive.f90 provides routines for integration with adaptive schemes
-!! @date "2019-12-19 08:39:08"
+!! @date "2020-01-09 12:47:37 fiol"
 
+!> @ingroup integrate
 !> Globally adaptive Simpson integrator.
 !! Description: @ref docintegrate
 !!

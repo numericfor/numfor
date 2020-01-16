@@ -1,8 +1,9 @@
 !> @file oopstring.f90 file provides an object-oriented type for working with string
-!! @date "2019-12-19 20:33:56 fiol"
+!! @date "2020-01-09 12:42:05 fiol"
 
+!> @ingroup utils
 !> Module defining the `fStr` object and its methods.
-!! Description: @ref docutils
+!! [Description](@ref docutils)
 module fString
   USE basic, only: dp
   USE strings, only: str,&

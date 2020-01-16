@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2019-10-09 16:50:41"
+!! @date "2020-01-06 23:03:06"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -325,7 +325,6 @@ contains
 
     IF (closef) close (u)
   end subroutine save_array
-
 end module array_utils
 
 ! Local variables:

@@ -1,3 +1,4 @@
+!> @ingroup interpolate
 !> fitpack provides a framework for fitting and interpolation using B-Splines.
 !! Description: @ref docinterpolate
 !!

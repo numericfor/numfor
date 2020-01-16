@@ -7,15 +7,18 @@ program test
   integer :: i1
   logical :: l1
   real(dp), dimension(12) :: vec
+  real(dp), dimension(3, 4) :: matrix
   complex(dp) x, y, z
   x = (1._dp, +1.e-50_dp)
   y = (1._dp, -1.e-60_dp)
   z = x / y
-  print *, z
 
   vec = [1._dp, 2._dp, 3._dp, M_PI, M_PI_2, M_ln2,&
     & -1._dp, -2._dp, -3._dp, -M_PI, -M_PI_2, -M_ln2]
   print "(A)", str(vec)
+
+  matrix = reshape(vec, [3, 4])
+  print "(A)", str(matrix)
 
   st1 = "NumFor - Library for Simple Numerical computing."
 

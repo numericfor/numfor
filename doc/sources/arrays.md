@@ -3,9 +3,9 @@
 This module contains routines to generate and operate on arrays
 
   * Utilities for [array manipulation](@ref descarrayutils) and simple calculations
-  * [Grid creation][@ref descgrids]: There are a few functions to quickly create arrays.
-  * [Search and sort][@ref descsorting]: Functions for search an element in a sorted array, and sort arrays.
-  * Generation of histograms. Do we want histogram2d?
+  * [Grid creation](@ref descgrids) There are a few functions to quickly create arrays.
+  * [Search and sort](@ref descsorting): Functions for search an element in a sorted array, and sort arrays.
+  * [Generation of histograms](@ref deschistogram). Do we want histogram2d?
 
 ## @anchor descarrayutils Array utils ##
 
@@ -115,3 +115,4 @@ It is nearly uniform, with spacing approximately `step` when `ratio`\f$\ll 1\f$.
 
 There are routines implemented to [sort](@ref sort()) and [search sorted arrays](@ref searchsorted). 
 
+## @anchor deschistogram Histograms

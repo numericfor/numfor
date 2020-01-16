@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2019-12-19 20:32:49"
+!! @date "2020-01-09 12:43:10"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -8,6 +8,7 @@
 !! All routines were modified from the original (and some heavily modified).
 !! See below for authors of original and earlier versions
 
+!> @ingroup interpolate
 !> csplines implements interpolation using cubic splines
 !! Description: @ref docinterpolate
 module csplines

@@ -1,8 +1,9 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2019-12-19 20:34:06"
+!! @date "2020-01-09 12:41:56"
 
+!> @ingroup utils
 !> This module defines functions to manipulate strings of characters.
-!! Description: @ref docutils
+!! [Description](@ref docutils)
 module strings
   USE basic, only: sp, dp, Small
   character(*), parameter :: ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
@@ -47,8 +48,9 @@ module strings
   !! !
   !! ```
   interface str
-    module procedure :: c2str, i2str, r2str, dp2str, cmplx2str
-    module procedure :: dparr2str, cmplxarr2str, iarr2str, rarr2str
+    module procedure :: c2str, i2str, r2str, dp2str, z2str
+    module procedure :: dparr2str, zarr2str, iarr2str, rarr2str
+    module procedure :: dparr2d2str, zarr2d2str, iarr2d2str, rarr2d2str
   end interface str
 
 contains
@@ -86,15 +88,15 @@ contains
     implicit none
     character(len=*), intent(in) :: S !< Original string
     character(len=:), allocatable :: Sout !< String with cases swapped
-    integer :: i, nl, nu
+    integer :: i, n_l, nu
     Sout = S
     do i = 1, len(S)
       nu = index(letters_uppercase, Sout(i:i))
       if (nu /= 0) then         ! if is uppercase
         Sout(i:i) = letters_lowercase(nu:nu)
       else
-        nl = index(letters_lowercase, Sout(i:i)) ! is lower
-        IF (nl /= 0) Sout(i:i) = letters_uppercase(nl:nl)
+        n_l = index(letters_lowercase, Sout(i:i)) ! is lower
+        IF (n_l /= 0) Sout(i:i) = letters_uppercase(n_l:n_l)
       end if
     end do
   end function swapcase
@@ -397,8 +399,8 @@ contains
   end function str2i
 
   ! Casts a real(dp) into an string
-  !> cmplx2str gives a string representation of a complex number
-  function cmplx2str(zin) result(Sout)
+  !> z2str gives a string representation of a complex number
+  function z2str(zin) result(Sout)
     implicit none
     character(len=:), allocatable :: Sout !< String representation
     character(len=:), allocatable :: Sre, Sim
@@ -415,7 +417,7 @@ contains
     end if
     Sre = dp2str(re); Sim = dp2str(im)
     Sout = "("//Sre//sg//Sim//"j)"
-  end function cmplx2str
+  end function z2str
 
   function dp2str(rin) result(Sout)
     implicit none
@@ -470,12 +472,11 @@ contains
     end if
   end function r2str
 
-  function cmplxarr2str(vec) result(Sout)
+  function zarr2str(vec) result(Sout)
     implicit none
     complex(dp), dimension(:), intent(IN) :: vec !<
     include "arr2str.inc"
-  end function cmplxarr2str
-
+  end function zarr2str
   function dparr2str(vec) result(Sout)
     implicit none
     real(dp), dimension(:), intent(IN) :: vec !<
@@ -487,12 +488,65 @@ contains
     real(sp), dimension(:), intent(IN) :: vec !<
     include "arr2str.inc"
   end function rarr2str
-
   function iarr2str(vec) result(Sout)
     implicit none
     integer, dimension(:), intent(IN) :: vec !<
     include "arr2str.inc"
   end function iarr2str
+
+  function dparr2d2str(vec) result(Sout)
+    implicit none
+    real(dp), dimension(:, :), intent(IN) :: vec !<
+    integer :: i
+    character(len=:), allocatable :: Sout !< String created
+    character(len=:), allocatable :: S_ !< String created
+    Sout = "["
+    do i = 1, size(vec, 2)
+      S_ = str(vec(:, i))
+      Sout = Sout//S_//nl//" "
+    end do
+    Sout = Sout(:len(Sout) - 2)//"]"
+  end function dparr2d2str
+  function rarr2d2str(vec) result(Sout)
+    implicit none
+    real(sp), dimension(:, :), intent(IN) :: vec !<
+    integer :: i
+    character(len=:), allocatable :: Sout !< String created
+    character(len=:), allocatable :: S_ !< String created
+    Sout = "["
+    do i = 1, size(vec, 2)
+      S_ = str(vec(:, i))
+      Sout = Sout//S_//nl//" "
+    end do
+    Sout = Sout(:len(Sout) - 2)//"]"
+  end function rarr2d2str
+  function iarr2d2str(vec) result(Sout)
+    implicit none
+    integer, dimension(:, :), intent(IN) :: vec !<
+    integer :: i
+    character(len=:), allocatable :: Sout !< String created
+    character(len=:), allocatable :: S_ !< String created
+    Sout = "["
+    do i = 1, size(vec, 2)
+      S_ = str(vec(:, i))
+      Sout = Sout//S_//nl//" "
+    end do
+    Sout = Sout(:len(Sout) - 2)//"]"
+  end function iarr2d2str
+
+  function zarr2d2str(vec) result(Sout)
+    implicit none
+    complex(dp), dimension(:, :), intent(IN) :: vec !<
+    integer :: i
+    character(len=:), allocatable :: Sout !< String created
+    character(len=:), allocatable :: S_ !< String created
+    Sout = "["
+    do i = 1, size(vec, 2)
+      S_ = str(vec(:, i))
+      Sout = Sout//S_//nl//" "
+    end do
+    Sout = Sout(:len(Sout) - 2)//"]"
+  end function zarr2d2str
 
 end module strings
 

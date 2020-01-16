@@ -1,4 +1,0 @@
-<map id="rng_rand_real2" name="rng_rand_real2">
-<area shape="rect" id="node1" title="Obtain a pseudorandom real number in the range [0,1)" alt="" coords="176,5,295,32"/>
-<area shape="rect" id="node2" href="$namespacemtrandom.html#ab21436f33d1cf5b649530f87af54399a" title="Obtain a pseudorandom integer in the range [lo,hi]." alt="" coords="5,5,128,32"/>
-</map>

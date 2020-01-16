@@ -17,42 +17,33 @@
 !> test finished OK:   0.153604707483576
 !>@endcode
 !>  Run Time is approximately: 0m12.509s
-program test
+program test_random
+  USE basic, only: dp, i8, str
+  USE random, only: random_seed, random_sample
   integer, parameter :: TEST_SIZE = 400000000
-  type(rng_state) :: state
-  integer(4) :: semilla
-  integer(I64) :: i1
+  integer :: semilla
+  ! integer(i8) :: i1
   real(dp), dimension(2, 3) :: r1
   real(dp) :: r
-  semilla = 1447774167
 
-  call random(state, r1)
+  semilla = 1234
+  call random_seed(semilla)
+  ! Single value
+  call random_sample(r)
+  print "(A)", str(r)
 
-  ! open(UNIT=9, file='test_mtrandom.dat')
-  write (*, '(A)') sep_2
-  write (*, *) '# random seed:', state%mt(0)
+  ! Vector of random numbers
+  call random_sample(r1(:, 1))
+  print "(A)", str(r1(:, 1))
 
-  call seed(semilla, state)
-  write (*, *) '# user-defined seed:', state%mt(0)
-  call random(state, r1)
-  write (*, '(3(1PE12.5,1x))') transpose(r1)
-  write (*, *) ''
-  call random(state, r1(:, 1))
-  write (*, '(3(1PE12.5,1x))') transpose(r1)
-  write (*, *) ''
-  call random(state, r1(:, 3))
-  write (*, '(3(1PE12.5,1x))') transpose(r1)
-  write (*, *) ''
-  call random(state, r1(1, :))
-  write (*, '(3(1PE12.5,1x))') transpose(r1)
-  do i1 = 1, TEST_SIZE
-    call random(state, r)
-  end do
-  if (abs(r - 0.153604707483576) < 1.e-7) then
-    write (*, *) 'test finished OK: ', r
+  ! Array of random numbers
+  call random_sample(r1)
+  print "(A)", str(r1)
+
+  if (abs(r - 0.78682095486780212_dp) < epsilon(1._dp)) then
+    print "(A,f20.17)", 'test finished OK: r =', r
   else
-    write (*, *) 'test failed: ', r
+    print "(A,f20.17)", 'test failed, got r ='//str(r)//' instead of ', 0.78682095486780212_dp
   end if
-  write (*, '(A)') sep_2
-end program test
+end program test_random
 
