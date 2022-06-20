@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2022-06-20 11:40:10"
+!! @date "2022-06-20 11:47:13"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -262,7 +262,8 @@ contains
   !!  y = -x**2/10
   !!  save_array(x)  ! One array in one column to stdout
   !!  save_array(x, 1, filename) ! One array in one column to file
-  !!  save_array([x,y], 2, filename) ! One array in one column to file
+  !!  save_array([x,y], 2, filename) ! Two arrays in two columns to file
+  !!  save_array([x,y], 2, fmt='g12.5', fout=filename) ! Two arrays in two columns to file with format
   !!```
   subroutine save_array(X, ncols, fname, fmt, header, unit)
     implicit none
