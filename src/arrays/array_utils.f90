@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2020-01-06 23:03:06"
+!! @date "2022-06-20 11:40:10"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -307,7 +307,7 @@ contains
     b = reshape(X, [ncols_, nrows_], order=[2, 1])
 
     if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
-      if (index('(', fmt) == 0) then
+      if (index(fmt, '(') == 0) then
         write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(fmt), '&
           &,1x))'
       else
