@@ -1,94 +1,94 @@
-\form#0:$\ll 1$
-\form#1:\[J \approx I := \int_a^b f(x) w(x) dx\]
-\form#2:$w(x)$
-\form#3:$w(x) = 1$
-\form#4:$10^{-3}, 10^{-4}$
-\form#5:$x \sim 1$
-\form#6:\[ x := g(t) = \tanh\left(\frac{\pi}{2}\sinh t\right)\,\]
-\form#7:\[ \int_{-1}^{1} f(x) \, dx \approx \sum_{k=-\infty}^\infty w_{k} f(x_{k}),\]
-\form#8:\[ x_k := g(h k) = \tanh\left(\frac{\pi}{2}\sinh kh\right) \]
-\form#9:\[w_k := g'( h k) = \frac{\frac{\pi}{2}h \cosh(kh)}{\cosh^{2} \big(\frac{\pi}{2} \sinh (kh) \big)}.\]
-\form#10:$(0,1]$
-\form#11:$\cos{(\omega x)}$
-\form#12:$\sin{(\omega x)}$
-\form#13:$(x - a)^\alpha (b - x)^\beta$
-\form#14:$(x - a)^\alpha (b - x)^\beta \log{(x-a)}$
-\form#15:$(x - a)^\alpha (b - x)^\beta \log{(b-x)}$
-\form#16:$(x - a)^\alpha (b - x)^\beta \log{(x-a)} \log{(b-x)}$
-\form#17:$(a,b)$
-\form#18:\[ \int_{0}^{1} \left| x^{2} + 2 x -1 \right|^{-1/2} \, dx = \arcsin(1/\sqrt(3)) - \frac{\pi}{2} - \log(3)/2 \approx 1.504622 \]
-\form#19:$\sqrt{3}-1$
-\form#20:$k \le 5$
-\form#21:$J$
-\form#22:\[ J \approx I =\int_{a}^{b} f(x, args) dx \]
-\form#23:\[ || I - J || \le \max ( epsabs, epsrel \cdot ||I|| ). \]
-\form#24:\[ J \approx I =\int_{a}^{\infty} f(x, args) dx \]
-\form#25:$x = \tanh( \pi \sinh(t) /2)$
-\form#26:$a \le 3$
-\form#27:$a$
-\form#28:$ t = 3$
-\form#29:$x$
-\form#30:$[-a, a]$
-\form#31:$h$
-\form#32:\[ J \approx I := \int_{a}^{b} f(x, args) dx \]
-\form#33:\[ J \approx I := \int_{a}^{b} f(x) W(x) dx \]
-\form#34:\[ || I - J || \le \max ( \mathrm{epsabs}, \mathrm{epsrel} \cdot ||I|| ). \]
-\form#35:$ f(x)=W(x)g(x)$
-\form#36:$g(x) $
-\form#37:$ W(x)=\cos(\omega x)$
-\form#38:$ W(x)= \sin(\omega x) $
-\form#39:$f(x)=W(x) g(x)$
-\form#40:$g(x)$
-\form#41:$ W(x)=(x-a)^{\alpha} (b-x)^{\beta} (\log(x-a))^L (\log(b-x))^K $
-\form#42:$K, L = 0$
-\form#43:$ \alpha, \beta > -1 $
-\form#44:$ W(x)=1/(x-c)$
-\form#45:$(a,+\infty)$
-\form#46:$x = a + (1-t)/t$
-\form#47:\[ \int_{a}^{+\infty} dx f(x) = \int_0^1 dt f(a + (1-t)/t)/t^2 \]
-\form#48:$(-\infty, b)$
-\form#49:$x = b - (1-t)/t$
-\form#50:\[ \int_{-\infty}^{b} dx f(x) = \int_0^1 dt f(b - (1-t)/t)/t^2 \]
-\form#51:$(-\infty,+\infty)$
-\form#52:$x = (1-t)/t$
-\form#53:\[\int_{-\infty}^{+\infty}dx f(x)=\int_0^1 dt\Big(f((1 - t) / t) + f(-(1 - t) / t) \Big) / t^2.\]
-\form#54:\[ I= \int_{a}^{b} f(x) W(x) dx \]
-\form#55:$ W(x) = \sin(\omega x)$
-\form#56:$ W(x) = \cos(\omega x)$
-\form#57:\[ I= \int_{a}^{\infty} f(x) W(x) dx \]
-\form#58:\begin{align*} C_1 &= [a,a+c] \\ C_2 &= [a+c,a+2c] \\ \vdots & \\ C_k &= [a+(k-1)c,a+kc] \end{align*}
-\form#59:$ c = (2 \, \mathrm{floor}(|\omega|) + 1) \pi/|\omega| $
-\form#60:$ W(x) $
-\form#61:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta $
-\form#62:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(x-a) $
-\form#63:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(b-x) $
-\form#64:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(x-a) \log(b-x) $
-\form#65:$ W(x) = \frac{1}{x-c} $
-\form#66:$x = c$
-\form#67:$ I =\int_{a}^{b} f(x) dx $
-\form#68:$ I_1 =\int_{a}^{b} |f(x)| dx $
-\form#69:$ I_2 =\int_{a}^{b} |f(x)-I/(b-a)| dx $
-\form#70:$n=(m-1)/2$
-\form#71:$ I =\int_{a}^{b} W(x) f(x) dx $
-\form#72:$ I_1 =\int_{a}^{b} W(x) |f(x)| dx $
-\form#73:$ I_2 =\int_{a}^{b} |W(x) f(x)-I/(b-a)| dx $
-\form#74:\[ f(x) = \sum_{k} (\mathrm{Cheb}(k) T_{k-1}(x) , \]
-\form#75:$ T_{k}(x)$
-\form#76:$ \cos(k*\pi/24)$
-\form#77:$k = 1, \dots, 11 $
-\form#78:$f(t) \approx S(1) t^3 + S(2) t^2 + S(3) t + S(4)$
-\form#79:$t = x - x_{i}$
-\form#80:$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) $
-\form#81:$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) $
-\form#82:$ h = x-x(i) $
-\form#83:$ (m-\sqrt{2 m},m+\sqrt{2 m})$
-\form#84:$ s= m-\sqrt{2 m}$
-\form#85:$x_{0}$
-\form#86:$\sigma$
-\form#87:\[ p(x) dx = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-(x-x_{0})^2 / 2\sigma^2) dx \]
-\form#88:$[a, b)$
-\form#89:$b > a$
-\form#90:$(b-a)$
-\form#91:$ \pi $
-\form#92:$\mu$
-\form#93:\[ p(x) dx = {1 \over \mu} \exp(-x/\mu) dx \quad, \qquad x \ge 0 \]
+\_form#0:$\ll 1$
+\_form#1:\[J \approx I := \int_a^b f(x) w(x) dx\]
+\_form#2:$w(x)$
+\_form#3:$w(x) = 1$
+\_form#4:$10^{-3}, 10^{-4}$
+\_form#5:$x \sim 1$
+\_form#6:\[ x := g(t) = \tanh\left(\frac{\pi}{2}\sinh t\right)\,\]
+\_form#7:\[ \int_{-1}^{1} f(x) \, dx \approx \sum_{k=-\infty}^\infty w_{k} f(x_{k}),\]
+\_form#8:\[ x_k := g(h k) = \tanh\left(\frac{\pi}{2}\sinh kh\right) \]
+\_form#9:\[w_k := g'( h k) = \frac{\frac{\pi}{2}h \cosh(kh)}{\cosh^{2} \big(\frac{\pi}{2} \sinh (kh) \big)}.\]
+\_form#10:$(0,1]$
+\_form#11:$\cos{(\omega x)}$
+\_form#12:$\sin{(\omega x)}$
+\_form#13:$(x - a)^\alpha (b - x)^\beta$
+\_form#14:$(x - a)^\alpha (b - x)^\beta \log{(x-a)}$
+\_form#15:$(x - a)^\alpha (b - x)^\beta \log{(b-x)}$
+\_form#16:$(x - a)^\alpha (b - x)^\beta \log{(x-a)} \log{(b-x)}$
+\_form#17:$(a,b)$
+\_form#18:\[ \int_{0}^{1} \left| x^{2} + 2 x -1 \right|^{-1/2} \, dx = \arcsin(1/\sqrt(3)) - \frac{\pi}{2} - \log(3)/2 \approx 1.504622 \]
+\_form#19:$\sqrt{3}-1$
+\_form#20:$k \le 5$
+\_form#21:$J$
+\_form#22:\[ J \approx I =\int_{a}^{b} f(x, args) dx \]
+\_form#23:\[ || I - J || \le \max ( epsabs, epsrel \cdot ||I|| ). \]
+\_form#24:\[ J \approx I =\int_{a}^{\infty} f(x, args) dx \]
+\_form#25:$x = \tanh( \pi \sinh(t) /2)$
+\_form#26:$a \le 3$
+\_form#27:$a$
+\_form#28:$ t = 3$
+\_form#29:$x$
+\_form#30:$[-a, a]$
+\_form#31:$h$
+\_form#32:\[ J \approx I := \int_{a}^{b} f(x, args) dx \]
+\_form#33:\[ J \approx I := \int_{a}^{b} f(x) W(x) dx \]
+\_form#34:\[ || I - J || \le \max ( \mathrm{epsabs}, \mathrm{epsrel} \cdot ||I|| ). \]
+\_form#35:$ f(x)=W(x)g(x)$
+\_form#36:$g(x) $
+\_form#37:$ W(x)=\cos(\omega x)$
+\_form#38:$ W(x)= \sin(\omega x) $
+\_form#39:$f(x)=W(x) g(x)$
+\_form#40:$g(x)$
+\_form#41:$ W(x)=(x-a)^{\alpha} (b-x)^{\beta} (\log(x-a))^L (\log(b-x))^K $
+\_form#42:$K, L = 0$
+\_form#43:$ \alpha, \beta > -1 $
+\_form#44:$ W(x)=1/(x-c)$
+\_form#45:$(a,+\infty)$
+\_form#46:$x = a + (1-t)/t$
+\_form#47:\[ \int_{a}^{+\infty} dx f(x) = \int_0^1 dt f(a + (1-t)/t)/t^2 \]
+\_form#48:$(-\infty, b)$
+\_form#49:$x = b - (1-t)/t$
+\_form#50:\[ \int_{-\infty}^{b} dx f(x) = \int_0^1 dt f(b - (1-t)/t)/t^2 \]
+\_form#51:$(-\infty,+\infty)$
+\_form#52:$x = (1-t)/t$
+\_form#53:\[\int_{-\infty}^{+\infty}dx f(x)=\int_0^1 dt\Big(f((1 - t) / t) + f(-(1 - t) / t) \Big) / t^2.\]
+\_form#54:\[ I= \int_{a}^{b} f(x) W(x) dx \]
+\_form#55:$ W(x) = \sin(\omega x)$
+\_form#56:$ W(x) = \cos(\omega x)$
+\_form#57:\[ I= \int_{a}^{\infty} f(x) W(x) dx \]
+\_form#58:\begin{align*} C_1 &= [a,a+c] \\ C_2 &= [a+c,a+2c] \\ \vdots & \\ C_k &= [a+(k-1)c,a+kc] \end{align*}
+\_form#59:$ c = (2 \, \mathrm{floor}(|\omega|) + 1) \pi/|\omega| $
+\_form#60:$ W(x) $
+\_form#61:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta $
+\_form#62:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(x-a) $
+\_form#63:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(b-x) $
+\_form#64:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(x-a) \log(b-x) $
+\_form#65:$ W(x) = \frac{1}{x-c} $
+\_form#66:$x = c$
+\_form#67:$ I =\int_{a}^{b} f(x) dx $
+\_form#68:$ I_1 =\int_{a}^{b} |f(x)| dx $
+\_form#69:$ I_2 =\int_{a}^{b} |f(x)-I/(b-a)| dx $
+\_form#70:$n=(m-1)/2$
+\_form#71:$ I =\int_{a}^{b} W(x) f(x) dx $
+\_form#72:$ I_1 =\int_{a}^{b} W(x) |f(x)| dx $
+\_form#73:$ I_2 =\int_{a}^{b} |W(x) f(x)-I/(b-a)| dx $
+\_form#74:\[ f(x) = \sum_{k} (\mathrm{Cheb}(k) T_{k-1}(x) , \]
+\_form#75:$ T_{k}(x)$
+\_form#76:$ \cos(k*\pi/24)$
+\_form#77:$k = 1, \dots, 11 $
+\_form#78:$f(t) \approx S(1) t^3 + S(2) t^2 + S(3) t + S(4)$
+\_form#79:$t = x - x_{i}$
+\_form#80:$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) $
+\_form#81:$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) $
+\_form#82:$ h = x-x(i) $
+\_form#83:$ (m-\sqrt{2 m},m+\sqrt{2 m})$
+\_form#84:$ s= m-\sqrt{2 m}$
+\_form#85:$x_{0}$
+\_form#86:$\sigma$
+\_form#87:\[ p(x) dx = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-(x-x_{0})^2 / 2\sigma^2) dx \]
+\_form#88:$[a, b)$
+\_form#89:$b > a$
+\_form#90:$(b-a)$
+\_form#91:$ \pi $
+\_form#92:$\mu$
+\_form#93:\[ p(x) dx = {1 \over \mu} \exp(-x/\mu) dx \quad, \qquad x \ge 0 \]

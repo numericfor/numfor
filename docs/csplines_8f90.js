@@ -3,7 +3,6 @@ var csplines_8f90 =
     [ "cubicspline", "structcsplines_1_1cubicspline.html", "structcsplines_1_1cubicspline" ],
     [ "csplev", "interfacecsplines_1_1csplev.html", "interfacecsplines_1_1csplev" ],
     [ "csplevder", "interfacecsplines_1_1csplevder.html", "interfacecsplines_1_1csplevder" ],
-    [ "cubicspline", "structcsplines_1_1cubicspline.html", "structcsplines_1_1cubicspline" ],
     [ "cspl_clean", "csplines_8f90.html#ab0ab6b17a8307f302b4e89905555e248", null ],
     [ "cspl_interp", "csplines_8f90.html#aa1166967b2b79e4765471cba5d6c72f5", null ],
     [ "cspl_interp_tab", "csplines_8f90.html#a4bf23670c01092b93b95b9e3a6e07274", null ],

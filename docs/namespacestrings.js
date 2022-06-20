@@ -1,4 +1,31 @@
 var namespacestrings =
 [
-    [ "str", "interfacestrings_1_1str.html", "interfacestrings_1_1str" ]
+    [ "str", "interfacestrings_1_1str.html", "interfacestrings_1_1str" ],
+    [ "c2str", "namespacestrings.html#a0448755711356284942176d7a23bf593", null ],
+    [ "center", "namespacestrings.html#a2b231e563b558221e98a80f3664d2a40", null ],
+    [ "count_sub", "namespacestrings.html#ac549d374e7f2437554d53b3efe9a84da", null ],
+    [ "dp2str", "namespacestrings.html#a2440a302141227ca8accf63271e393e6", null ],
+    [ "dparr2d2str", "namespacestrings.html#abb18b1e73dbe503b3fafc6e66753b580", null ],
+    [ "endswith", "namespacestrings.html#a37afd2adfc9e968b66161eb8f9912f7d", null ],
+    [ "find", "namespacestrings.html#ad446184e6d5fe10c56f1b8f21d0114b4", null ],
+    [ "i2str", "namespacestrings.html#af1eb85b70a8035867267debd476c4a4d", null ],
+    [ "iarr2d2str", "namespacestrings.html#a784a55887800867a59bcc54eae0008b8", null ],
+    [ "issub", "namespacestrings.html#a3d2e55c4aa2c3b16ae7754398a458228", null ],
+    [ "ljust", "namespacestrings.html#af6a6e99380fb5a2c4022c8cc765895e6", null ],
+    [ "lower", "namespacestrings.html#ad51b29d46d17b8cf5993fb15e3df0681", null ],
+    [ "lstrip", "namespacestrings.html#a7a0b8942302aec0179df8d5f2c457994", null ],
+    [ "r2str", "namespacestrings.html#a7858fa5a193b8a334b170af491dde1a2", null ],
+    [ "rarr2d2str", "namespacestrings.html#a5e43da49715b75b2b0cde3514da6b7a1", null ],
+    [ "replace", "namespacestrings.html#a7a217c2342ad01bfcd1503ce67e883cd", null ],
+    [ "reverse", "namespacestrings.html#ab656fe344a77a1ad0c4f479cd1388166", null ],
+    [ "rjust", "namespacestrings.html#ae579fe48c4a66f10ef4483e02e10808e", null ],
+    [ "rstrip", "namespacestrings.html#a34f882b33fedd7afee64b8dfb2877958", null ],
+    [ "startswith", "namespacestrings.html#aca7f468c7b25af7092b7e02165b36395", null ],
+    [ "str2i", "namespacestrings.html#a8bb9dfe10cbf51957a32197bf0e7e667", null ],
+    [ "strip", "namespacestrings.html#aaba2d0c1a30cc93ff90e4043ce484f1f", null ],
+    [ "swapcase", "namespacestrings.html#a6d62ef239e9f27969d3be69a3c3e11a5", null ],
+    [ "upper", "namespacestrings.html#a8ca72088e2e265d302345bce3d605dc3", null ],
+    [ "z2str", "namespacestrings.html#a42dc5df5b87a3ceb9cf311967e34bc70", null ],
+    [ "zarr2d2str", "namespacestrings.html#ac9276b6e5fb56016409fc76ab0e94a7b", null ],
+    [ "zfill", "namespacestrings.html#ab6a4e326a45b264cdf91c157d2a956c1", null ]
 ];

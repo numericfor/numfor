@@ -1,7 +1,7 @@
 var modules =
 [
-    [ "Routines for integration", "group__integrate.html", "group__integrate" ],
-    [ "Polynomials, Interpolation, and fitting", "group__interpolate.html", "group__interpolate" ],
-    [ "Random distributions", "group__randomdist.html", "group__randomdist" ],
-    [ "Basic Utilities", "group__utils.html", "group__utils" ]
+    [ "Routines for integration", "group__integrate.html", null ],
+    [ "Polynomials, Interpolation, and fitting", "group__interpolate.html", null ],
+    [ "Random distributions", "group__randomdist.html", null ],
+    [ "Basic Utilities", "group__utils.html", null ]
 ];
