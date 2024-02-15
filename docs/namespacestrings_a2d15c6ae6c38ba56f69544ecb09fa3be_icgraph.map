@@ -1,0 +1,4 @@
+<map id="startswith" name="startswith">
+<area shape="rect" id="node1" title="Return True if S starts with the specified prefix, False otherwise." alt="" coords="99,5,185,31"/>
+<area shape="rect" id="node2" href="$namespacestrings.html#a5510a50c9f1f76cf4041e81206474612" title="Pad a string with zeroes (&quot;0&quot;) to specified width. If width is &lt;= input string width,..." alt="" coords="5,5,51,31"/>
+</map>

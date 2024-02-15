@@ -1,0 +1,7 @@
+<map id="histogram" name="histogram">
+<area shape="rect" id="node1" title="Computes the histogram of an array of data." alt="" coords="5,81,93,107"/>
+<area shape="rect" id="node2" href="$namespacegrids.html#a3081ec9dec23b58d26f36c1833aaf72b" title=" " alt="" coords="148,5,264,31"/>
+<area shape="rect" id="node3" href="$namespacearray__utils.html#a4cc2fbe3b571e7bd404b321b62951b14" title="mean Computes the arithmetic mean of the array." alt="" coords="319,107,455,132"/>
+<area shape="rect" id="node4" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="141,107,271,132"/>
+<area shape="rect" id="node5" href="$namespacearray__utils.html#a10a6d5cd3333d473442c8955b500e34b" title="std Computes the standard deviation of the array." alt="" coords="147,156,265,181"/>
+</map>

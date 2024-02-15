@@ -1,0 +1,5 @@
+<map id="csplder" name="csplder">
+<area shape="rect" id="node1" title="csplder Computes the derivative of the cubic spline" alt="" coords="5,31,75,56"/>
+<area shape="rect" id="node2" href="$namespacepolynomial.html#a3efa943b16e640ba0e47f6b7ca243065" title="polyder Computes the derivative of a polynomial. Returns an array with the coefficients" alt="" coords="123,5,275,31"/>
+<area shape="rect" id="node3" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="323,31,452,56"/>
+</map>

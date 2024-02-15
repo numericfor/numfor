@@ -14,6 +14,5 @@ var wquadpack_8f90 =
     [ "qextr", "interfacequadpack_1_1qextr.html", null ],
     [ "d_qp_extra", "structquadpack_1_1d__qp__extra.html", "structquadpack_1_1d__qp__extra" ],
     [ "c_qp_extra", "structquadpack_1_1c__qp__extra.html", "structquadpack_1_1c__qp__extra" ],
-    [ "d_sinit", "wquadpack_8f90.html#a7ee6cd9d9e082ac5035721bd92b90215", null ],
-    [ "qp_err_msg", "wquadpack_8f90.html#a19d9d1d7eee3dc275b20e8fd4c6431b1", null ]
+    [ "qp_err_msg", "wquadpack_8f90.html#a298a77beb42a53fca2c147fa4abe026f", null ]
 ];

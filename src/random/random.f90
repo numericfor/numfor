@@ -1,9 +1,8 @@
 !> @file random.f90 for random number generator (and distributions)
 !> @author Juan Fiol <juanfiol@gmail.com> (modifications, see real authors below)
-!! @date "2020-01-09 15:19:36"
+!! @date "2024-02-14 17:02:13"
 
-!> @ingroup randomdist
-!> Random number generator
+!> \defgroup randomnumber Random number generator
 !!
 !! The random number are generated using the 64-bit version of MT19937,
 !! translated from C-program for MT19937-64 (2004/9/29 version)
@@ -28,16 +27,17 @@ module random
     module procedure init_genrand64_empty
   end interface random_seed
 
-  !> Function returning a real number in the semi-open interval [0,1)
+  !> @ingroup randomnumber Function returning a real number in the semi-open interval [0,1)
   interface random_real
     module procedure genrand64_real2, rng_real_interval
   end interface random_real
 
-  !> Function returning a real number in the open interval (0,1)
+  !> @ingroup randomnumber Function returning a real number in the open interval (0,1)
   interface random_real_pos
     module procedure genrand64_real3
   end interface random_real_pos
 
+  !> @ingroup randomnumber Function returning an integer number in the open interval (0,1)
   interface random_int
     module procedure genrand64_int64, rng_integer_pos, rng_int
   end interface random_int
@@ -63,7 +63,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!! random integer !!!!!!!!!!!!!!!!!!!!!!!!!!!
-  !> rng_integer_pos returns a random integer in the range [0, N), or equivalently [0, N-1]
+  !> @ingroup randomnumber rng_integer_pos returns a random integer in the range [0, N), or equivalently [0, N-1]
   !!
   !!  This function returns a random integer from 0 to N-1 inclusive
   !!  by scaling down and/or discarding samples.

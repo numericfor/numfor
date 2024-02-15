@@ -60,14 +60,16 @@ There are different ways to accomplish this:
   ```bash
   $> gfortran [your FFLAGS] -o myprog $(pkg-config --cflags numfor) myprog.f90 $(pkg-config --libs numfor)
   ``` 
- 
- In order to work, first the environment variable PKG_CONFIG_PATH must be set. 
+
+  **Note** that the library options must be, in both cases, at the end of the command.
+
+  In order to work, first the environment variable PKG_CONFIG_PATH must be set. 
   For instance, in linux you have to add to $HOME/.bashrc (or site /etc/bashrc if you install for all users) the folowing line:
   
   ```bash
   export PKG_CONFIG_PATH="<prefix>/lib/pkgconfig:$PKG_CONFIG_PATH"
   ```
-  You will have to open a new terminal or source the `bashrc` file before compiling your program.
+  You will need to open a new terminal or source the `bashrc` file before compiling your program.
   
 
 

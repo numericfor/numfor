@@ -1,28 +1,21 @@
-!> @file uniform.f90 for random number generator (and distributions)
-!> @author Juan Fiol <juanfiol@gmail.com> (modifications, see real authors below)
-!! @date "2020-01-09 14:51:35"
-
-#ifdef __GFORTRAN__
-#define PASTE(a) a
-#define JOIN(a,b) PASTE(a)b
-#else
-#define PASTE(a,b) a ## b
-#define JOIN(a,b) PASTE(a,b)
-#endif
+!> @file exponential.f90 for exponential random distribution
+!> @author Juan Fiol <juanfiol@gmail.com>
+!! @date "2024-02-14 17:37:20"
 
 !> @ingroup randomdist
 !! Exponential random distribution
+!! The exponential probability distribution located at \f$x_{0}\f$ and mean \f$\mu\f$, is given by
+!! \f[
+!!    p(x) dx = {1 \over \mu} \exp(-x/\mu) dx \quad, \qquad x \ge 0
+!! \f]
 module exponential
   USE utils, only: dp, i8, M_DPI
   USE random, only: random_real
 
   !> Fills a scalar or array with random numbers following an exponential distribution
   !!
-  !! The exponential probability distribution located at \f$x_{0}\f$ and mean \f$\mu\f$, is given by
-  !! \f[
-  !!    p(x) dx = {1 \over \mu} \exp(-x/\mu) dx \quad, \qquad x \ge 0
-  !! \f]
-  !! The general signature is `call random_exponential(mu, x)` where `x` may be a scalar, vector (1D array), matrix (2D array), 3D-array, 4D-array, or 5D-array.
+  !! The general signature is `call random_exponential(mu, x)` where `x` may be a scalar, or
+  !! vector (1D array), matrix (2D array), 3D-array, 4D-array, or 5D-array.
   !!
   !! The following uses are valid.
   !! ```{.f90}
@@ -63,7 +56,7 @@ contains
       log1p = -r * (1._dp + r * (0.5_dp + r / 3))
     else
       log1p = log(1._dp - r)
-    endif
+    end if
     r = -mu * log1p
   end function rng_expon
 
@@ -84,6 +77,14 @@ contains
     y = 0
     where (x >= 0) y = exp(-x / mu) / mu
   end function ran_expon_pdf_v
+
+#ifdef __GFORTRAN__
+#define PASTE(a) a
+#define JOIN(a,b) PASTE(a)b
+#else
+#define PASTE(a,b) a ## b
+#define JOIN(a,b) PASTE(a,b)
+#endif
 
 ! Name of arguments
 #define A2 mu

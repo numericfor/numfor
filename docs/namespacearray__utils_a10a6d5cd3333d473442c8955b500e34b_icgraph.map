@@ -1,0 +1,4 @@
+<map id="std" name="std">
+<area shape="rect" id="node1" title="std Computes the standard deviation of the array." alt="" coords="223,5,265,31"/>
+<area shape="rect" id="node2" href="$namespacehistograms.html#ab6a23f50b50732a4c49db0c9e547609f" title="Computes the histogram of an array of data." alt="" coords="5,5,175,31"/>
+</map>

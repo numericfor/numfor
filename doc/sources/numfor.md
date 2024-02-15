@@ -19,6 +19,7 @@ It provides:
   + A @subpage docarrays with basic functionality to work with arrays, including generation of grids, search of elements and sorting.
   + A @subpage docinterpolate with routines to perform interpolation, fitting of data, and some work on polynomials.
   + A @subpage docintegrate with routines to perform integration of real and complex functions, and of sampled data.
+  + A @subpage docrandom with routines to perform integration of real and complex functions, and of sampled data.
 
 
 You can also visit the [documentation for the code](namespaces.html)

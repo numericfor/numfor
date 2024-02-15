@@ -23,7 +23,7 @@ install: $(numlib) $(SCRPTD)/$(pcfile)
 	$(CP) $(numlib) $(INSTALL_LIB)/
 	$(CP) $(MODD)/$(PRJ).mod $(INSTALL_INCLUDE)/
 	$(CP) $(SCRPTD)/$(pcfile) $(INSTALL_PKG)/
-	cd $(INSTALL_PKG); $(LN) $(pcfile) $(PRJ).pc; cd -
+	cd $(INSTALL_PKG); $(LN)  $(pcfile) $(PRJ).pc; cd -
 	@echo "-------------------------------------------------------------"
 	$(call POST_INSTALL_MSG)
 

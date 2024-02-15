@@ -1,17 +1,11 @@
-!> @file uniform.f90 for random number generator (and distributions)
-!> @author Juan Fiol <juanfiol@gmail.com> (modifications, see real authors below)
-!! @date "2020-01-09 13:00:01"
-
-#ifdef __GFORTRAN__
-#define PASTE(a) a
-#define JOIN(a,b) PASTE(a)b
-#else
-#define PASTE(a,b) a ## b
-#define JOIN(a,b) PASTE(a,b)
-#endif
+!> @file gauss.f90 for Gaussian random distributions
+!> @author Juan Fiol <juanfiol@gmail.com>
+!! @date "2024-02-14 18:07:47"
 
 !> @ingroup randomdist
 !! Normal random distribution
+!! The normal probability distribution located at \f$x_{0}\f$ and standard deviation \f$\sigma\f$, is given by
+!! \f[ p(x) dx = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-(x-x_{0})^2 / 2\sigma^2) dx \f]
 module gauss
   USE utils, only: dp, i8, M_DPI
   USE random, only: random_real, random_real_pos
@@ -53,8 +47,6 @@ module gauss
 
   !> Fills a scalar or array with random numbers following a normal (gaussian) distribution
   !!
-  !! The normal probability distribution located at \f$x_{0}\f$ and standard deviation \f$\sigma\f$, is given by
-  !! \f[ p(x) dx = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-(x-x_{0})^2 / 2\sigma^2) dx \f]
   !! The general signature is `call random_normal([[loc,] scale,] x)` where the center `loc`=\f$x_{0}\f$ and the `scale`=\f$\sigma\f$ are optional, and `x` may be a scalar, vector (1D array), matrix (2D array), 3D-array, 4D-array, or 5D-array.
   !!
   !! The following uses are all valid, except the last one
@@ -78,10 +70,16 @@ module gauss
     module procedure :: std_norm3d, std_norm4d, std_norm5d
   end interface random_normal
 
-  !> This function computes the probability density p(x) at x for a Gaussian distribution
-  ! with standard deviation `scale`, using the formula given above.
+  !> This function computes the probability density function (pdf) p(x) at x for a
+  !! Gaussian distribution with standard deviation `scale`, using the formula given above.
+  !!
+  !! It returns the value of the function
+  !! \f[ p(x) = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-x^2 / 2\sigma^2) \f]
+  !!
+  !! Here the argument `x` may be scalar or a 1D-vector
   interface ran_gaussian_pdf
-    module procedure :: ran_gauss_pdf_s, ran_gauss_pdf_v
+    module procedure :: ran_gauss_pdf_s0, ran_gauss_pdf_s1, ran_gauss_pdf_s2
+    module procedure :: ran_gauss_pdf_v0, ran_gauss_pdf_v1, ran_gauss_pdf_v2
   end interface ran_gaussian_pdf
 
   private
@@ -178,27 +176,71 @@ contains
     r = scale * ran_ugaussian2() + loc
   end function ran_gaussian2
 
-  !> ran_gauss_pdf Computes
+  !> ran_gauss_pdf Computes the probability density function (pdf) for a Gaussian distribution
   !!
-  function ran_gauss_pdf_s(x, sigma) result(y)
+  function ran_gauss_pdf_s0(x) result(y)
     implicit none
     real(dp) :: y !<
     real(dp), intent(IN) :: x !<
-    real(dp), intent(IN) :: sigma !<
+    y = (1 / (sqrt(M_DPI))) * exp(-x * x * 0.5_dp)
+  end function ran_gauss_pdf_s0
+
+  function ran_gauss_pdf_s1(x, scale) result(y)
+    implicit none
+    real(dp) :: y !<
+    real(dp), intent(IN) :: x !<
+    real(dp), intent(IN) :: scale !<
     real(dp) :: u
-    u = x / abs(sigma)
-    y = (1 / (sqrt(M_DPI) * abs(sigma))) * exp(-u * u * 0.5_dp)
-  end function ran_gauss_pdf_s
+    u = x / abs(scale)
+    y = (1 / (sqrt(M_DPI) * abs(scale))) * exp(-u * u * 0.5_dp)
+  end function ran_gauss_pdf_s1
+
+  function ran_gauss_pdf_s2(x, scale, loc) result(y)
+    implicit none
+    real(dp) :: y !<
+    real(dp), intent(IN) :: x !<
+    real(dp), intent(IN) :: scale !<
+    real(dp), intent(IN) :: loc !<
+    real(dp) :: u
+    u = (x - loc) / abs(scale)
+    y = (1 / (sqrt(M_DPI) * abs(scale))) * exp(-u * u * 0.5_dp)
+  end function ran_gauss_pdf_s2
 
   !> ran_gauss_pdf Computes
   !!
-  function ran_gauss_pdf_v(x, sigma) result(y)
+  function ran_gauss_pdf_v0(x) result(y)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !<
     real(dp), dimension(size(x)) :: y
-    real(dp), intent(IN) :: sigma !<
-    y = (1 / (sqrt(M_DPI) * abs(sigma))) * exp(-x**2 / (2 * sigma**2))
-  end function ran_gauss_pdf_v
+    y = (1 / (sqrt(M_DPI))) * exp(-x**2 / 2)
+  end function ran_gauss_pdf_v0
+  !> ran_gauss_pdf Computes
+  !!
+  function ran_gauss_pdf_v1(x, scale) result(y)
+    implicit none
+    real(dp), dimension(:), intent(IN) :: x !<
+    real(dp), dimension(size(x)) :: y
+    real(dp), intent(IN) :: scale !<
+    y = (1 / (sqrt(M_DPI) * abs(scale))) * exp(-(x / scale)**2 / 2)
+  end function ran_gauss_pdf_v1
+  !> ran_gauss_pdf Computes
+  !!
+  function ran_gauss_pdf_v2(x, scale, loc) result(y)
+    implicit none
+    real(dp), dimension(:), intent(IN) :: x !<
+    real(dp), dimension(size(x)) :: y
+    real(dp), intent(IN) :: scale !<
+    real(dp), intent(IN) :: loc !<
+    y = (1 / (sqrt(M_DPI) * abs(scale))) * exp(-((x - loc) / scale)**2 / 2)
+  end function ran_gauss_pdf_v2
+
+#ifdef __GFORTRAN__
+#define PASTE(a) a
+#define JOIN(a,b) PASTE(a)b
+#else
+#define PASTE(a,b) a ## b
+#define JOIN(a,b) PASTE(a,b)
+#endif
 
   ! JF: This is thread-safe but takes almost twice
 ! #define RNG_NAME ran_ugaussian2

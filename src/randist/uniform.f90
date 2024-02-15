@@ -1,23 +1,18 @@
-!> @file uniform.f90 for random number generator (and distributions)
+!> @file uniform.f90 for random number distributions
 !> @author Juan Fiol <juanfiol@gmail.com> (modifications, see real authors below)
-!! @date "2020-01-09 12:39:36"
-
-#ifdef __GFORTRAN__
-#define PASTE(a) a
-#define JOIN(a,b) PASTE(a)b
-#else
-#define PASTE(a,b) a ## b
-#define JOIN(a,b) PASTE(a,b)
-#endif
+!! @date "2024-02-14 17:31:16"
 
 !> @ingroup randomdist
 !! Uniform Random distribution
+!! Description: @ref randist
+!!
+!!
 module uniform
   USE utils, only: dp, i8
   USE random, only: random_real, random_int
 
-  ! !> @ingroup randomdist
-  !> Fills a scalar or array with random numbers in the half-open interval [0, 1).
+  !> Uniform Random distributions
+  !! Fills a scalar or array with random numbers in the half-open interval [0, 1).
   !!
   !! The signature is `call random_sample(x)` where `x` may be a scalar, vector (1D array), matrix (2D array), 3D-array, 4D-array, or 5D-array.
   !!
@@ -33,12 +28,12 @@ module uniform
   !! Example:
   !! --------
   !! @snippet ex_rand_unif.f90 usesample
+  !!
   interface random_sample
     module procedure :: random_sample0d, random_sample1d, random_sample2d
     module procedure :: random_sample3d, random_sample4d, random_sample5d
   end interface random_sample
 
-  ! !> @ingroup randomdist
   !> Fills a scalar or array with random numbers in the half-open interval [low, high).
   !!
   !! The signature is `call random_uniform(low, high, x)` where `x` may be a scalar, vector (1D array), matrix (2D array), 3D-array, 4D-array, or 5D-array.
@@ -46,6 +41,7 @@ module uniform
   !! Example:
   !! --------
   !! @snippet ex_rand_unif.f90 useuniform
+  !!
   interface random_uniform
     module procedure :: random_unif0d, random_unif1d, random_unif2d
     module procedure :: random_unif3d, random_unif4d, random_unif5d
@@ -55,6 +51,14 @@ module uniform
   public :: random_sample, random_uniform
 
 contains
+
+#ifdef __GFORTRAN__
+#define PASTE(a) a
+#define JOIN(a,b) PASTE(a)b
+#else
+#define PASTE(a,b) a ## b
+#define JOIN(a,b) PASTE(a,b)
+#endif
 
 #define RNG_NAME random_real
 

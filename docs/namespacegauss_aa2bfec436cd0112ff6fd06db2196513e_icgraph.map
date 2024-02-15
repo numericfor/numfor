@@ -1,0 +1,5 @@
+<map id="ran_ugaussian2" name="ran_ugaussian2">
+<area shape="rect" id="node1" title="Computes a Gaussian random variate, with mean zero and standard deviation sigma=1." alt="" coords="212,45,336,70"/>
+<area shape="rect" id="node2" href="$interfacegauss_1_1rng__normal2.html#ad297e4c5a68a6acedf1ef241bbd7c21d" title="ran_gaussian computes a Gaussian random variate, with mean zero and standard deviation sigma" alt="" coords="9,5,160,45"/>
+<area shape="rect" id="node3" href="$interfacegauss_1_1rng__normal2.html#aeac45545f60842f6f0ef5485e35e8d09" title=" " alt="" coords="5,69,164,109"/>
+</map>

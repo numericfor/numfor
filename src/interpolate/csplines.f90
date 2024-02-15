@@ -1,6 +1,6 @@
 !> @file csplines.f90
 !! @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2020-01-09 12:43:10"
+!! @date "2024-02-14 16:52:07"
 !!
 !! @brief implements several functions for simple use of cubic splines.
 !!
@@ -164,7 +164,7 @@ contains
   !> Clean-up a spline representation
   subroutine cspl_clean(r)
     implicit none
-    type(CubicSpline), intent(INOUT) :: r
+    type(CubicSpline), intent(INOUT) :: r   !< CubicSpline
 
     integer :: ierr
     if (allocated(r%x)) then
@@ -271,7 +271,7 @@ contains
     n1 = nn - 1
     n2 = nn - 2
 
-    associate (A=>S(4, :), B=>S(3, :), C=>S(2, :), D=>S(1, :))
+    associate (A => S(4, :), B => S(3, :), C => S(2, :), D => S(1, :))
 
       A(:n1) = x(2:) - x(:n1)
       ! Check that the points of the grid are all different and ascending. Else abort
@@ -291,7 +291,7 @@ contains
         R = A(i) / B(i - 1)
         B(i) = B(i) - R * A(i)
         D(i + 1) = D(i + 1) - R * D(i)
-      enddo
+      end do
       D(n1) = D(n1) / B(n2)  ! Sigma Coefficients
 
       do k = n2, 2, -1
@@ -317,11 +317,11 @@ contains
         C(i) = 3 * SI
         D(i) = ih * (SI1 - SI)
         A(i) = y(i)
-      enddo
+      end do
     end associate
   end function spline_coeff
 
-  !> Estimates the error produced by using a spline approximation
+  !> cspleps Estimates the error produced by using a spline approximation
   !!
   !! @details This subroutine estimates the error introduced by natural cubic spline
   !! interpolation in a table <code> x(i),y(i) (i=1,...,n)</code>.  the interpolation
@@ -333,7 +333,6 @@ contains
   !! estimated by this routine
   !! @note Modified from Salvat et al, Comp. Phys. Comm. (1995)
   !!
-  !! @returns Err An array with the relative errors
   subroutine cspleps(x, y, Err)
     implicit none
     real(dp), dimension(:), intent(IN) :: x !< grid points
@@ -358,8 +357,8 @@ contains
         Err(i) = 1.0_dp - YI / y(i) ! Relative error
       else
         Err(i) = YI - y(i)      ! Absolute error
-      endif
-    enddo
+      end if
+    end do
   end subroutine cspleps
 
   !> Definite integral of a cubic spline function.
@@ -381,7 +380,7 @@ contains
       XLL = xL; XUU = xU; sign = 1._dp
     else
       XLL = xU; XUU = xL; sign = -1._dp
-    endif
+    end if
 
     x1 = csp%x(1)     ! Last value
     x2 = csp%x(size(csp%x))     ! Last value
@@ -432,7 +431,7 @@ contains
     function int_single(xx) result(y)
       real(dp), intent(IN) :: xx  ! Position of interval
       real(dp) :: y               ! Integrate a single interval
-      associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
+      associate (A => csp%S(4, :), B => csp%S(3, :), C => csp%S(2, :), D => csp%S(1, :))
         y = xx * (A(i) + xx * (B(i) / 2 + xx * (C(i) / 3 + xx * D(i) / 4)))
       end associate
     end function int_single
@@ -454,7 +453,7 @@ contains
       XLL = xL; XUU = xU; sign = 1._dp
     else
       XLL = xU; XUU = xL; sign = -1._dp
-    endif
+    end if
 
     x2 = csp%x(size(csp%x))
     IF (XLL < csp%x(1)) XLL = csp%x(1) + Small ! Check and correct integral limits.
@@ -495,7 +494,7 @@ contains
     function int_single_a(xx) result(y)
       real(dp), intent(IN) :: xx ! Position of the given interval
       real(dp) :: y
-      associate (A=>csp%S(4, :), B=>csp%S(3, :), C=>csp%S(2, :), D=>csp%S(1, :))
+      associate (A => csp%S(4, :), B => csp%S(3, :), C => csp%S(2, :), D => csp%S(1, :))
         y = xx * (A(i) * (A(i) + xx * B(i))                           &
           &      + xx**2 * ((2 * A(i) * C(i) + B(i)**2) / 3._dp       &
           &      + xx * ((B(i) * C(i) + A(i) * D(i)) / 2._dp          &
@@ -519,7 +518,7 @@ contains
     !!   real(dp), dimension(:), allocatable :: zeros
     !!   zeros = csp%roots()
     !!```
-    real(dp), dimension(3 * size(csp%x)) :: c
+    real(dp), dimension(3*size(csp%x)) :: c
     integer :: i, nc, n, j, k
     real(dp), parameter :: toler = 1.e-5_8
 

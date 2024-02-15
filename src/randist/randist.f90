@@ -1,4 +1,4 @@
-!> \defgroup randomdist Random distributions
+!> @defgroup randomdist Random distributions
 module randist
   USE uniform
   USE gauss

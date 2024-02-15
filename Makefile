@@ -44,8 +44,8 @@ compiler = gnu
 depends:=$(SCRPTD)/sfmakedepend
 AR:=ar
 RM:=rm -f
-CP:=cp
-LN:=ln -s
+CP:=cp -f
+LN:=ln -s -f
 MKDIR:=mkdir -p
 ######################################################################
 

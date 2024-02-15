@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2020-01-09 12:41:56"
+!! @date "2024-02-14 16:48:37"
 
 !> @ingroup utils
 !> This module defines functions to manipulate strings of characters.
@@ -249,7 +249,7 @@ contains
       Sout = S
     else
       Sout = repeat(ch_, width - lS)//S
-    endif
+    end if
   end function rjust
 
   !> Returns a left-justified string of length width.
@@ -268,7 +268,7 @@ contains
       Sout = S
     else
       Sout = S//repeat(ch_, width - lS)
-    endif
+    end if
 
   end function ljust
 
@@ -291,7 +291,7 @@ contains
         Sout = repeat("0", width - lS)//S
       end if
 
-    endif
+    end if
   end function zfill
 
   !> Center a string to a specified width.  The default character to fill in the
@@ -314,8 +314,8 @@ contains
         Sout = repeat(ch_, Lfill / 2)//S//repeat(ch_, Lfill / 2)
       else
         Sout = repeat(ch_, (Lfill / 2) + 1)//S//repeat(ch_, Lfill / 2)
-      endif
-    endif
+      end if
+    end if
   end function center
 
   !> Return the lowest index in S where substring sub is found
@@ -474,29 +474,29 @@ contains
 
   function zarr2str(vec) result(Sout)
     implicit none
-    complex(dp), dimension(:), intent(IN) :: vec !<
+    complex(dp), dimension(:), intent(IN) :: vec !< Vector to convert
     include "arr2str.inc"
   end function zarr2str
   function dparr2str(vec) result(Sout)
     implicit none
-    real(dp), dimension(:), intent(IN) :: vec !<
+    real(dp), dimension(:), intent(IN) :: vec !< Vector to convert
     include "arr2str.inc"
   end function dparr2str
 
   function rarr2str(vec) result(Sout)
     implicit none
-    real(sp), dimension(:), intent(IN) :: vec !<
+    real(sp), dimension(:), intent(IN) :: vec !< Vector to convert
     include "arr2str.inc"
   end function rarr2str
   function iarr2str(vec) result(Sout)
     implicit none
-    integer, dimension(:), intent(IN) :: vec !<
+    integer, dimension(:), intent(IN) :: vec !< Vector to convert
     include "arr2str.inc"
   end function iarr2str
 
   function dparr2d2str(vec) result(Sout)
     implicit none
-    real(dp), dimension(:, :), intent(IN) :: vec !<
+    real(dp), dimension(:, :), intent(IN) :: vec !< Vector of numbers to convert
     integer :: i
     character(len=:), allocatable :: Sout !< String created
     character(len=:), allocatable :: S_ !< String created
