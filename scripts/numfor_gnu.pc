@@ -1,0 +1,14 @@
+prj=numfor
+prefix=/home/fiol/.local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/${prj}
+fc_compiler=gfortran
+
+Name: ${prj}
+Description: NumFor: Numerical (Modern) Fortran Library
+Version: 1ef96ef
+Requires: 
+Conflicts:
+Libs: -L${libdir} -l${prj}
+Cflags: -I${includedir}

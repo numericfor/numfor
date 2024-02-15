@@ -1,5 +1,7 @@
 <map id="csplantider" name="csplantider">
-<area shape="rect" id="node1" title="Computes the antiderivative of the CubicSpline approximation." alt="" coords="5,5,100,31"/>
-<area shape="rect" id="node2" href="$namespacepolynomial.html#a8f92439e5ed3937aeaa73c3c76591a38" title="polyint Computes m&#45;esima antiderivative" alt="" coords="148,5,296,31"/>
-<area shape="rect" id="node3" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="344,5,473,31"/>
+<area shape="rect" id="Node000001" title="Computes the antiderivative of the CubicSpline approximation." alt="" coords="5,5,99,33"/>
+<area shape="rect" id="Node000002" href="$namespacepolynomial.html#a8f92439e5ed3937aeaa73c3c76591a38" title="polyint Computes m&#45;esima antiderivative" alt="" coords="147,5,294,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,17,132,17,132,22,99,22"/>
+<area shape="rect" id="Node000003" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="342,5,470,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="295,17,327,17,327,22,295,22"/>
 </map>

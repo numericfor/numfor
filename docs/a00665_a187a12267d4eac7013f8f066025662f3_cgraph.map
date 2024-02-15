@@ -1,0 +1,5 @@
+<map id="cspl_interpdev_tab" name="cspl_interpdev_tab">
+<area shape="rect" id="node1" title=" " alt="" coords="5,31,151,57"/>
+<area shape="rect" id="node2" href="$a00460.html#abeed252347d91726977c4a692370a1ac" title="polyder Computes the derivative of a polynomial. Returns an array with the coefficients" alt="" coords="199,5,351,32"/>
+<area shape="rect" id="node3" href="$a00465.html#a4870a04efefc9c3f5b29fe74dce63bbe" title="Print a message, and optionally stop the program." alt="" coords="399,31,528,57"/>
+</map>

@@ -1,4 +1,5 @@
 <map id="ran_gaussian_sym2" name="ran_gaussian_sym2">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,156,31"/>
-<area shape="rect" id="node2" href="$namespacegauss.html#aa2bfec436cd0112ff6fd06db2196513e" title="Computes a Gaussian random variate, with mean zero and standard deviation sigma=1." alt="" coords="204,5,375,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,156,33"/>
+<area shape="rect" id="Node000002" href="$namespacegauss.html#aa2bfec436cd0112ff6fd06db2196513e" title="Computes a Gaussian random variate, with mean zero and standard deviation sigma=1." alt="" coords="204,5,373,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,17,189,17,189,22,156,22"/>
 </map>

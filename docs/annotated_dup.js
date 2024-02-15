@@ -21,8 +21,8 @@ var annotated_dup =
       [ "fstr", "structfstring_1_1fstr.html", "structfstring_1_1fstr" ]
     ] ],
     [ "func_integ", "namespacefunc__integ.html", [
-      [ "nf_cfunction", "namespacefunc__integ.html#structfunc__integ_1_1nf__cfunction", "namespacefunc__integ_structfunc__integ_1_1nf__cfunction_dup" ],
-      [ "nf_rfunction", "namespacefunc__integ.html#structfunc__integ_1_1nf__rfunction", "namespacefunc__integ_structfunc__integ_1_1nf__rfunction_dup" ]
+      [ "nf_cfunction", "structfunc__integ_1_1nf__cfunction.html", "structfunc__integ_1_1nf__cfunction" ],
+      [ "nf_rfunction", "structfunc__integ_1_1nf__rfunction.html", "structfunc__integ_1_1nf__rfunction" ]
     ] ],
     [ "gauss", "namespacegauss.html", [
       [ "ran_gaussian_pdf", "interfacegauss_1_1ran__gaussian__pdf.html", "interfacegauss_1_1ran__gaussian__pdf" ],
@@ -38,7 +38,7 @@ var annotated_dup =
       [ "polyval", "interfacepolynomial_1_1polyval.html", "interfacepolynomial_1_1polyval" ]
     ] ],
     [ "qadaptive", "namespaceqadaptive.html", [
-      [ "iads", "interfaceqadaptive_1_1iads.html", null ],
+      [ "iads", "interfaceqadaptive_1_1iads.html", "interfaceqadaptive_1_1iads" ],
       [ "iadsi", "interfaceqadaptive_1_1iadsi.html", null ]
     ] ],
     [ "qsimpson", "namespaceqsimpson.html", [

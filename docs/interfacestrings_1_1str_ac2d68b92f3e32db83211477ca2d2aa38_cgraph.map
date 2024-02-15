@@ -1,6 +1,9 @@
 <map id="i2str" name="i2str">
-<area shape="rect" id="node1" title=" " alt="" coords="5,31,56,56"/>
-<area shape="rect" id="node2" href="$namespacestrings.html#a20de69000aabc829d940dcc9a3926cef" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="104,31,207,56"/>
-<area shape="rect" id="node3" href="$namespacestrings.html#a9055b50266886e19f01caa817b734bcf" title="This function returns a copy of the string with leading chars removed." alt="" coords="255,5,362,31"/>
-<area shape="rect" id="node4" href="$namespacestrings.html#a6b4f975d44955da057bef5e5f06481c2" title="This function returns a copy of the string with trailing chars removed." alt="" coords="255,55,363,80"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,32,56,60"/>
+<area shape="rect" id="Node000002" href="$namespacestrings.html#a20de69000aabc829d940dcc9a3926cef" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="104,32,206,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="56,43,89,43,89,49,56,49"/>
+<area shape="rect" id="Node000003" href="$namespacestrings.html#a9055b50266886e19f01caa817b734bcf" title="This function returns a copy of the string with leading chars removed." alt="" coords="255,5,361,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="206,34,239,28,240,34,207,40"/>
+<area shape="rect" id="Node000004" href="$namespacestrings.html#a6b4f975d44955da057bef5e5f06481c2" title="This function returns a copy of the string with trailing chars removed." alt="" coords="254,57,361,85"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="207,52,240,57,239,63,206,57"/>
 </map>

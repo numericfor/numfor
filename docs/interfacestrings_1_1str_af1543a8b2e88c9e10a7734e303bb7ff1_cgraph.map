@@ -1,8 +1,15 @@
 <map id="dp2str" name="dp2str">
-<area shape="rect" id="node1" title=" " alt="" coords="5,105,68,131"/>
-<area shape="rect" id="node2" href="$namespacestrings.html#a075c828fb736d66f51609cb770d73bbe" title="Return the lowest index in S where substring sub is found." alt="" coords="122,5,221,31"/>
-<area shape="rect" id="node3" href="$namespacestrings.html#a333b5b0bbad13dbf1e1b52bdc397d4ea" title="Returns a copy of the string converted to lowercase." alt="" coords="116,55,227,80"/>
-<area shape="rect" id="node4" href="$namespacestrings.html#a9055b50266886e19f01caa817b734bcf" title="This function returns a copy of the string with leading chars removed." alt="" coords="275,132,382,157"/>
-<area shape="rect" id="node5" href="$namespacestrings.html#a6b4f975d44955da057bef5e5f06481c2" title="This function returns a copy of the string with trailing chars removed." alt="" coords="275,181,383,207"/>
-<area shape="rect" id="node6" href="$namespacestrings.html#a20de69000aabc829d940dcc9a3926cef" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="120,156,223,181"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,108,68,136"/>
+<area shape="rect" id="Node000002" href="$namespacestrings.html#a075c828fb736d66f51609cb770d73bbe" title="Return the lowest index in S where substring sub is found." alt="" coords="122,5,219,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="48,106,77,76,114,44,122,38,125,43,117,48,80,79,52,109"/>
+<area shape="rect" id="Node000003" href="$namespacestrings.html#a333b5b0bbad13dbf1e1b52bdc397d4ea" title="Returns a copy of the string converted to lowercase." alt="" coords="116,57,225,85"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="67,108,118,88,119,93,69,113"/>
+<area shape="rect" id="Node000004" href="$namespacestrings.html#a9055b50266886e19f01caa817b734bcf" title="This function returns a copy of the string with leading chars removed." alt="" coords="274,121,380,149"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="68,121,259,129,259,135,68,126"/>
+<area shape="rect" id="Node000005" href="$namespacestrings.html#a6b4f975d44955da057bef5e5f06481c2" title="This function returns a copy of the string with trailing chars removed." alt="" coords="273,185,380,213"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="49,134,76,167,95,183,117,195,151,206,188,211,258,209,258,214,188,216,150,211,115,200,92,188,73,171,45,137"/>
+<area shape="rect" id="Node000006" href="$namespacestrings.html#a20de69000aabc829d940dcc9a3926cef" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="119,159,222,186"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="69,131,119,151,118,155,67,136"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="221,158,259,149,260,154,223,163"/>
+<area shape="poly" id="edge7_Node000006_Node000005" title=" " alt="" coords="222,179,259,185,258,190,222,184"/>
 </map>

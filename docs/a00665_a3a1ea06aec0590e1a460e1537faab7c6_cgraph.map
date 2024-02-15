@@ -1,0 +1,5 @@
+<map id="cspl_interpdev" name="cspl_interpdev">
+<area shape="rect" id="node1" title="Interpolates the first derivative of a function." alt="" coords="5,31,123,57"/>
+<area shape="rect" id="node2" href="$a00460.html#abeed252347d91726977c4a692370a1ac" title="polyder Computes the derivative of a polynomial. Returns an array with the coefficients" alt="" coords="171,5,323,32"/>
+<area shape="rect" id="node3" href="$a00465.html#a4870a04efefc9c3f5b29fe74dce63bbe" title="Print a message, and optionally stop the program." alt="" coords="371,31,500,57"/>
+</map>

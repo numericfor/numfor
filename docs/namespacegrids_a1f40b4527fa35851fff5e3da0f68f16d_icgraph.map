@@ -1,4 +1,5 @@
 <map id="logspace" name="logspace">
-<area shape="rect" id="node1" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="151,5,231,31"/>
-<area shape="rect" id="node2" href="$namespacegrids.html#aa2c165d65542286a8ef2b55b4ac1f98e" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,5,103,31"/>
+<area shape="rect" id="Node000001" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="150,5,229,33"/>
+<area shape="rect" id="Node000002" href="$namespacegrids.html#aa2c165d65542286a8ef2b55b4ac1f98e" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,5,102,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="135,22,102,22,102,17,135,17"/>
 </map>
