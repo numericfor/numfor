@@ -1,6 +1,6 @@
 !> @ingroup interpolate
 !> fitpack provides a framework for fitting and interpolation using B-Splines.
-!! Description: @ref docinterpolate
+!! Description: @ref submodule-interpolate
 !!
 !! It uses routines from a slightly cleaned-up f90 version of FITPACK by P. Diercxx
 !!
@@ -144,7 +144,7 @@ contains
     !!
     !! @snippet ex_interp_splprep.f90 Using it
     !!
-    !! Full example in @ref docinterpolate
+    !! Full example in @ref submodule-interpolate
     real(dp) :: tol
     integer :: i, ia1, ia2, ib, ifp, ig1, ig2, iq, iz, maxit, ncc
 
@@ -387,7 +387,7 @@ contains
     !!
     !! @snippet ex_interp_splrep.f90 Using it
     !!
-    !! Full example in @ref docinterpolate
+    !! Full example in @ref submodule-interpolate
 
     real(dp), dimension(size(x)) :: w_
     real(dp), dimension(:), allocatable :: c_

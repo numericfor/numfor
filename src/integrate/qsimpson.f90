@@ -1,9 +1,9 @@
 !> @file qsimpson.f90 provides routines for Trapezoide and Simpson integration
-!! @date "2020-01-09 12:47:43 fiol"
+!! @date "2024-02-21 15:01:01"
 
 !> @ingroup integrate
 !> The qsimpson module provides routines for trapezoid and simpson integration of both sampled data and functions.
-!! Description: @ref docintegrate
+!! Description: @ref submodule-integrate
 module qsimpson
   USE utils, only: dp, Zero, M_PI_2, SMALL, str, print_msg
   USE grids, only: linspace
@@ -245,7 +245,7 @@ contains
         wt(n - 2) = 9._dp / 8._dp
         wt(n - 1) = 9._dp / 8._dp
         wt(n) = 3._dp / 8._dp
-      endif
+      end if
     end select
   end subroutine get_simpson_weights
 

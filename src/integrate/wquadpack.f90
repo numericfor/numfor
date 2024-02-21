@@ -1,9 +1,9 @@
 !> @file wquadpack.f90 provides wrapper routines for integration with QUADPACK
-!! @date "2020-01-09 12:47:59 fiol"
+!! @date "2024-02-21 15:03:10"
 
 !> @ingroup integrate
 !> Wrapper of (slightly modified) QUADPACK routines
-!! Description: @ref docintegrate
+!! Description: @ref submodule-integrate
 !!
 !! ## From QUADPACK original paper:
 !!

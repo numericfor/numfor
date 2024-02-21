@@ -1,9 +1,9 @@
 !> @file oopstring.f90 file provides an object-oriented type for working with string
-!! @date "2020-01-09 12:42:05 fiol"
+!! @date "2024-02-21 15:43:01"
 
 !> @ingroup utils
 !> Module defining the `fStr` object and its methods.
-!! [Description](@ref docutils)
+!! [Description](@ref submodule-utils)
 module fString
   USE basic, only: dp
   USE strings, only: str,&
@@ -56,7 +56,7 @@ module fString
     generic :: Assignment(=) => init
     generic :: Operator(==) => equal
     generic :: Operator(/=) => not_equal
-    generic :: Operator(*) => left_multiply_int, right_multiply_int
+    generic :: Operator(*) => left_multiply_int, right_multiply_int !< Multiplication by integer
     generic :: Operator(//) => concat_ss, concat_cs, concat_sc
     generic :: read (formatted) => readf
     generic :: write (formatted) => writef
@@ -235,7 +235,7 @@ contains
       write (unit, "(a)", IOSTAT=iostat, IOMSG=iomsg) S%val
     else
       write (unit, "(a)", IOSTAT=iostat, IOMSG=iomsg) ' '
-    endif
+    end if
   end subroutine
 
   subroutine readf(S, unit, iotype, v_list, iostat, iomsg)
@@ -245,7 +245,7 @@ contains
     integer, intent(in)         :: v_list(:)
     integer, intent(out)        :: iostat
     character(*), intent(inout) :: iomsg
-    character(len=8 * 1024)     :: temp ! long lines
+    character(len=8*1024)     :: temp ! long lines
     integer         :: vlist
     ! These are dummy statements, to avoid "unused-dummy-argument" warning/errors
     vlist = iachar(iotype)
@@ -288,13 +288,13 @@ contains
     output%val = repeat(S%val, n)
   end function left_multiply_int
 
-  !> @copydoc left_multiply_int
-  function right_multiply_int(S, nr) result(output)
+  !> Multiply by an integer
+  function right_multiply_int(S, n) result(output)
     implicit none
-    class(fStr), intent(IN) :: S
-    integer, intent(IN) :: nr
-    type(fStr) :: output
-    output%val = repeat(S%val, nr)
+    class(fStr), intent(IN) :: S !< Original string
+    integer, intent(IN) :: n     !< number of repetitions
+    type(fStr) :: output         !< String multiplied n times
+    output%val = repeat(S%val, n)
   end function right_multiply_int
 
   function concat_sc(S, value) result(output)

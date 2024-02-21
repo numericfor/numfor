@@ -1,4 +1,4 @@
-## Physical constants {#physconst}
+## Physical constants
 
 CODATA Recommended Values of the Fundamental Physical Constants 2014.
 

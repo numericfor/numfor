@@ -1,4 +1,4 @@
-# Submodule Utils {#docutils}
+# Submodule Utils
 
 The module utils defines several objects (types, constants and routines) convenient for common tasks in programming.
 
@@ -55,7 +55,7 @@ There are defined some commonly used constants (where the definition of "commonl
 | M_log10e   | 0.43429448190325182765112891892_dp        |
 
 
-There are also defined many @subpage physconst, which are mostly those defined in [scipy.constants](https://docs.scipy.org/doc/scipy/reference/constants.html).
+There are also defined many @subpage physical-constants, which are mostly those defined in [scipy.constants](https://docs.scipy.org/doc/scipy/reference/constants.html).
 
 ## Simple Timing 
 

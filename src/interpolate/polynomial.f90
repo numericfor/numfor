@@ -1,9 +1,9 @@
 !> @file polynomial.f90
-!! @date "2020-01-09 12:43:31"
+!! @date "2024-02-21 15:00:50"
 
 !> @ingroup interpolate
 !> polynomials provides a framework for simple (and quite naive) work with polynomials
-!! Further description in @ref docinterpolate
+!! Further description in @ref submodule-interpolate
 !!
 !! It allows to easily evaluate, derivate, and integrate a polynomial
 !! Examples:

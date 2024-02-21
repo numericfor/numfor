@@ -1,6 +1,6 @@
 !> @ingroup integrate
 !> Definition of integrable functions
-!! Description: @ref docintegrate
+!! Description: @ref submodule-integrate
 module func_integ
   public
 

@@ -1,6 +1,6 @@
 <map id="print_msg" name="print_msg">
 <area shape="rect" id="Node000001" title="Print a message, and optionally stop the program." alt="" coords="439,235,525,262"/>
-<area shape="rect" id="Node000002" href="$structbasic_1_1timer.html#a63243210eb8ac565e670c19ae40333e6" title="Assign an integer value to a timer." alt="" coords="209,5,391,33"/>
+<area shape="rect" id="Node000002" href="$structbasic_1_1timer.html#a63243210eb8ac565e670c19ae40333e6" title="assign int to time" alt="" coords="209,5,391,33"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="473,221,464,182,448,135,423,88,389,48,371,36,373,31,393,44,428,85,453,133,469,180,479,220"/>
 <area shape="rect" id="Node000003" href="$namespacecsplines.html#a5799749df49b4390b604fda47c413945" title="Clean&#45;up a spline representation." alt="" coords="225,57,375,85"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="468,222,438,163,416,132,389,105,358,88,361,83,393,101,420,129,443,160,473,220"/>

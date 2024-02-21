@@ -23,7 +23,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">NuMFor<span id="projectnumber">&#160;f5bd292 (2024-02-14)</span>
+   <div id="projectname">NuMFor<span id="projectnumber">&#160;c523fa3 (2024-02-15)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -132,7 +132,14 @@ Data Types</h2></td></tr>
 </div><div class="memdoc">
 
 <p>rng_real_interval Draw samples from a uniform distribution. </p>
-<p>Samples are uniformly distributed over the half-open interval [low, high) (includes low, but excludes high). </p>
+<p>Samples are uniformly distributed over the half-open interval [low, high) (includes low, but excludes high). </p><dl class="section return"><dt>Returns</dt><dd>random float number </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a</td><td>lower limit </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>higher limit </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -171,12 +178,49 @@ Data Types</h2></td></tr>
 <tr class="memitem:ae3bb87d29617e29477c27eb65889c152"><td class="memItemLeft" align="right" valign="top">integer(i8) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__randomnumber.html#ae3bb87d29617e29477c27eb65889c152">rng_integer_pos</a> (n)</td></tr>
 <tr class="memdesc:ae3bb87d29617e29477c27eb65889c152"><td class="mdescLeft">&#160;</td><td class="mdescRight">[0, ), [0, ]  <br /></td></tr>
 <tr class="separator:ae3bb87d29617e29477c27eb65889c152"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf5dc528495c46df2a51b93db9fb8e66"><td class="memItemLeft" align="right" valign="top"><a id="adf5dc528495c46df2a51b93db9fb8e66" name="adf5dc528495c46df2a51b93db9fb8e66"></a>
-integer(i8) function&#160;</td><td class="memItemRight" valign="bottom"><b>rng_int</b> (low, high)</td></tr>
-<tr class="memdesc:adf5dc528495c46df2a51b93db9fb8e66"><td class="mdescLeft">&#160;</td><td class="mdescRight">rng_int Computes a random integer in the range [low, high] inclusive <br /></td></tr>
+<tr class="memitem:adf5dc528495c46df2a51b93db9fb8e66"><td class="memItemLeft" align="right" valign="top">integer(i8) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__randomnumber.html#adf5dc528495c46df2a51b93db9fb8e66">rng_int</a> (low, high)</td></tr>
+<tr class="memdesc:adf5dc528495c46df2a51b93db9fb8e66"><td class="mdescLeft">&#160;</td><td class="mdescRight">rng_int Computes a random integer in the range [low, high] inclusive  <br /></td></tr>
 <tr class="separator:adf5dc528495c46df2a51b93db9fb8e66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Member Function/Subroutine Documentation</h4>
+<a id="adf5dc528495c46df2a51b93db9fb8e66" name="adf5dc528495c46df2a51b93db9fb8e66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf5dc528495c46df2a51b93db9fb8e66">&#9670;&#160;</a></span>rng_int()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">integer(i8) function rng_int </td>
+          <td>(</td>
+          <td class="paramtype">integer(i8), intent(in)&#160;</td>
+          <td class="paramname"><em>low</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer(i8), intent(in)&#160;</td>
+          <td class="paramname"><em>high</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>rng_int Computes a random integer in the range [low, high] inclusive </p>
+<dl class="section return"><dt>Returns</dt><dd>random integer </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">low</td><td>lower limit </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">high</td><td>higher limit </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ae3bb87d29617e29477c27eb65889c152" name="ae3bb87d29617e29477c27eb65889c152"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae3bb87d29617e29477c27eb65889c152">&#9670;&#160;</a></span>rng_integer_pos()</h2>
 

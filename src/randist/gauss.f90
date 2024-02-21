@@ -1,6 +1,6 @@
 !> @file gauss.f90 for Gaussian random distributions
 !> @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2024-02-14 18:07:47"
+!! @date "2024-02-21 15:43:45"
 
 !> @ingroup randomdist
 !! Normal random distribution
@@ -180,8 +180,8 @@ contains
   !!
   function ran_gauss_pdf_s0(x) result(y)
     implicit none
-    real(dp) :: y !<
-    real(dp), intent(IN) :: x !<
+    real(dp) :: y !< Value of distribution at `x`
+    real(dp), intent(IN) :: x !< value of argument
     y = (1 / (sqrt(M_DPI))) * exp(-x * x * 0.5_dp)
   end function ran_gauss_pdf_s0
 

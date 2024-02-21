@@ -25,13 +25,7 @@
 var NAVTREE =
 [
   [ "NuMFor", "index.html", [
-    [ "Numeric Modern Fortran", "index.html", null ],
-    [ "Submodule Arrays", "md__2home_2fiol_2_trabajos_2fortran_2numfor_2doc_2sources_2arrays.html", null ],
-    [ "Physical constants", "md__2home_2fiol_2_trabajos_2fortran_2numfor_2doc_2sources_2constants.html", null ],
-    [ "Submodule integrate", "md__2home_2fiol_2_trabajos_2fortran_2numfor_2doc_2sources_2integration.html", null ],
-    [ "Submodule interpolate", "md__2home_2fiol_2_trabajos_2fortran_2numfor_2doc_2sources_2interpolate.html", null ],
-    [ "Submodule random", "md__2home_2fiol_2_trabajos_2fortran_2numfor_2doc_2sources_2random.html", null ],
-    [ "Submodule Utils", "md__2home_2fiol_2_trabajos_2fortran_2numfor_2doc_2sources_2utils.html", null ],
+    [ "Numeric Modern Fortran", "index.html", "index" ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Modules", "namespaces.html", [
@@ -59,8 +53,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"md__2home_2fiol_2_trabajos_2fortran_2numfor_2doc_2sources_2integration.html",
-"structhistograms_1_1histog.html#ad4d46da24e198143fc3193da5933ca6b"
+"namespacearray__utils.html#a10a6d5cd3333d473442c8955b500e34b",
+"structquadpack_1_1c__qp__extra.html#a42fd97599ed92eacb748720a23bfa1df"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

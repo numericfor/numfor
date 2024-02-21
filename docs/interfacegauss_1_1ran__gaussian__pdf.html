@@ -23,7 +23,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">NuMFor<span id="projectnumber">&#160;f5bd292 (2024-02-14)</span>
+   <div id="projectname">NuMFor<span id="projectnumber">&#160;c523fa3 (2024-02-15)</span>
    </div>
    <div id="projectbrief">Numerical (Modern) Fortran. Library for Simple Numerical computing</div>
   </td>
@@ -73,9 +73,8 @@ $(document).ready(function(){initNavTree('interfacegauss_1_1ran__gaussian__pdf.h
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3591a38f67ba7c11d291ca83dba01b39"><td class="memItemLeft" align="right" valign="top"><a id="a3591a38f67ba7c11d291ca83dba01b39" name="a3591a38f67ba7c11d291ca83dba01b39"></a>
-real(dp) function&#160;</td><td class="memItemRight" valign="bottom"><b>ran_gauss_pdf_s0</b> (x)</td></tr>
-<tr class="memdesc:a3591a38f67ba7c11d291ca83dba01b39"><td class="mdescLeft">&#160;</td><td class="mdescRight">ran_gauss_pdf Computes the probability density function (pdf) for a Gaussian distribution <br /></td></tr>
+<tr class="memitem:a3591a38f67ba7c11d291ca83dba01b39"><td class="memItemLeft" align="right" valign="top">real(dp) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacegauss_1_1ran__gaussian__pdf.html#a3591a38f67ba7c11d291ca83dba01b39">ran_gauss_pdf_s0</a> (x)</td></tr>
+<tr class="memdesc:a3591a38f67ba7c11d291ca83dba01b39"><td class="mdescLeft">&#160;</td><td class="mdescRight">ran_gauss_pdf Computes the probability density function (pdf) for a Gaussian distribution  <br /></td></tr>
 <tr class="separator:a3591a38f67ba7c11d291ca83dba01b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13b49fe855a8d6600a78bf8ffa24b51c"><td class="memItemLeft" align="right" valign="top"><a id="a13b49fe855a8d6600a78bf8ffa24b51c" name="a13b49fe855a8d6600a78bf8ffa24b51c"></a>
 real(dp) function, dimension(size(x))&#160;</td><td class="memItemRight" valign="bottom"><b>ran_gauss_pdf_v0</b> (x)</td></tr>
@@ -96,8 +95,36 @@ real(dp) function, dimension(size(x))&#160;</td><td class="memItemRight" valign=
 <picture><source srcset="form_95_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaDsp" alt="\[ p(x) = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-x^2 / 2\sigma^2) \]" src="form_95.png" width="192" height="36"/></picture>
 </p>
 <p>Here the argument <code>x</code> may be scalar or a 1D-vector </p>
-</div><hr/>The documentation for this interface was generated from the following file:<ul>
-<li><a class="el" href="gauss_8f90.html">gauss.f90</a></li>
+</div><h2 class="groupheader">Member Function/Subroutine Documentation</h2>
+<a id="a3591a38f67ba7c11d291ca83dba01b39" name="a3591a38f67ba7c11d291ca83dba01b39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3591a38f67ba7c11d291ca83dba01b39">&#9670;&#160;</a></span>ran_gauss_pdf_s0()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">real(dp) function ran_gauss_pdf_s0 </td>
+          <td>(</td>
+          <td class="paramtype">real(dp), intent(in)&#160;</td>
+          <td class="paramname"><em>x</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>ran_gauss_pdf Computes the probability density function (pdf) for a Gaussian distribution </p>
+<dl class="section return"><dt>Returns</dt><dd>Value of distribution at <code>x</code> </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>value of argument </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this interface was generated from the following file:<ul>
+<li>/home/fiol/Trabajos/fortran/numfor/src/randist/<a class="el" href="gauss_8f90.html">gauss.f90</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

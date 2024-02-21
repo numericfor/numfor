@@ -1,8 +1,8 @@
 var index =
 [
-    [ "Submodule Utils", "docutils.html", "docutils" ],
-    [ "Submodule Arrays", "docarrays.html", null ],
-    [ "Submodule interpolate", "docinterpolate.html", null ],
-    [ "Submodule integrate", "docintegrate.html", null ],
-    [ "Submodule random", "docrandom.html", null ]
+    [ "Submodule Utils", "submodule-utils.html", "submodule-utils" ],
+    [ "Submodule Arrays", "submodule-arrays.html", null ],
+    [ "Submodule interpolate", "submodule-interpolate.html", null ],
+    [ "Submodule Integrate", "submodule-integrate.html", null ],
+    [ "Submodule random", "submodule-random.html", null ]
 ];

@@ -1,6 +1,6 @@
 !> @file random.f90 for random number generator (and distributions)
 !> @author Juan Fiol <juanfiol@gmail.com> (modifications, see real authors below)
-!! @date "2024-02-14 17:02:13"
+!! @date "2024-02-21 15:26:24"
 
 !> \defgroup randomnumber Random number generator
 !!
@@ -55,9 +55,9 @@ contains
   !! Samples are uniformly distributed over the half-open interval [low, high) (includes low, but excludes high).
   function rng_real_interval(a, b) result(y)
     implicit none
-    real(dp) :: y !<
-    real(dp), intent(IN) :: a !<
-    real(dp), intent(IN) :: b !<
+    real(dp) :: y !< random float number
+    real(dp), intent(IN) :: a !< lower limit
+    real(dp), intent(IN) :: b !< higher limit
     y = (b - a) * random_real() + a
   end function rng_real_interval
 
@@ -98,9 +98,9 @@ contains
   !> rng_int Computes a random integer in the range [low, high] inclusive
   function rng_int(low, high) result(y)
     implicit none
-    integer(i8) :: y !<
-    integer(i8), intent(IN) :: low !<
-    integer(i8), intent(IN) :: high !<
+    integer(i8) :: y !< random integer
+    integer(i8), intent(IN) :: low !< lower limit
+    integer(i8), intent(IN) :: high !< higher limit
     integer(i8) :: N
     N = high - low + 1
     y = rng_integer_pos(N) + low

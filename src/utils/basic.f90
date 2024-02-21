@@ -1,9 +1,9 @@
 !> @file basic.f90 contains module basic
-!! @date "2020-01-09 12:41:59"
+!! @date "2024-02-21 15:35:55"
 
 !> @ingroup utils
 !> This module will provide some basic convenience routines
-!! [Description](@ref docutils)
+!! [Description](@ref submodule-utils)
 !!
 !! Eventually it will provide:
 !!  - [X] types (real, double precision, infinite, etc)
@@ -57,17 +57,17 @@ module basic
     real(dp), public :: elapsed !< Elapsed time (in seconds)
   contains
 
-    procedure :: start => start_timer
-    procedure :: stop => stop_timer
-    procedure :: show => print_elapsed
-    procedure, private :: add_timers
-    procedure, private :: assign_int
-    procedure, private :: assign
-    procedure, private :: divide_T_int
+    procedure :: start => start_timer !< start time
+    procedure :: stop => stop_timer   !< stop time
+    procedure :: show => print_elapsed !< Show time
+    procedure, private :: add_timers   !< add times
+    procedure, private :: assign_int   !< assign int to time
+    procedure, private :: assign       !< assign to time
+    procedure, private :: divide_T_int !< divide time in intervals
 
-    generic :: Operator(+) => add_timers
-    generic :: Operator(/) => divide_T_int
-    generic :: Assignment(=) => assign_int, assign
+    generic :: Operator(+) => add_timers   !< add times
+    generic :: Operator(/) => divide_T_int         !< divide time in intervals
+    generic :: Assignment(=) => assign_int, assign !< Assign a time
 
   end type timer
 
@@ -143,10 +143,11 @@ contains
   end subroutine reset_timer
 
   !> Assign an integer value to a timer
+  !!
   subroutine assign_int(T, val)
     implicit none
-    class(timer), intent(OUT) :: T !<
-    integer, intent(IN) :: val
+    class(timer), intent(OUT) :: T !< Time
+    integer, intent(IN) :: val !< integer time
     T%start_date = 0
     T%stop_date = 0
     T%date_elapsed = val
@@ -158,9 +159,9 @@ contains
   !> Divide T by an integer value
   function divide_T_int(T1, val) result(T)
     implicit none
-    class(timer), intent(IN) :: T1 !<
-    integer, intent(IN) :: val
-    type(timer) :: T
+    class(timer), intent(IN) :: T1 !< Time
+    integer, intent(IN) :: val  !< integer
+    type(timer) :: T !< Resulting time
     integer :: i
     integer :: n
     T%start_date = T1%start_date
@@ -176,11 +177,12 @@ contains
 
   end function divide_T_int
 
-  !> Assign values from a timer
+  !> Assign values from a timer to another
+  !!
   subroutine assign(T, T1)
     implicit none
-    class(timer), intent(OUT) :: T !<
-    type(timer), intent(IN) :: T1 !<
+    class(timer), intent(OUT) :: T !< New time
+    type(timer), intent(IN) :: T1 !< Original time
     T%start_date = T1%start_date
     T%stop_date = T1%stop_date
     T%date_elapsed = T1%date_elapsed
@@ -201,6 +203,7 @@ contains
   end function record_date
 
   !< Start the timer
+  !!
   subroutine start_timer(T)
     implicit none
     class(timer), intent(out) :: T !< Timer
@@ -225,12 +228,13 @@ contains
 
   end subroutine stop_timer
 
-  !> add_timers Computes
+  !> add_timers Adds two time intervals
+  !!
   function add_timers(T1, T2) result(T)
     implicit none
-    class(timer), intent(IN) :: T1 !<
-    class(timer), intent(IN) :: T2 !<
-    type(timer) :: T !<
+    class(timer), intent(IN) :: T1 !< first time interval
+    class(timer), intent(IN) :: T2 !< second time interval
+    type(timer) :: T !< Resulting time
     integer :: i
 
     T%elapsed = T1%elapsed + T2%elapsed
@@ -266,6 +270,7 @@ contains
   end subroutine diff_timer
 
   !> print_elapsed time to unit or stdout
+  !!
   subroutine print_elapsed(T, unit)
     implicit none
     class(timer), intent(in) :: T !< Timer

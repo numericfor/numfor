@@ -15,11 +15,11 @@ Further information on the capabilities of the library may be learned by explori
 
 
 It provides:
-  + A @subpage docutils utils with basic, non-specific, functionality used in many (most?) scientific programming.
-  + A @subpage docarrays with basic functionality to work with arrays, including generation of grids, search of elements and sorting.
-  + A @subpage docinterpolate with routines to perform interpolation, fitting of data, and some work on polynomials.
-  + A @subpage docintegrate with routines to perform integration of real and complex functions, and of sampled data.
-  + A @subpage docrandom with routines to perform integration of real and complex functions, and of sampled data.
+  + @subpage submodule-utils "Some basic, non-specific routines" with functionality used in many (most?) scientific programming.
+  + @subpage submodule-arrays, with basic functionality to work with arrays, including generation of grids, search of elements and sorting.
+  + @subpage submodule-interpolate has routines to perform interpolation, fitting of data, and some work on polynomials.
+  + @subpage submodule-integrate with routines to perform integration of real and complex functions, and of sampled data.
+  + Still Incomplete @subpage submodule-random "routines for random" generation and some distributions.
 
 
 You can also visit the [documentation for the code](namespaces.html)

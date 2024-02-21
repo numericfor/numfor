@@ -1,8 +1,8 @@
 !> @file grids.f90
-!! @date "2019-12-20 10:29:30"
+!! @date "2024-02-21 15:02:59"
 
 !> This module provides convenience routines to create grids
-!! Description: @ref docarrays
+!! Description: @ref submodule-arrays
 !!
 module grids
   use basic, only: dp, Zero, Small, stdout, print_msg
@@ -172,7 +172,7 @@ contains
         ru = 2 * ru
         fu = a * ru + b * log(ru) + c_i
         if (fu >= Zero) exit search
-      enddo search
+      end do search
 
       bisection: do
         rr = 0.5d0 * (ru + rl)
@@ -181,7 +181,7 @@ contains
           ru = rr
         else
           rl = rr
-        endif
+        end if
         if ((ru - rl) <= accuracy * rr) exit bisection
       end do bisection
 

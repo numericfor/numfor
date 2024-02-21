@@ -1,4 +1,4 @@
-# Submodule interpolate {#docinterpolate}
+# Submodule interpolate
 
 This submodule has several related features:
 

@@ -1,4 +1,4 @@
-# Submodule Arrays {#docarrays}
+# Submodule Arrays
 
 This module contains routines to generate and operate on arrays
 
@@ -113,6 +113,6 @@ It is nearly uniform, with spacing approximately `step` when `ratio`\f$\ll 1\f$.
 
 ## @anchor descsorting Search and sort of arrays
 
-There are routines implemented to [sort](@ref sort()) and [search sorted arrays](@ref searchsorted). 
+There are routines implemented for @ref sorting and search sorted arrays. 
 
 ## @anchor deschistogram Histograms

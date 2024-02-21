@@ -1,9 +1,9 @@
 !> @file tanhsinh.f90 provides routines using the tanh-sinh method
-!! @date "2020-01-09 12:47:50 fiol"
+!! @date "2024-02-21 15:01:51"
 
 !> @ingroup integrate
 !> Implementation of tanh-sinh integration method.
-!! Description: @ref docintegrate
+!! Description: @ref submodule-integrate
 module qtanhsinh
   USE utils, only: dp, Zero, M_PI_2, str, print_msg
   USE func_integ
