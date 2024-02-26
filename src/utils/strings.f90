@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2024-02-21 15:02:28"
+!! @date "2024-02-26 18:32:32"
 
 !> @ingroup utils
 !> This module defines functions to manipulate strings of characters.
@@ -430,12 +430,13 @@ contains
     integer :: i
 
     rr = abs(rin - int(rin))         !decimal part
-    if (rr < Small) then
+    if (rin == 0._dp) then
+      Sout = '0'
+    else if ((rr < Small) .and. (int(rin) /= 0)) then ! If difference with integer is small...
       Sout = i2str(int(rin))
     else if ((abs(rin) >= 1.e-4_dp) .and. (abs(rin) < 1.e4_dp)) then
       write (S_, '(f23.13)') rin
       Sout = lower(rstrip(lstrip(S_), '0 '))
-
     else
       write (S_, '(es25.13)') rin
       S_ = lower(rstrip(lstrip(S_), ' '))

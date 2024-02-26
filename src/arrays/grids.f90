@@ -1,5 +1,5 @@
 !> @file grids.f90
-!! @date "2024-02-21 15:02:59"
+!! @date "2024-02-26 17:16:17"
 
 !> This module provides convenience routines to create grids
 !! Description: @ref submodule-arrays
@@ -223,7 +223,6 @@ contains
   end function arange
 
 end module grids
-
 ! Local variables:
 ! eval: (add-hook 'before-save-hook 'time-stamp)
 ! time-stamp-start: "date[ ]+\\\\?[\"]+"
