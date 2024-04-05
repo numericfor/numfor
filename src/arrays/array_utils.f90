@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2022-06-20 11:47:13"
+!! @date "2024-04-05 16:39:47"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -12,6 +12,28 @@ module array_utils
   Private
   PUBLIC :: allclose, save_array, mean, std, merge_sorted
   ! PUBLIC :: savetxt
+
+  !> save_array Stores an 1D or 2D array to file or stdout
+  !!
+  !! Examples:
+  !!```
+  !!  real(dp), dimension(20), allocatable :: x,y
+  !!  real(dp), dimension(20,2) :: z
+  !!  character(len=:), allocatable :: filename
+  !!  filename = "output.dat"
+  !!  x = linspace(0, 10, 20)
+  !!  y = -x**2/10
+  !!  save_array(x)  ! One array in one column to stdout
+  !!  save_array(x, 1, filename) ! One array in one column to file
+  !!  save_array([x,y], 2, filename) ! Two arrays in two columns to file
+  !!  save_array([x,y], 2, fmt='g12.5', fout=filename) ! Two arrays in two columns to file with format
+  !!  save_array(z)  ! A 2D array in two columns to stdout
+  !!  save_array(z, fmt='g12.5', fout=filename) ! A 2D array in two columns to file with format
+  !!```
+  interface save_array
+    module procedure save_array1D
+    module procedure save_array2D
+  end interface save_array
 
 contains
 
@@ -265,7 +287,7 @@ contains
   !!  save_array([x,y], 2, filename) ! Two arrays in two columns to file
   !!  save_array([x,y], 2, fmt='g12.5', fout=filename) ! Two arrays in two columns to file with format
   !!```
-  subroutine save_array(X, ncols, fname, fmt, header, unit)
+  subroutine save_array1D(X, ncols, fname, fmt, header, unit)
     implicit none
     real(dp), dimension(:), intent(IN) :: X        !< Array to store
     integer, optional, intent(IN) :: ncols !< Number of columns to write. Default 1
@@ -291,6 +313,8 @@ contains
       & number of columns"//str(ncols_)//" and size(X)="//str(size(X))&
       &//" for saving", "save_arrays", errcode=1)
 
+    b = reshape(X, [ncols_, nrows_], order=[2, 1])
+
     ! Si fname está presente => Toma precedencia sobre unit.
     closef = .False.
     u = stdout    ! Si no está ni fname ni unit está usa stdout
@@ -304,8 +328,6 @@ contains
       ! invoking the function
       IF (unit >= 0 .and. unit <= 99) u = unit
     end if
-
-    b = reshape(X, [ncols_, nrows_], order=[2, 1])
 
     if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
       if (index(fmt, '(') == 0) then
@@ -325,7 +347,66 @@ contains
     end do
 
     IF (closef) close (u)
-  end subroutine save_array
+  end subroutine save_array1D
+
+  subroutine save_array2D(X, fname, fmt, header, unit)
+    implicit none
+    real(dp), dimension(:, :), intent(IN) :: X        !< Array to store
+
+    character(len=*), optional, intent(IN) :: fname  !< Filename. Default: stdout
+    character(len=*), optional, intent(IN) :: fmt    !< String with format. Default 'g0.5' for each data
+    character(len=*), optional, intent(IN) :: header  !< If present, text to write before data.
+    integer, optional, intent(IN) :: unit            !< If the file is already open, the unit at which it is associated.
+
+    integer, dimension(2) :: theshape
+    integer :: ncols_, nrows_
+    integer :: i
+    integer :: u
+
+    character(len=32) :: form = "g0.5" ! Default
+    character(len=32) :: formato
+    logical :: closef
+
+    theshape = shape(X)
+    ncols_ = theshape(1)
+    nrows_ = theshape(2)
+    IF (nrows_ * ncols_ /= size(X)) call print_msg("Incompatible&
+      & number of columns"//str(ncols_)//" and size(X)="//str(size(X))&
+      &//" for saving", "save_arrays", errcode=1)
+
+    ! Si fname está presente => Toma precedencia sobre unit.
+    closef = .False.
+    u = stdout    ! Si no está ni fname ni unit está usa stdout
+
+    if (Present(fname)) then
+      if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
+        open (newunit=u, file=trim(fname))
+        closef = .True.
+      end if
+    else if (Present(unit)) then ! The file was already open before
+      ! invoking the function
+      IF (unit >= 0 .and. unit <= 99) u = unit
+    end if
+
+    if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
+      if (index(fmt, '(') == 0) then
+        write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(fmt), '&
+          &,1x))'
+      else
+        formato = fmt
+      end if
+    else
+      write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(form), '&
+        &,1x))'
+    end if
+
+    if (Present(header)) write (u, '(A)') "# "//trim(header)
+    do i = 1, nrows_
+      write (u, formato) X(:, i)
+    end do
+
+    IF (closef) close (u)
+  end subroutine save_array2D
 end module array_utils
 
 ! Local variables:
