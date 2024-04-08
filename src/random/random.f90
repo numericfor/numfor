@@ -1,6 +1,6 @@
 !> @file random.f90 for random number generator (and distributions)
 !> @author Juan Fiol <juanfiol@gmail.com> (modifications, see real authors below)
-!! @date "2024-04-08 16:13:26"
+!! @date "2024-04-08 16:35:33"
 
 !> \defgroup randomnumber Random number generator
 !!
@@ -27,7 +27,9 @@ module random
     module procedure init_genrand64_empty
   end interface random_seed
 
-  !> @ingroup randomnumber Function returning a real number in the semi-open interval [0,1)
+  !> @ingroup randomnumber
+  !
+  ! Function returning a real number in the semi-open interval [0,1)
   interface random_real
     module procedure genrand64_real2, rng_real_interval
   end interface random_real
@@ -38,7 +40,8 @@ module random
     module procedure genrand64_real3
   end interface random_real_pos
 
-  !> @ingroup randomnumber Function returning an integer number in the open interval (0,1)
+  !> @ingroup randomnumber
+  ! Function returning an integer number in the open interval (0,1)
   interface random_int
     module procedure genrand64_int64, rng_integer_pos, rng_int
   end interface random_int
@@ -64,7 +67,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!! random integer !!!!!!!!!!!!!!!!!!!!!!!!!!!
-  !> @ingroup randomnumber rng_integer_pos returns a random integer in the range [0, N), or equivalently [0, N-1]
+  !> @ingroup randomnumber
   !!
   !!  This function returns a random integer from 0 to N-1 inclusive
   !!  by scaling down and/or discarding samples.

@@ -1,0 +1,28 @@
+var basic_8f90 =
+[
+    [ "timer", "structbasic_1_1timer.html", "structbasic_1_1timer" ],
+    [ "is_inf", "basic_8f90.html#a07721b6baf75580665bf22c2f52d284f", null ],
+    [ "print_msg", "basic_8f90.html#a984198f5a2caf255ca9e50c4abb2fbb0", null ],
+    [ "c_i1", "basic_8f90.html#ab97cc58b14478161bc3e51c18ebec3c3", null ],
+    [ "c_r1", "basic_8f90.html#ade51fcd50a3d2ba2216e34d3ac8dfb7d", null ],
+    [ "c_z0", "basic_8f90.html#a57dd169e92df1feffa3219fc56299dff", null ],
+    [ "deg2rad", "basic_8f90.html#ae78ba929ad6c33409f2aad420a04f19e", null ],
+    [ "m_1_pi", "basic_8f90.html#a28988fa898aa05b7dd1003671f665fa3", null ],
+    [ "m_2_pi", "basic_8f90.html#a2c2c7a2a9b6774b45849082dec962f05", null ],
+    [ "m_2_sqrtpi", "basic_8f90.html#a6161e237eb9c062a8378d40decbec487", null ],
+    [ "m_dpi", "basic_8f90.html#a34eb0e366773004d5b90f09a7b2516a5", null ],
+    [ "m_e", "basic_8f90.html#a0bc5a33bfec41e7feeacf92e2218e09b", null ],
+    [ "m_ln2", "basic_8f90.html#a9574d38782deafeeadf52b2d3be5c925", null ],
+    [ "m_lnpi", "basic_8f90.html#a81bde4a4f6d01aee827e6a780c604a5b", null ],
+    [ "m_log10e", "basic_8f90.html#aea3cc05a9dcdbd019c6aae7db2c6f9ac", null ],
+    [ "m_log2e", "basic_8f90.html#a7a1ca99d543059a012514957a10bfdfc", null ],
+    [ "m_pi", "basic_8f90.html#a002850500adb361973d2a9f7d298dd1d", null ],
+    [ "m_pi_2", "basic_8f90.html#a0cecc59c4e22d6713077c17fd292dc19", null ],
+    [ "m_pi_4", "basic_8f90.html#afeac79e16c53b8fa87150a19147e88e6", null ],
+    [ "m_sqrtpi", "basic_8f90.html#af9851286261f7d693dbfc286302705f3", null ],
+    [ "nf_inf", "basic_8f90.html#ad1a8b29340a2908b7033eb4211d09066", null ],
+    [ "nf_minf", "basic_8f90.html#a040a32a70e1b637210c09d448255e3ee", null ],
+    [ "rad2deg", "basic_8f90.html#ae0145e14b41d2e23f798ef48b15c8a59", null ],
+    [ "small", "basic_8f90.html#acd2a55c52242c43c2920da588804c69b", null ],
+    [ "zero", "basic_8f90.html#ae5f652a6d3a078398037227525c4fddd", null ]
+];

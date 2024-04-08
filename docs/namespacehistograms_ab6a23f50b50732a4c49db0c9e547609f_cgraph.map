@@ -1,0 +1,12 @@
+<map id="histogram" name="histogram">
+<area shape="rect" id="Node000001" title="Computes the histogram of an array of data." alt="" coords="5,81,93,109"/>
+<area shape="rect" id="Node000002" href="$namespacegrids.html#a3081ec9dec23b58d26f36c1833aaf72b" title=" " alt="" coords="147,5,263,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,78,160,38,163,42,81,83"/>
+<area shape="rect" id="Node000003" href="$namespacearray__utils.html#a4cc2fbe3b571e7bd404b321b62951b14" title="mean Computes the arithmetic mean of the array." alt="" coords="317,108,452,136"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="93,90,175,88,269,93,319,101,318,107,269,98,175,93,93,95"/>
+<area shape="rect" id="Node000004" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="141,107,269,134"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="93,100,127,105,126,110,93,105"/>
+<area shape="rect" id="Node000005" href="$namespacearray__utils.html#a10a6d5cd3333d473442c8955b500e34b" title="std Computes the standard deviation of the array." alt="" coords="146,159,264,186"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="75,107,142,143,156,150,154,155,139,148,73,112"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="256,156,318,138,320,143,257,161"/>
+</map>

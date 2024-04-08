@@ -1,0 +1,7 @@
+<map id="assignment" name="assignment">
+<area shape="rect" id="Node000001" title="assign int to time" alt="" coords="5,32,103,60"/>
+<area shape="rect" id="Node000002" href="$namespacebasic.html#a07721b6baf75580665bf22c2f52d284f" title="is_inf Checks if the argument is plus or minus infinite." alt="" coords="166,5,264,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,35,151,27,151,32,104,40"/>
+<area shape="rect" id="Node000003" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="151,57,279,85"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="104,51,136,56,135,61,103,56"/>
+</map>

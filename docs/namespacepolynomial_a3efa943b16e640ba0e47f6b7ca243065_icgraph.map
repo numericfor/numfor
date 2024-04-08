@@ -1,0 +1,9 @@
+<map id="polyder" name="polyder">
+<area shape="rect" id="Node000001" title="polyder Computes the derivative of a polynomial. Returns an array with the coefficients" alt="" coords="206,83,276,111"/>
+<area shape="rect" id="Node000002" href="$interfacecsplines_1_1csplevder.html#a3a1ea06aec0590e1a460e1537faab7c6" title="Interpolates the first derivative of a function." alt="" coords="9,5,154,50"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,79,133,53,135,48,195,74"/>
+<area shape="rect" id="Node000003" href="$interfacecsplines_1_1csplevder.html#a187a12267d4eac7013f8f066025662f3" title=" " alt="" coords="5,75,158,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="191,100,158,100,158,94,191,94"/>
+<area shape="rect" id="Node000004" href="$namespacecsplines.html#ab6c537a3870a8c4d22112fa96ee6617c" title="csplder Computes the derivative of the cubic spline" alt="" coords="17,143,146,171"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="195,120,159,134,128,145,126,140,157,129,193,115"/>
+</map>

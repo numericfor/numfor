@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2024-04-05 16:39:47"
+!! @date "2024-04-08 16:28:25"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -273,20 +273,7 @@ contains
   !   IF (closef) close (u)
   ! end subroutine savetxt
 
-  !> save_array Stores an array to file or stdout
-  !!
-  !! Examples:
-  !!```
-  !!  real(dp), dimension(20), allocatable :: x,y
-  !!  character(len=:), allocatable :: filename
-  !!  filename = "output.dat"
-  !!  x = linspace(0, 10, 20)
-  !!  y = -x**2/10
-  !!  save_array(x)  ! One array in one column to stdout
-  !!  save_array(x, 1, filename) ! One array in one column to file
-  !!  save_array([x,y], 2, filename) ! Two arrays in two columns to file
-  !!  save_array([x,y], 2, fmt='g12.5', fout=filename) ! Two arrays in two columns to file with format
-  !!```
+  ! save_array1D Stores an array to file or stdout
   subroutine save_array1D(X, ncols, fname, fmt, header, unit)
     implicit none
     real(dp), dimension(:), intent(IN) :: X        !< Array to store

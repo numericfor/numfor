@@ -1,0 +1,13 @@
+<map id="lstrip" name="lstrip">
+<area shape="rect" id="Node000001" title="This function returns a copy of the string with leading chars removed." alt="" coords="291,57,345,85"/>
+<area shape="rect" id="Node000002" href="$interfacestrings_1_1str.html#af1543a8b2e88c9e10a7734e303bb7ff1" title=" " alt="" coords="5,5,145,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="276,59,242,48,144,30,145,25,244,43,278,54"/>
+<area shape="rect" id="Node000003" href="$interfacestrings_1_1str.html#a324fd4b6dc7f6f4856440c7917214803" title=" " alt="" coords="11,109,139,137"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="278,89,244,99,140,118,139,113,242,94,276,84"/>
+<area shape="rect" id="Node000004" href="$namespacestrings.html#a20de69000aabc829d940dcc9a3926cef" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="193,57,243,85"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="276,74,243,74,243,69,276,69"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="178,60,114,36,116,31,180,55"/>
+<area shape="poly" id="edge6_Node000004_Node000003" title=" " alt="" coords="180,88,116,111,114,106,178,83"/>
+<area shape="rect" id="Node000005" href="$interfacestrings_1_1str.html#ac2d68b92f3e32db83211477ca2d2aa38" title=" " alt="" coords="11,57,139,85"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="177,74,139,74,139,69,177,69"/>
+</map>

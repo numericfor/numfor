@@ -1,0 +1,9 @@
+<map id="strip" name="strip">
+<area shape="rect" id="Node000001" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="193,57,243,85"/>
+<area shape="rect" id="Node000002" href="$interfacestrings_1_1str.html#af1543a8b2e88c9e10a7734e303bb7ff1" title=" " alt="" coords="5,5,145,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,60,114,36,116,31,180,55"/>
+<area shape="rect" id="Node000003" href="$interfacestrings_1_1str.html#ac2d68b92f3e32db83211477ca2d2aa38" title=" " alt="" coords="11,57,139,85"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="177,74,139,74,139,69,177,69"/>
+<area shape="rect" id="Node000004" href="$interfacestrings_1_1str.html#a324fd4b6dc7f6f4856440c7917214803" title=" " alt="" coords="11,109,139,137"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,88,116,111,114,106,178,83"/>
+</map>

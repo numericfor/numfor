@@ -1,0 +1,28 @@
+var namespacebasic =
+[
+    [ "timer", "structbasic_1_1timer.html", "structbasic_1_1timer" ],
+    [ "is_inf", "namespacebasic.html#a07721b6baf75580665bf22c2f52d284f", null ],
+    [ "print_msg", "namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0", null ],
+    [ "c_i1", "namespacebasic.html#ab97cc58b14478161bc3e51c18ebec3c3", null ],
+    [ "c_r1", "namespacebasic.html#ade51fcd50a3d2ba2216e34d3ac8dfb7d", null ],
+    [ "c_z0", "namespacebasic.html#a57dd169e92df1feffa3219fc56299dff", null ],
+    [ "deg2rad", "namespacebasic.html#ae78ba929ad6c33409f2aad420a04f19e", null ],
+    [ "m_1_pi", "namespacebasic.html#a28988fa898aa05b7dd1003671f665fa3", null ],
+    [ "m_2_pi", "namespacebasic.html#a2c2c7a2a9b6774b45849082dec962f05", null ],
+    [ "m_2_sqrtpi", "namespacebasic.html#a6161e237eb9c062a8378d40decbec487", null ],
+    [ "m_dpi", "namespacebasic.html#a34eb0e366773004d5b90f09a7b2516a5", null ],
+    [ "m_e", "namespacebasic.html#a0bc5a33bfec41e7feeacf92e2218e09b", null ],
+    [ "m_ln2", "namespacebasic.html#a9574d38782deafeeadf52b2d3be5c925", null ],
+    [ "m_lnpi", "namespacebasic.html#a81bde4a4f6d01aee827e6a780c604a5b", null ],
+    [ "m_log10e", "namespacebasic.html#aea3cc05a9dcdbd019c6aae7db2c6f9ac", null ],
+    [ "m_log2e", "namespacebasic.html#a7a1ca99d543059a012514957a10bfdfc", null ],
+    [ "m_pi", "namespacebasic.html#a002850500adb361973d2a9f7d298dd1d", null ],
+    [ "m_pi_2", "namespacebasic.html#a0cecc59c4e22d6713077c17fd292dc19", null ],
+    [ "m_pi_4", "namespacebasic.html#afeac79e16c53b8fa87150a19147e88e6", null ],
+    [ "m_sqrtpi", "namespacebasic.html#af9851286261f7d693dbfc286302705f3", null ],
+    [ "nf_inf", "namespacebasic.html#ad1a8b29340a2908b7033eb4211d09066", null ],
+    [ "nf_minf", "namespacebasic.html#a040a32a70e1b637210c09d448255e3ee", null ],
+    [ "rad2deg", "namespacebasic.html#ae0145e14b41d2e23f798ef48b15c8a59", null ],
+    [ "small", "namespacebasic.html#acd2a55c52242c43c2920da588804c69b", null ],
+    [ "zero", "namespacebasic.html#ae5f652a6d3a078398037227525c4fddd", null ]
+];

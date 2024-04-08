@@ -1,0 +1,110 @@
+\_form#0=26x12:$\ll 1$
+\_form#1=161x39:\[J \approx I := \int_a^b f(x) w(x) dx\]
+\_form#2=32x17:$w(x)$
+\_form#3=60x17:$w(x) = 1$
+\_form#4=68x17:$10^{-3}, 10^{-4}$
+\_form#5=36x11:$x \sim 1$
+\_form#6=176x29:\[ x := g(t) = \tanh\left(\frac{\pi}{2}\sinh t\right)\,\]
+\_form#7=194x44:\[ \int_{-1}^{1} f(x) \, dx \approx \sum_{k=-\infty}^\infty w_{k} f(x_{k}),\]
+\_form#8=207x29:\[ x_k := g(h k) = \tanh\left(\frac{\pi}{2}\sinh kh\right) \]
+\_form#9=230x41:\[w_k := g'( h k) = \frac{\frac{\pi}{2}h \cosh(kh)}{\cosh^{2} \big(\frac{\pi}{2} \sinh (kh) \big)}.\]
+\_form#10=30x17:$(0,1]$
+\_form#11=53x17:$\cos{(\omega x)}$
+\_form#12=51x17:$\sin{(\omega x)}$
+\_form#13=107x18:$(x - a)^\alpha (b - x)^\beta$
+\_form#14=177x18:$(x - a)^\alpha (b - x)^\beta \log{(x-a)}$
+\_form#15=176x18:$(x - a)^\alpha (b - x)^\beta \log{(b-x)}$
+\_form#16=246x18:$(x - a)^\alpha (b - x)^\beta \log{(x-a)} \log{(b-x)}$
+\_form#17=32x17:$(a,b)$
+\_form#18=456x39:\[
+\int_{0}^{1} \left| x^{2} + 2 x -1 \right|^{-1/2} \, dx = \arcsin(1/\sqrt(3)) - \frac{\pi}{2} - \log(3)/2 \approx 1.504622
+\]
+\_form#19=45x17:$\sqrt{3}-1$
+\_form#20=36x15:$k \le 5$
+\_form#21=9x12:$J$
+\_form#22=162x39:\[ J \approx I =\int_{a}^{b} f(x, args) dx \]
+\_form#23=239x17:\[ || I - J || \le \max ( epsabs, epsrel \cdot ||I|| ). \]
+\_form#24=170x36:\[ J \approx I =\int_{a}^{\infty} f(x, args) dx \]
+\_form#25=141x17:$x = \tanh( \pi \sinh(t) /2)$
+\_form#26=35x14:$a \le 3$
+\_form#27=8x8:$a$
+\_form#28=35x11:$ t = 3$
+\_form#29=9x8:$x$
+\_form#30=41x17:$[-a, a]$
+\_form#31=9x12:$h$
+\_form#32=167x39:\[ J \approx I := \int_{a}^{b} f(x, args) dx \]
+\_form#33=167x39:\[ J \approx I := \int_{a}^{b} f(x) W(x) dx \]
+\_form#34=236x17:\[ || I - J || \le \max ( \mathrm{epsabs}, \mathrm{epsrel} \cdot ||I|| ). \]
+\_form#35=113x17:$ f(x)=W(x)g(x)$
+\_form#36=29x17:$g(x) $
+\_form#37=105x17:$ W(x)=\cos(\omega x)$
+\_form#38=104x17:$ W(x)= \sin(\omega x) $
+\_form#39=113x17:$f(x)=W(x) g(x)$
+\_form#40=29x17:$g(x)$
+\_form#41=336x18:$ W(x)=(x-a)^{\alpha} (b-x)^{\beta}  (\log(x-a))^L  (\log(b-x))^K  $
+\_form#42=57x15:$K, L = 0$
+\_form#43=65x15:$ \alpha, \beta > -1 $
+\_form#44=116x17:$ W(x)=1/(x-c)$
+\_form#45=51x17:$(a,+\infty)$
+\_form#46=111x17:$x = a + (1-t)/t$
+\_form#47=263x39:\[
+ \int_{a}^{+\infty} dx f(x) = \int_0^1 dt f(a + (1-t)/t)/t^2
+ \]
+\_form#48=50x17:$(-\infty, b)$
+\_form#49=110x17:$x = b - (1-t)/t$
+\_form#50=257x39:\[
+ \int_{-\infty}^{b} dx f(x) = \int_0^1 dt f(b - (1-t)/t)/t^2
+ \]
+\_form#51=71x17:$(-\infty,+\infty)$
+\_form#52=86x17:$x = (1-t)/t$
+\_form#53=365x39:\[\int_{-\infty}^{+\infty}dx f(x)=\int_0^1 dt\Big(f((1 - t) / t) + f(-(1 - t) / t) \Big) / t^2.\]
+\_form#54=134x39:\[ I= \int_{a}^{b} f(x) W(x) dx \]
+\_form#55=104x17:$ W(x) = \sin(\omega x)$
+\_form#56=105x17:$ W(x) = \cos(\omega x)$
+\_form#57=140x36:\[ I= \int_{a}^{\infty} f(x) W(x) dx \]
+\_form#58=171x95:\begin{align*}
+     C_1 &= [a,a+c] \\
+     C_2 &= [a+c,a+2c] \\
+     \vdots & \\
+     C_k &= [a+(k-1)c,a+kc]
+     \end{align*}
+\_form#59=167x17:$ c = (2 \, \mathrm{floor}(|\omega|) + 1) \pi/|\omega| $
+\_form#60=35x17:$ W(x) $
+\_form#61=182x18:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta $
+\_form#62=251x18:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(x-a) $
+\_form#63=249x18:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(b-x) $
+\_form#64=317x18:$ \Rightarrow W(x) = (x-a)^\alpha (b-x)^\beta \log(x-a) \log(b-x) $
+\_form#65=80x20:$ W(x) = \frac{1}{x-c} $
+\_form#66=36x8:$x = c$
+\_form#67=36x8:$x =
+ c$
+\_form#68=93x23:$ I =\int_{a}^{b} f(x) dx $
+\_form#69=107x23:$ I_1 =\int_{a}^{b} |f(x)| dx $
+\_form#70=185x23:$ I_2 =\int_{a}^{b} |f(x)-I/(b-a)| dx $
+\_form#71=96x17:$n=(m-1)/2$
+\_form#72=129x23:$ I =\int_{a}^{b} W(x) f(x) dx $
+\_form#73=143x23:$ I_1 =\int_{a}^{b} W(x) |f(x)| dx $
+\_form#74=221x23:$ I_2 =\int_{a}^{b} |W(x) f(x)-I/(b-a)| dx $
+\_form#75=185x33:\[  f(x) = \sum_{k} (\mathrm{Cheb}(k) T_{k-1}(x) , \]
+\_form#76=36x17:$ T_{k}(x)$
+\_form#77=86x17:$ \cos(k*\pi/24)$
+\_form#78=83x15:$k = 1, \dots, 11 $
+\_form#79=246x18:$f(t) \approx S(1) t^3 + S(2) t^2 + S(3) t + S(4)$
+\_form#80=66x14:$t = x - x_{i}$
+\_form#81=326x17:$ P_i(X) = S(4,i)+h (S(3,i)+h (S(2,i)+h S(1,i))) $
+\_form#82=299x18:$ P_i(X) = S(1,i) h^3 + S(2,i) h^2 S(3,i) h + S(4,i) $
+\_form#83=80x17:$ h = x-x(i) $
+\_form#84=146x18:$ (m-\sqrt{2 m},m+\sqrt{2 m})$
+\_form#85=92x17:$ s= m-\sqrt{2 m}$
+\_form#86=15x11:$x_{0}$
+\_form#87=11x11:$\mu$
+\_form#88=255x35:\[
+    p(x) dx = {1 \over \mu} \exp(-x/\mu) dx \quad, \qquad x \ge 0
+ \]
+\_form#89=9x8:$\sigma$
+\_form#90=270x36:\[ p(x) dx = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-(x-x_{0})^2 / 2\sigma^2) dx \]
+\_form#91=192x36:\[ p(x) = {1 \over \sqrt{2 \pi \sigma^2}} \exp (-x^2 / 2\sigma^2) \]
+\_form#92=30x17:$[a, b)$
+\_form#93=35x14:$b > a$
+\_form#94=44x17:$(b-a)$
+\_form#95=11x8:$ \pi $
