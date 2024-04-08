@@ -1,10 +1,5 @@
 <map id="mean" name="mean">
-<area shape="rect" id="Node000001" title="mean Computes the arithmetic mean of the array." alt="" coords="501,14,560,42"/>
-<area shape="rect" id="Node000002" href="$namespacehistograms.html#ab6a23f50b50732a4c49db0c9e547609f" title="Computes the histogram of an array of data." alt="" coords="196,14,364,42"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="486,30,364,30,364,25,486,25"/>
-<area shape="rect" id="Node000004" href="$namespacearray__utils.html#a10a6d5cd3333d473442c8955b500e34b" title="std Computes the standard deviation of the array." alt="" coords="412,39,453,67"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="488,41,455,50,453,45,486,36"/>
-<area shape="rect" id="Node000003" href="$structhistograms_1_1histog.html#ad4d46da24e198143fc3193da5933ca6b" title="clean&#45;up" alt="" coords="5,5,148,50"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="181,30,148,30,148,25,181,25"/>
-<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="397,50,364,44,365,39,398,45"/>
+<area shape="rect" id="node1" title="mean Computes the arithmetic mean of the array." alt="" coords="313,5,372,31"/>
+<area shape="rect" id="node2" href="$namespacehistograms.html#ab6a23f50b50732a4c49db0c9e547609f" title="Computes the histogram of an array of data." alt="" coords="5,5,175,31"/>
+<area shape="rect" id="node3" href="$namespacearray__utils.html#a10a6d5cd3333d473442c8955b500e34b" title="std Computes the standard deviation of the array." alt="" coords="223,31,265,56"/>
 </map>

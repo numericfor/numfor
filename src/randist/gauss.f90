@@ -1,6 +1,6 @@
 !> @file gauss.f90 for Gaussian random distributions
 !> @author Juan Fiol <juanfiol@gmail.com>
-!! @date "2024-02-21 15:43:45"
+!! @date "2024-04-07 23:54:22"
 
 !> @ingroup randomdist
 !! Normal random distribution
@@ -43,8 +43,7 @@ module gauss
     module procedure :: std_norm3d, std_norm4d, std_norm5d
   end interface random_standard_normal
 
-  ! !> @ingroup randomdist
-
+  !> @ingroup randomdist
   !> Fills a scalar or array with random numbers following a normal (gaussian) distribution
   !!
   !! The general signature is `call random_normal([[loc,] scale,] x)` where the center `loc`=\f$x_{0}\f$ and the `scale`=\f$\sigma\f$ are optional, and `x` may be a scalar, vector (1D array), matrix (2D array), 3D-array, 4D-array, or 5D-array.

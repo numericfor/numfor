@@ -1,7 +1,5 @@
 var structquadpack_1_1d__qp__extra =
 [
-    [ "assignment", "structquadpack_1_1d__qp__extra.html#a6dd68a68e74fe1e5332fd03b8cb9a37f", null ],
-    [ "init", "structquadpack_1_1d__qp__extra.html#ae63f113ab729061e451e5e1869b28ad1", null ],
     [ "alist", "structquadpack_1_1d__qp__extra.html#a568bfef9ee268666ba13da3c8bf72aa2", null ],
     [ "blist", "structquadpack_1_1d__qp__extra.html#a76de18ff977dbd681e8b818177d26c72", null ],
     [ "elist", "structquadpack_1_1d__qp__extra.html#aaf2359643e55d33c572415aa4869f0c0", null ],

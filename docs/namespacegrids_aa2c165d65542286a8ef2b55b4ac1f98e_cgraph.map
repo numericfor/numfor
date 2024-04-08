@@ -1,7 +1,5 @@
 <map id="geomspace" name="geomspace">
-<area shape="rect" id="Node000001" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,5,102,33"/>
-<area shape="rect" id="Node000002" href="$namespacegrids.html#a1f40b4527fa35851fff5e3da0f68f16d" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="150,5,229,33"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,17,135,17,135,22,102,22"/>
-<area shape="rect" id="Node000003" href="$namespacegrids.html#a3081ec9dec23b58d26f36c1833aaf72b" title=" " alt="" coords="277,5,352,33"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="229,17,262,17,262,22,229,22"/>
+<area shape="rect" id="node1" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,5,103,31"/>
+<area shape="rect" id="node2" href="$namespacegrids.html#a1f40b4527fa35851fff5e3da0f68f16d" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="151,5,231,31"/>
+<area shape="rect" id="node3" href="$namespacegrids.html#a3081ec9dec23b58d26f36c1833aaf72b" title=" " alt="" coords="279,5,355,31"/>
 </map>

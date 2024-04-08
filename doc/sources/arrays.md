@@ -1,4 +1,4 @@
-# Submodule Arrays
+# Submodule Arrays {#submodule-arrays}
 
 This module contains routines to generate and operate on arrays
 
@@ -11,11 +11,11 @@ This module contains routines to generate and operate on arrays
 
 This submodule provides a few convenience routines to work with arrays
 
-  * function `allclose()`  Returns `.True.` if two arrays are element-wise equal within a tolerance.
-  * subroutine `save_array()` Stores an array to file or stdout
-  * function `mean()` Computes the arithmetic mean of the array. 
-  * function `std()` Computes the standard deviation of the array. 
-  * function `merge_sorted()` Creates a sorted array with values from two input sorted arrays
+  * function `array_utils::allclose()`  Returns `.True.` if two arrays are element-wise equal within a tolerance.
+  * subroutine `array_utils::save_array()` Stores an array to file or stdout
+  * function `array_utils::mean()` Computes the arithmetic mean of the array. 
+  * function `array_utils::std()` Computes the standard deviation of the array. 
+  * function `array_utils::merge_sorted()` Creates a sorted array with values from two input sorted arrays
 
   
 
@@ -23,9 +23,10 @@ This submodule provides a few convenience routines to work with arrays
 
 This submodule provides convenience routines to create commonly occurring grids, somewhat mimicking those appearing in `Numpy`:
 
-  * `linspace()` returns evenly (linearly) spaced numbers over a specified interval.
-  * `logspace()` and `geomspace()` return logarithmically evenly spaced numbers over a specified interval.
-  * `arange()` returns an array of **integer** numbers from a given interval.
+  * `grids::linspace()` returns evenly (linearly) spaced numbers over a specified interval.
+  * `grids::logspace()` and `grids::geomspace()` return logarithmically evenly spaced numbers over a specified interval.
+  * `grids::loglinspace()` returns spaced numbers that are approximately logarithmically spaced for smaller values and approximately linear at large values.
+  * `grids::arange()` returns an array of **integer** numbers from a given interval.
 
 ### @anchor desclinspace Equally spaced grids
 

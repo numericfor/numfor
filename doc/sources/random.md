@@ -1,4 +1,4 @@
-# Submodule random
+# Submodule random {#submodule-random}
 
 This module contains routines for
 

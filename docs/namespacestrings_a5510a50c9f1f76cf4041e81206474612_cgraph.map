@@ -1,5 +1,4 @@
 <map id="zfill" name="zfill">
-<area shape="rect" id="Node000001" title="Pad a string with zeroes (&quot;0&quot;) to specified width. If width is &lt;= input string width,..." alt="" coords="5,5,50,33"/>
-<area shape="rect" id="Node000002" href="$namespacestrings.html#a2d15c6ae6c38ba56f69544ecb09fa3be" title="Return True if S starts with the specified prefix, False otherwise." alt="" coords="98,5,184,33"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="50,17,83,17,83,22,50,22"/>
+<area shape="rect" id="node1" title="Pad a string with zeroes (&quot;0&quot;) to specified width. If width is &lt;= input string width,..." alt="" coords="5,5,51,31"/>
+<area shape="rect" id="node2" href="$namespacestrings.html#a2d15c6ae6c38ba56f69544ecb09fa3be" title="Return True if S starts with the specified prefix, False otherwise." alt="" coords="99,5,185,31"/>
 </map>

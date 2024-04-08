@@ -1,5 +1,4 @@
 <map id="cspl_clean" name="cspl_clean">
-<area shape="rect" id="Node000001" title="Clean&#45;up a spline representation." alt="" coords="5,5,95,33"/>
-<area shape="rect" id="Node000002" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="143,5,271,33"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,17,127,17,127,22,95,22"/>
+<area shape="rect" id="node1" title="Clean&#45;up a spline representation." alt="" coords="5,5,96,31"/>
+<area shape="rect" id="node2" href="$namespacebasic.html#a984198f5a2caf255ca9e50c4abb2fbb0" title="Print a message, and optionally stop the program." alt="" coords="144,5,273,31"/>
 </map>

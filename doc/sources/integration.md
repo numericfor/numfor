@@ -1,4 +1,4 @@
-# Submodule Integrate
+# Submodule Integrate {#submodule-integrate}
 
 There are implemented several routines for integration of functions, and also sampled values via Trapezoid and Simpson methods. 
 

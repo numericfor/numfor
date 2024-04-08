@@ -1,5 +1,8 @@
 var annotated_dup =
 [
+    [ "array_utils", "namespacearray__utils.html", [
+      [ "save_array", "interfacearray__utils_1_1save__array.html", "interfacearray__utils_1_1save__array" ]
+    ] ],
     [ "basic", "namespacebasic.html", [
       [ "timer", "structbasic_1_1timer.html", "structbasic_1_1timer" ]
     ] ],
@@ -21,12 +24,12 @@ var annotated_dup =
       [ "fstr", "structfstring_1_1fstr.html", "structfstring_1_1fstr" ]
     ] ],
     [ "func_integ", "namespacefunc__integ.html", [
-      [ "nf_cfunction", "structfunc__integ_1_1nf__cfunction.html", "structfunc__integ_1_1nf__cfunction" ],
-      [ "nf_rfunction", "structfunc__integ_1_1nf__rfunction.html", "structfunc__integ_1_1nf__rfunction" ]
+      [ "nf_cfunction", "namespacefunc__integ.html#structfunc__integ_1_1nf__cfunction", "namespacefunc__integ_structfunc__integ_1_1nf__cfunction_dup" ],
+      [ "nf_rfunction", "namespacefunc__integ.html#structfunc__integ_1_1nf__rfunction", "namespacefunc__integ_structfunc__integ_1_1nf__rfunction_dup" ]
     ] ],
     [ "gauss", "namespacegauss.html", [
       [ "ran_gaussian_pdf", "interfacegauss_1_1ran__gaussian__pdf.html", "interfacegauss_1_1ran__gaussian__pdf" ],
-      [ "random_normal", "interfacegauss_1_1random__normal.html", null ],
+      [ "random_normal", "group__randomdist.html#interfacegauss_1_1random__normal", null ],
       [ "random_standard_normal", "interfacegauss_1_1random__standard__normal.html", null ],
       [ "rng_normal", "interfacegauss_1_1rng__normal.html", "interfacegauss_1_1rng__normal" ],
       [ "rng_normal2", "interfacegauss_1_1rng__normal2.html", "interfacegauss_1_1rng__normal2" ]
@@ -38,7 +41,7 @@ var annotated_dup =
       [ "polyval", "interfacepolynomial_1_1polyval.html", "interfacepolynomial_1_1polyval" ]
     ] ],
     [ "qadaptive", "namespaceqadaptive.html", [
-      [ "iads", "interfaceqadaptive_1_1iads.html", "interfaceqadaptive_1_1iads" ],
+      [ "iads", "interfaceqadaptive_1_1iads.html", null ],
       [ "iadsi", "interfaceqadaptive_1_1iadsi.html", null ]
     ] ],
     [ "qsimpson", "namespaceqsimpson.html", [

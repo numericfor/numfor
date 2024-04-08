@@ -1,5 +1,5 @@
 !> @file grids.f90
-!! @date "2024-02-26 17:16:17"
+!! @date "2024-04-07 23:41:45"
 
 !> This module provides convenience routines to create grids
 !! Description: @ref submodule-arrays
@@ -131,8 +131,8 @@ contains
   !! @details From package RADIAL by Salvat et al 1995 Computer Physics Communications.
   !! The grid is such that:
   !!   -# R(1)=0, R(NP)=RN,
-  !!   -# A*R(I)+B*DLOG(R(I))-C= I  (I > 0),
-  !!    with  A=1.0/STEP  and   B=1.0/DLOG(RATIO).
+  !!   -# A*R(I)+B*log(R(I))-C= I  (I > 0),
+  !!    with  A=1/STEP  and   B=1/log(RATIO).
   function loglinspace(start, end, num, step, ratio) result(x)
     implicit none
     real(dp), intent(IN) :: start !< Starting value
@@ -144,6 +144,7 @@ contains
     !!
     !! Examples:
     !! -------
+    !! @snippet ex_loglinspace.f90 loglinspace
 
     real(dp) :: a, b, c
     real(dp) :: rr, ru, rl, r_N, c_i, fu, fr

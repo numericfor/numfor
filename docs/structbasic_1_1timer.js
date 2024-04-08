@@ -1,12 +1,11 @@
 var structbasic_1_1timer =
 [
-    [ "assignment", "structbasic_1_1timer.html#a14c1589916776e2f2601dcb9dcdf8c96", null ],
-    [ "assignment", "structbasic_1_1timer.html#a63243210eb8ac565e670c19ae40333e6", null ],
-    [ "operator", "structbasic_1_1timer.html#a9bf1444de4b77687775f1a01f73b1998", null ],
-    [ "operator", "structbasic_1_1timer.html#afe92695215b3b2b99267343f93cba460", null ],
-    [ "show", "structbasic_1_1timer.html#a67e16bd96b435738b4befde6a1336cb1", null ],
-    [ "start", "structbasic_1_1timer.html#a1318b769a42da45ddc2107d71ab3b28d", null ],
-    [ "stop", "structbasic_1_1timer.html#a569de95b0a93654681dffc3c76d1f16b", null ],
+    [ "assignment", "structbasic_1_1timer.html#a28d6d809f1f9a1aacba759a497dbba67", null ],
+    [ "operator", "structbasic_1_1timer.html#ae02d1bc0b88465ec0a581e8136ab5b80", null ],
+    [ "operator", "structbasic_1_1timer.html#a74f802ddf37945687eb934801a924fd3", null ],
+    [ "show", "structbasic_1_1timer.html#ab3a675f9718744282a78bd50c68e0753", null ],
+    [ "start", "structbasic_1_1timer.html#a320e34a58ad2d6e9a244bd67635568eb", null ],
+    [ "stop", "structbasic_1_1timer.html#aa97cc411c4d35dbfcaa80fb97cd7a5c9", null ],
     [ "date_elapsed", "structbasic_1_1timer.html#ade3a5928a5a1703db40cc521435004cb", null ],
     [ "elapsed", "structbasic_1_1timer.html#a8b8cdb5dde8e36736f2a5cbbdde68512", null ],
     [ "start_date", "structbasic_1_1timer.html#a79ab8e93ddbbac81ea8db89bdbe650d2", null ],
