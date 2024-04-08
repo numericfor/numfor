@@ -1,6 +1,6 @@
 !> @file random.f90 for random number generator (and distributions)
 !> @author Juan Fiol <juanfiol@gmail.com> (modifications, see real authors below)
-!! @date "2024-02-21 15:26:24"
+!! @date "2024-04-08 16:13:26"
 
 !> \defgroup randomnumber Random number generator
 !!
@@ -32,7 +32,8 @@ module random
     module procedure genrand64_real2, rng_real_interval
   end interface random_real
 
-  !> @ingroup randomnumber Function returning a real number in the open interval (0,1)
+  !> @ingroup randomnumber
+  !! Function returning a real number in the open interval (0,1)
   interface random_real_pos
     module procedure genrand64_real3
   end interface random_real_pos

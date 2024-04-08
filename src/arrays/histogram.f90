@@ -1,5 +1,5 @@
 !> @file histogram.f90
-!! @date "2019-10-08 10:54:03"
+!! @date "2024-04-08 16:14:16"
 
 !> The module `histograms` provides infrastructure for the calculation of histograms. i.e: a count of frequency
 !!
@@ -25,6 +25,7 @@ module histograms
 
 contains
   !> clean-up
+  !! returns None
   subroutine clean_histog(h)
     implicit none
     class(histog), intent(INOUT) :: h !< histogram to clean

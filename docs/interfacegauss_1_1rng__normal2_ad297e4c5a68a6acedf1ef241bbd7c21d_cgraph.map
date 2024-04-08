@@ -1,4 +1,0 @@
-<map id="ran_gaussian2" name="ran_gaussian2">
-<area shape="rect" id="node1" title="ran_gaussian computes a Gaussian random variate, with mean zero and standard deviation sigma" alt="" coords="5,5,121,31"/>
-<area shape="rect" id="node2" href="$namespacegauss.html#aa2bfec436cd0112ff6fd06db2196513e" title="Computes a Gaussian random variate, with mean zero and standard deviation sigma=1." alt="" coords="169,5,340,31"/>
-</map>

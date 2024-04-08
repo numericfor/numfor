@@ -1,6 +1,0 @@
-<map id="linspace" name="linspace">
-<area shape="rect" id="node1" title=" " alt="" coords="368,31,444,57"/>
-<area shape="rect" id="node2" href="$namespacehistograms.html#a6b8170eda8b7c6c491022f6ab549a49a" title="Computes the histogram of an array of data." alt="" coords="151,5,320,32"/>
-<area shape="rect" id="node3" href="$namespacegrids.html#a57a00528ed7d6958462826e845549860" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="195,56,275,83"/>
-<area shape="rect" id="node4" href="$namespacegrids.html#abcba335d8217bfab5c47603ef6e09298" title="Makes a grid with numbers spaced evenly on a log scale." alt="" coords="5,56,103,83"/>
-</map>

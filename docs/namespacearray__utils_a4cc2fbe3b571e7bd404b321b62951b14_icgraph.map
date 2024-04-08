@@ -1,5 +1,0 @@
-<map id="mean" name="mean">
-<area shape="rect" id="node1" title="mean Computes the arithmetic mean of the array." alt="" coords="313,5,372,31"/>
-<area shape="rect" id="node2" href="$namespacehistograms.html#ab6a23f50b50732a4c49db0c9e547609f" title="Computes the histogram of an array of data." alt="" coords="5,5,175,31"/>
-<area shape="rect" id="node3" href="$namespacearray__utils.html#a10a6d5cd3333d473442c8955b500e34b" title="std Computes the standard deviation of the array." alt="" coords="223,31,265,56"/>
-</map>

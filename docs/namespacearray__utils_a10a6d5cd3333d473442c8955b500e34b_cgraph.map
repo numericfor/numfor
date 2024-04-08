@@ -1,4 +1,0 @@
-<map id="std" name="std">
-<area shape="rect" id="node1" title="std Computes the standard deviation of the array." alt="" coords="5,5,48,31"/>
-<area shape="rect" id="node2" href="$namespacearray__utils.html#a4cc2fbe3b571e7bd404b321b62951b14" title="mean Computes the arithmetic mean of the array." alt="" coords="96,5,155,31"/>
-</map>

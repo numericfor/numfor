@@ -1,5 +1,0 @@
-<map id="strip" name="strip">
-<area shape="rect" id="node1" title="This function returns a copy of the string with leading and trailing chars removed." alt="" coords="5,31,56,57"/>
-<area shape="rect" id="node2" href="$namespacestrings.html#a7a0b8942302aec0179df8d5f2c457994" title="This function returns a copy of the string with leading chars removed." alt="" coords="105,5,159,32"/>
-<area shape="rect" id="node3" href="$namespacestrings.html#a34f882b33fedd7afee64b8dfb2877958" title="This function returns a copy of the string with trailing chars removed." alt="" coords="104,56,160,83"/>
-</map>

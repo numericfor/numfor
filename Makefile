@@ -47,6 +47,8 @@ RM:=rm -f
 CP:=cp -f
 LN:=ln -s -f
 MKDIR:=mkdir -p
+DOXYGEN=$(HOME)/usr/bin/doxygen
+
 ######################################################################
 
 ######################################################################
@@ -160,7 +162,7 @@ doc:  $(DOCDIR)/index.html
 $(DOCDIR)/index.html: Makefile $(DOXYF) $(SRC) $(top_dir)/README.md  $(DOCSD)/*.md $(EXMPD)/*.f90
 	sed -e 's|\(INPUT[ ]*=\)\(.*\)|\1 ${SUBDIRS} |' $(DOXYF) -e 's|\(PROJECT_NUMBER[ ]*=\)\(.*\)|\1 "${VERSION} ($(DATE))"|'\
             -e 's|\(STRIP_FROM_PATH[ ]*=\)\(.*\)|\1 ${DOCDIR}|' > $(top_dir)/$(PRJ).dox
-	cd $(top_dir) && doxygen $(PRJ).dox && cd -
+	cd $(top_dir) && $(DOXYGEN) $(PRJ).dox && cd -
 
 
 .PHONY: library tags clean clean-backup clean-all view-doc doc-api doc
@@ -202,7 +204,7 @@ clean-obj:
 	$(RM) $(deps)
 
 clean-doc:
-	$(RM) -r $(DOCDIR)/html
+	$(RM) -r $(DOCDIR)/*
 	$(RM) $(top_dir)/$(PRJ).dox $(top_dir)/$(PRJ)_api.dox
 
 clean-all: clean-backup clean-obj clean-doc
