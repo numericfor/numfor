@@ -7,7 +7,7 @@ fc_compiler=gfortran
 
 Name: ${prj}
 Description: NumFor: Numerical (Modern) Fortran Library
-Version: 6075ee8
+Version: e8cb109
 Requires: 
 Conflicts:
 Libs: -L${libdir} -l${prj}
