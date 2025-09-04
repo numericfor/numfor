@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2024-02-26 18:32:32"
+!! @date "2025-09-04 10:52:10"
 
 !> @ingroup utils
 !> This module defines functions to manipulate strings of characters.
@@ -359,7 +359,7 @@ contains
     Sout = S
     nold = len(old)
 
-    count_ = -1; IF (present(count)) count_ = count
+    count_ = 1; IF (present(count)) count_ = count
 
     c = 0
     do
