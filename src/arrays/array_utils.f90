@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2024-04-08 16:28:25"
+!! @date "2025-09-09 13:32:47"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -377,8 +377,7 @@ contains
 
     if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
       if (index(fmt, '(') == 0) then
-        write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(fmt), '&
-          &,1x))'
+        write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(fmt), ',1x))'
       else
         formato = fmt
       end if
