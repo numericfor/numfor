@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2025-09-04 10:52:10"
+!! @date "2025-09-22 11:28:10"
 
 !> @ingroup utils
 !> This module defines functions to manipulate strings of characters.
@@ -442,7 +442,7 @@ contains
       S_ = lower(rstrip(lstrip(S_), ' '))
       i = find(S_, 'e')
       expo = trim(S_(i:))
-      decim = strip(S_(3:i - 1), ' 0')
+      decim = rstrip(S_(3:i - 1), ' 0')
       Sout = S_(:2)//decim//expo
     end if
 
