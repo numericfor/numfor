@@ -9,12 +9,12 @@
 
   N = 21; IF (Present(limit)) N = limit
   icount = 1
-  int0 = -huge(1._dp)
+  ! int0 = -huge(1._dp)
   int = NUMFOR_INTEG(func, xrange, yrange, N, N)
   do icount = 1, NMAX
     int0 = int
     N = 2 * N - 10
     int = NUMFOR_INTEG(func, xrange, yrange, N, N)
     IF (abs(int - int0) <= eps * abs(int)) exit
-  enddo
+  end do
 

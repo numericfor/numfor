@@ -20,16 +20,16 @@ int = &
 do i = 2, Nx
   do j = 2, Ny
     int = int + 4._8 * NUMFOR_EVAL_F(func, ([xx(i), yy(j)]))
-  enddo
-enddo
+  end do
+end do
 do j = 2, Ny
   int = int + 2._8 * (NUMFOR_EVAL_F(func, ([xrange(1), yy(j)])) &
     & + NUMFOR_EVAL_F(func, ([xrange(2), yy(j)])))
-enddo
+end do
 do i = 2, Nx
   int = int + 2._8 * (NUMFOR_EVAL_F(func, ([xx(i), yrange(1)]))&
     & + NUMFOR_EVAL_F(func, ([xx(i), yrange(2)])))
-enddo
+end do
 int = int * hx * hy / 4._8
 end PRNM(trapz2d_func)
 
@@ -58,38 +58,38 @@ int = &
 do j = 1, Ny
   int = int + 4._8 * (NUMFOR_EVAL_F(func, ([xrange(1), yy(2 * j - 1)])) + &
     & NUMFOR_EVAL_F(func, ([xrange(2), yy(2 * j - 1)])))
-enddo
+end do
 do j = 1, Ny - 1
   int = int + 2._8 * (NUMFOR_EVAL_F(func, ([xrange(1), yy(2 * j)])) + NUMFOR_EVAL_F(func, ([xrange(2), yy(2 * j)])))
-enddo
+end do
 do i = 1, Nx
   int = int + 4._8 * (NUMFOR_EVAL_F(func, ([xx(2 * i - 1), yrange(1)])) + NUMFOR_EVAL_F(func, ([xx(2 * i - 1), yrange(2)])))
-enddo
+end do
 do i = 1, Nx - 1
   int = int + 2._8 * (NUMFOR_EVAL_F(func, ([xx(2 * i), yrange(1)])) + NUMFOR_EVAL_F(func, ([xx(2 * i), yrange(2)])))
-enddo
+end do
 !
 do j = 1, Ny
   do i = 1, Nx
     int = int + 16._8 * NUMFOR_EVAL_F(func, ([xx(2 * i - 1), yy(2 * j - 1)]))
-  enddo
-enddo
+  end do
+end do
 do j = 1, Ny - 1
   do i = 1, Nx
     int = int + 8._8 * NUMFOR_EVAL_F(func, ([xx(2 * i - 1), yy(2 * j)]))
-  enddo
-enddo
+  end do
+end do
 !
 do j = 1, Ny
   do i = 1, Nx - 1
     int = int + 8._8 * NUMFOR_EVAL_F(func, ([xx(2 * i), yy(2 * j - 1)]))
-  enddo
-enddo
+  end do
+end do
 do j = 1, Ny - 1
   do i = 1, Nx - 1
     int = int + 4._8 * NUMFOR_EVAL_F(func, ([xx(2 * i), yy(2 * j)]))
-  enddo
-enddo
+  end do
+end do
 int = int * hx * hy / 9.0_8
 end PRNM(simps2d_func)
 
@@ -98,7 +98,8 @@ implicit none
 NUMFOR_KINDF :: func
 NUMFOR_KINDR :: int
 NUMFOR_KINDR :: int0
-#define NUMFOR_INTEG(f,x,y,N,M) trapz(f,x,y,N,M)
+#define NUMFOR_INTEG(f,x,y,N,M) NUMFOR_KINDI(trapz2d_func)(f,x,y,N,M)
+! #define NUMFOR_INTEG(f,x,y,N,M) trapz(f,x,y,N,M)
 #include "integ2deps.inc"
 #undef NUMFOR_INTEG
 end PRNM(trapz2d_func_eps)
@@ -108,7 +109,8 @@ implicit none
 NUMFOR_KINDF :: func
 NUMFOR_KINDR :: int !<
 NUMFOR_KINDR :: int0
-#define NUMFOR_INTEG(f,x,y,N,M) simps(f,x,y,N,M)
+#define NUMFOR_INTEG(f,x,y,N,M) NUMFOR_KINDI(simps2d_func)(f,x,y,N,M)
+! #define NUMFOR_INTEG(f,x,y,N,M) simps(f,x,y,N,M)
 #include "integ2deps.inc"
 #undef NUMFOR_INTEG
 end PRNM(simps2d_func_eps)

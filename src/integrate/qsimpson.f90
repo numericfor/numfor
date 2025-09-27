@@ -159,8 +159,10 @@ contains
 #undef NUMFOR_KINDF
 
 #define NUMFOR_KINDF procedure(funqrnd)
+#define NUMFOR_KINDI(a) JOIN(d_,a)
 #include "qtrs2d.inc"
 #undef NUMFOR_KINDF
+#undef NUMFOR_KINDI
 
 #undef PRNM
 #undef NUMFOR_KINDR
@@ -173,8 +175,10 @@ contains
 #include "qtrs1d.inc"
 #undef NUMFOR_KINDF
 #define NUMFOR_KINDF procedure(funqcnd)
+#define NUMFOR_KINDI(a) JOIN(c_,a)
 #include "qtrs2d.inc"
 #undef NUMFOR_KINDF
+#undef NUMFOR_KINDI
 
 #undef PRNM
 #undef NUMFOR_KINDR
@@ -193,8 +197,10 @@ contains
 #include "qtrs1d.inc"
 #undef NUMFOR_KINDF
 #define NUMFOR_KINDF type(nf_rndfunction)
+#define NUMFOR_KINDI(a) JOIN(JOIN(d_,a),_arg)
 #include "qtrs2d.inc"
 #undef NUMFOR_KINDF
+#undef NUMFOR_KINDI
 
 #undef PRNM
 #undef NUMFOR_KINDR
@@ -208,8 +214,10 @@ contains
 #include "qtrs1d.inc"
 #undef NUMFOR_KINDF
 #define NUMFOR_KINDF type(nf_cndfunction)
+#define NUMFOR_KINDI(a) JOIN(JOIN(c_,a),_arg)
 #include "qtrs2d.inc"
 #undef NUMFOR_KINDF
+#undef NUMFOR_KINDI
 
 #undef PRNM
 #undef NUMFOR_KINDR

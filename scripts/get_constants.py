@@ -1,4 +1,5 @@
 from scipy.constants import physical_constants
+from pathlib import Path
 import re
 notice = """
 ## Notice
@@ -52,7 +53,7 @@ wcol2 = len(max(descriptions, key=len))
 # headers
 doc_txt = """## Physical constants {#physconst}
 
-CODATA Recommended Values of the Fundamental Physical Constants 2014.
+CODATA Recommended Values of the Fundamental Physical Constants.
 
 
 """
@@ -65,17 +66,18 @@ inc_txt = modeline
 # Create the tables/list of constants
 for k, v, d in sorted(zip(names, values, descriptions),
                       key=lambda s: s[0].lower()):
-  inc_txt += "real(dp), public, parameter :: {} = {}\n".format(k, v)
+  inc_txt += f"real(dp), public, parameter :: {k} = {v}\n"
   doc_txt += "| {} | {} |\n".format(k.ljust(wcol1), d.ljust(wcol2))
 
 # Write to files
-fdir = 'src/utils/'
-ddir = 'docs/sources/'
+fdir = Path('src/utils/')
+ddir = Path('doc/sources/')
 
-forfname = os.path.join(fdir, "codata.inc")
+# forfname = os.path.join(fdir, "codata.inc")
+forfname = fdir/ "codata.inc"
 with open(forfname, 'w') as fo:
   fo.write(inc_txt)
 
-mdfname = os.path.join(ddir, "constants.md")
+mdfname = ddir / "constants.md"
 with open(mdfname, 'w') as fo:
   fo.write(doc_txt + notice)

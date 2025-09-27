@@ -66,7 +66,7 @@ module func_integ
   end type nf_rfunction
   !> Type to encapsulate complex functions and extra arguments
   type nf_cfunction
-    procedure(funqcarg), nopass, pointer :: f!< complex function f(x,args)
+    procedure(funqcarg), nopass, pointer :: f !< complex function f(x,args)
     real(8), dimension(:), allocatable :: args!< extra-arguments
   end type nf_cfunction
   type nf_rndfunction

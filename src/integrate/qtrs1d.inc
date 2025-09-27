@@ -48,7 +48,7 @@ int = NUMFOR_EVAL_F(f, x(1)) * (x(2) - x(1)) + NUMFOR_EVAL_F(f, x(L)) * (x(L) - 
 do i = 2, L - 1
   dh = (x(i + 1) - x(i - 1))
   int = int + NUMFOR_EVAL_F(f, x(i)) * dh
-enddo
+end do
 int = int / 2._8
 end PRNM(trapz_nonlin_func)
 
@@ -140,8 +140,8 @@ do while (i < L)
   elseif (dx(i) /= dx(i + 1)) then      !trapezoidal rule
     int = int + dx(i) * (y(i) + y(i + 1)) / 2._dp
     i = i + 1
-  endif
-enddo
+  end if
+end do
 end PRNM(simpson_dx_sample)
 
 PRNM(simps_nonlin_func) (f, x) result(int)
