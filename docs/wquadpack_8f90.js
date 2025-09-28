@@ -14,5 +14,5 @@ var wquadpack_8f90 =
     [ "qextr", "interfacequadpack_1_1qextr.html", null ],
     [ "d_qp_extra", "structquadpack_1_1d__qp__extra.html", "structquadpack_1_1d__qp__extra" ],
     [ "c_qp_extra", "structquadpack_1_1c__qp__extra.html", "structquadpack_1_1c__qp__extra" ],
-    [ "qp_err_msg", "wquadpack_8f90.html#a298a77beb42a53fca2c147fa4abe026f", null ]
+    [ "qp_err_msg", "namespacequadpack.html#a298a77beb42a53fca2c147fa4abe026f", null ]
 ];

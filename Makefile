@@ -47,7 +47,8 @@ RM:=rm -f
 CP:=cp -f
 LN:=ln -s -f
 MKDIR:=mkdir -p
-DOXYGEN=$(HOME)/usr/bin/doxygen
+# DOXYGEN=$(HOME)/usr/bin/doxygen
+DOXYGEN=/usr/bin/doxygen
 
 ######################################################################
 

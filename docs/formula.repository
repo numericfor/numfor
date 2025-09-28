@@ -108,3 +108,18 @@
 \_form#93=35x14:$b > a$
 \_form#94=44x17:$(b-a)$
 \_form#95=11x8:$ \pi $
+\_form#96=456x39:\[\int_{0}^{1} \left| x^{2} + 2 x -1 \right|^{-1/2} \, dx = \arcsin(1/\sqrt(3)) - \frac{\pi}{2} - \log(3)/2 \approx 1.504622
+\]
+\_form#97=263x39:\[      \int_{a}^{+\infty} dx f(x) = \int_0^1 dt f(a + (1-t)/t)/t^2
+\]
+\_form#98=257x39:\[      \int_{-\infty}^{b} dx f(x) = \int_0^1 dt f(b - (1-t)/t)/t^2
+\]
+\_form#99=171x95:\begin{align*}          C_1 &= [a,a+c] \\
+          C_2 &= [a+c,a+2c] \\
+          \vdots & \\
+          C_k &= [a+(k-1)c,a+kc]
+\end{align*}
+\_form#100=36x8:$x =
+       c$
+\_form#101=255x35:\[       p(x) dx = {1 \over \mu} \exp(-x/\mu) dx \quad, \qquad x \ge 0
+\]

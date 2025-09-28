@@ -41,7 +41,7 @@ var annotated_dup =
       [ "polyval", "interfacepolynomial_1_1polyval.html", "interfacepolynomial_1_1polyval" ]
     ] ],
     [ "qadaptive", "namespaceqadaptive.html", [
-      [ "iads", "interfaceqadaptive_1_1iads.html", "interfaceqadaptive_1_1iads" ],
+      [ "iads", "interfaceqadaptive_1_1iads.html", null ],
       [ "iadsi", "interfaceqadaptive_1_1iadsi.html", null ]
     ] ],
     [ "qsimpson", "namespaceqsimpson.html", [
