@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2025-12-22 02:52:30"
+!! @date "2025-12-22 05:28:51"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -29,9 +29,12 @@ module array_utils
   !!  save_array(x)  ! One array in one column to stdout
   !!  save_array(x, 1, filename) ! One array in one column to file
   !!  save_array([x,y], 2, filename) ! Two arrays in two columns to file
-  !!  save_array([x,y], 2, fmt='g12.5', fout=filename) ! Two arrays in two columns to file with format
+  !!  save_array([x,y], 2, fmt='g12.5', fname=filename) ! Two arrays in two columns to file with format
   !!  save_array(z)  ! A 2D array in two columns to stdout
-  !!  save_array(z, fmt='g12.5', fout=filename) ! A 2D array in two columns to file with format
+  !!  save_array(z, fmt='g12.5', fname=filename) ! A 2D array in two columns to file with format
+  !!  save_array(z, fmt='g12.5', fname=filename, delimiter=', ') ! Change the delimiter
+  !!  save_array(z, fmt='g12.5', fname=filename, delimiter=', ', header="A nice header")
+  !!  save_array(z, fmt='g12.5', unit=3, delimiter=', ') ! write to unit of an open file
   !!```
   interface save_array
     module procedure save_array1D
@@ -224,7 +227,7 @@ contains
 
     character(len=*), optional, intent(IN) :: fname  !< Filename. Default: stdout
     character(len=*), optional, intent(IN) :: fmt    !< String with format. Default 'g0.5' for each data
-    character(len=1), optional, intent(IN) :: delimiter  !< Separator between columns. Default " "
+    character(len=*), optional, intent(IN) :: delimiter  !< Separator between columns. Default " "
     character(len=*), optional, intent(IN) :: header  !< If present, text to write before data.
     character(len=1), optional, intent(IN) :: comment  !< Separator between columns. Default " "
     character(len=*), optional, intent(IN) :: footer  !< If present, text to write after data.
@@ -255,8 +258,7 @@ contains
     & may be present", "save_array", errcode=1)
 
     ! Check delimiter and comment
-    delimiter_ = '"'//delimiter_default//'"'
-    IF (Present(delimiter)) delimiter_ = "'"//delimiter//"'"
+    delimiter_ = delimiter_default; IF (Present(delimiter)) delimiter_ = delimiter
     comment_ = comment_default; IF (Present(comment)) comment_ = comment
 
     ! Check presence of filename
@@ -267,7 +269,7 @@ contains
     unit_ = stdout; if (Present(unit)) unit_ = unit
 
     ! Check presence of format
-    fmt_ = default_fmt; IF (Present(fmt)) fmt_ = trim(fmt)
+    fmt_ = ''; IF (Present(fmt)) fmt_ = trim(fmt)
 
     ! Check presence of header and footer
     header_ = ''; if (Present(header)) header_ = trim(header)
@@ -287,7 +289,7 @@ contains
     !
     character(len=*), optional, intent(IN) :: fname  !< Filename. Default: stdout
     character(len=*), optional, intent(IN) :: fmt    !< String with format. Default 'g0.5' for each data
-    character(len=1), optional, intent(IN) :: delimiter  !< Separator between columns. Default " "
+    character(len=*), optional, intent(IN) :: delimiter  !< Separator between columns. Default " "
     character(len=1), optional, intent(IN) :: comment  !< Separator between columns. Default " "
     character(len=*), optional, intent(IN) :: header  !< If present, text to write before data.
     character(len=*), optional, intent(IN) :: footer  !< If present, text to write after data.
@@ -295,7 +297,7 @@ contains
 
     integer, dimension(2) :: theshape
     integer :: ncols_, nrows_
-    character(len=3) :: delimiter_
+    character(len=:), allocatable :: delimiter_
     character(len=1) :: comment_
 
     integer :: i
@@ -312,7 +314,7 @@ contains
     & may be present", "save_array", errcode=1)
 
     ! Check delimiter and comment
-    delimiter_ = '"'//delimiter_default//'"'
+    delimiter_ = "'"//delimiter_default//"'"
     IF (Present(delimiter)) delimiter_ = "'"//delimiter//"'"
     comment_ = comment_default; IF (Present(comment)) comment_ = comment
 
@@ -323,8 +325,7 @@ contains
     ! Check presence of unit
     unit_ = stdout; if (Present(unit)) unit_ = unit
 
-    ! Check presence of format
-    fmt_ = default_fmt; IF (Present(fmt)) fmt_ = trim(fmt)
+    fmt_ = ''; IF (Present(fmt)) fmt_ = trim(fmt)
 
     ! Check presence of header and footer
     header_ = ''; if (Present(header)) header_ = trim(header)
@@ -337,13 +338,14 @@ contains
     ncols_ = theshape(1)
     nrows_ = theshape(2)
     if (fmt_ /= 'default' .and. (fmt_ /= '')) then
-      if (index(fmt_, '(') == 0) then
-        write (formato, '(A,I1,A,A,A,A,A)') '(', ncols_, '(', trim(fmt_), ',', delimiter_, '))'
+      if (index(fmt_, '(') == 1) then ! Full format is given, including delimiter
+        write (formato, '(A)') "(*"//fmt_//",))"
       else
-        formato = fmt_
+        write (formato, '(A)') "(*("//fmt_//",:,"//delimiter_//"))"
       end if
     else
-      write (formato, '(A,I1,A,A,A,A,A)') '(', ncols_, '(', trim(default_fmt), ',', delimiter_, '))'
+      write (formato, '(A)') "(*("//default_fmt//",:,"//delimiter_//"))"
+      ! write (formato, '(A,I1,A,A,A,A,A)') '(*', '(', trim(default_fmt), ',', delimiter_, '))'
     end if
 
     if (header_ /= '') write (unit_, '(A)') comment_//" "//header_
