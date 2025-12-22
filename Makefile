@@ -131,11 +131,11 @@ include $(deps)
 # Rule used to create the examples. For instance, to make test_strings:
 # make tst=oopstring test
 # Default test will be test_strings
-tst=strings
+tst=array_utils
 test: $(BIND)/test_$(tst)
 $(BIND)/test_$(tst): $(TSTD)/test_$(tst).f90 $(OBJD)/libnumfor.a | $(BIND)
 	$(FC)  $(FFLAGS) $(FFLAGS_EXTRA) $(LDFLAGS)  $< -o $@ $(LIBS)
-
+	$(BIND)/test_$(tst)
 # Once the library is working, we write and compile examples 
 # Rule used to create the examples. For instance, to make ex_fstring:
 # make ex=fstring1 example

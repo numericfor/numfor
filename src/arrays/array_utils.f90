@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2025-09-09 13:32:47"
+!! @date "2025-12-22 01:36:20"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -8,6 +8,8 @@ module array_utils
   USE strings, only: str
 
   implicit none
+
+  character(len=1), parameter :: delimiter_default = " "
 
   Private
   PUBLIC :: allclose, save_array, mean, std, merge_sorted
@@ -336,17 +338,23 @@ contains
     IF (closef) close (u)
   end subroutine save_array1D
 
-  subroutine save_array2D(X, fname, fmt, header, unit)
+  subroutine save_array2D(X, fname, delimiter, fmt, header, footer, unit, comment)
     implicit none
-    real(dp), dimension(:, :), intent(IN) :: X        !< Array to store
-
+    real(dp), dimension(:, :), intent(IN) :: X        !< Array to save to file
+    !
     character(len=*), optional, intent(IN) :: fname  !< Filename. Default: stdout
     character(len=*), optional, intent(IN) :: fmt    !< String with format. Default 'g0.5' for each data
+    character(len=1), optional, intent(IN) :: delimiter  !< Separator between columns. Default " "
+    character(len=1), optional, intent(IN) :: comment  !< Separator between columns. Default " "
     character(len=*), optional, intent(IN) :: header  !< If present, text to write before data.
+    character(len=*), optional, intent(IN) :: footer  !< If present, text to write after data.
     integer, optional, intent(IN) :: unit            !< If the file is already open, the unit at which it is associated.
 
     integer, dimension(2) :: theshape
     integer :: ncols_, nrows_
+    character(len=3), allocatable :: delimiter_
+    character(len=1) :: comment_
+
     integer :: i
     integer :: u
 
@@ -357,13 +365,17 @@ contains
     theshape = shape(X)
     ncols_ = theshape(1)
     nrows_ = theshape(2)
-    IF (nrows_ * ncols_ /= size(X)) call print_msg("Incompatible&
-      & number of columns"//str(ncols_)//" and size(X)="//str(size(X))&
-      &//" for saving", "save_arrays", errcode=1)
+    ! IF (nrows_ * ncols_ /= size(X)) call print_msg("Incompatible&
+    !   & number of columns"//str(ncols_)//" and size(X)="//str(size(X))&
+    !   &//" for saving", "save_arrays", errcode=1)
 
     ! Si fname está presente => Toma precedencia sobre unit.
     closef = .False.
     u = stdout    ! Si no está ni fname ni unit está usa stdout
+
+    delimiter_ = '"'//delimiter_default//'"'
+    IF (Present(delimiter)) delimiter_ = "'"//delimiter//"'"
+    comment_ = "#"; IF (Present(comment)) comment_ = comment
 
     if (Present(fname)) then
       if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
@@ -377,19 +389,19 @@ contains
 
     if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
       if (index(fmt, '(') == 0) then
-        write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(fmt), ',1x))'
+        write (formato, '(A,I1,A,A,A,A,A)') '(', ncols_, '(', trim(fmt), ',', delimiter_, '))'
       else
         formato = fmt
       end if
     else
-      write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(form), '&
-        &,1x))'
+      write (formato, '(A,I1,A,A,A,A,A)') '(', ncols_, '(', trim(form), ',', delimiter_, '))'
     end if
 
-    if (Present(header)) write (u, '(A)') "# "//trim(header)
+    if (Present(header)) write (u, '(A)') comment_//" "//trim(header)
     do i = 1, nrows_
       write (u, formato) X(:, i)
     end do
+    if (Present(footer)) write (u, '(A)') comment_//" "//trim(footer)
 
     IF (closef) close (u)
   end subroutine save_array2D
