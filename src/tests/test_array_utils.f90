@@ -34,7 +34,7 @@ program test
   call save_array(z, fname=filename, delimiter=',', comment="!", header="A nice header"&
     &, footer="And a nice footer", fmt="g0.8") !  Change comment char
   ! Save to stdout
-  call save_array(z, fname='stdout', delimiter=',', comment="!", header="A nice header"&
+  call save_array(z, fname='', delimiter=',', comment="!", header="A nice header"&
     &, footer="And a nice footer", fmt="g0.8") !  Change comment char
   !
   ! u = 19

@@ -1,5 +1,5 @@
 !> @file array_utils.f90
-!! @date "2025-12-22 02:21:59"
+!! @date "2025-12-22 02:52:30"
 
 !> This module provides convenience routines to operate or get information on arrays
 
@@ -10,6 +10,7 @@ module array_utils
   implicit none
 
   character(len=1), parameter :: delimiter_default = " "
+  character(len=1), parameter :: comment_default = "#"
 
   Private
   PUBLIC :: allclose, save_array, mean, std, merge_sorted
@@ -215,90 +216,31 @@ contains
     y = sum(x) / size(x)
   end function mean
 
-  ! !> savetxt Guarda un array 2D en un archivo de texto
-  ! !!
-  ! !! @note
-  ! !! Si fname es "stdout" o " ", o no están presente ni fname ni unit,
-  ! !! usa stdout
-  ! !! Si se da fname el archivo se abre y cierra.
-  ! !! Si se da unit, el archivo queda abierto
-  ! subroutine savetxt(X, fname, fmt, unit)
-  !   implicit none
-  !   real(dp), dimension(:, :), intent(IN) :: X        !< Array a escribir a archivo de texto
-  !   character(len=*), optional, intent(IN) :: fname  !< Nombre del archivo de salida
-  !   character(len=*), optional, intent(IN) :: fmt    !< formato a usar para los datos. Default 'g0.5'
-  !   integer, optional, intent(IN) :: unit            !< Unidad a escribir si el archivo está abierto
-
-  !   real(dp), dimension(ubound(X, 2), ubound(X, 1)) :: b
-  !   integer, dimension(2) :: sh
-  !   integer :: i
-  !   integer :: u
-
-  !   character(len=32) :: form = "g0.5" ! Default
-  !   character(len=32) :: formato
-  !   logical :: closef
-
-  !   ! Si fname está presente => Toma precedencia sobre unit. Si
-  !   ! ninguna está usa stdout
-  !   closef = .False.
-  !   u = stdout
-
-  !   if (Present(fname)) then
-  !     if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
-  !       open (newunit=u, file=trim(fname))
-  !       closef = .True.
-  !     end if
-  !   else if (present(unit)) then ! The file was already open before
-  !     ! invoking the function
-  !     IF (unit >= 0 .and. unit <= 99) u = unit
-  !   end if
-
-  !   b = transpose(X)
-  !   sh = shape(b)
-
-  !   if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
-  !     if (index('(', fmt) == 0) then
-  !       write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(fmt), '&
-  !         &,1x))'
-  !     else
-  !       formato = fmt
-  !     end if
-  !   else
-  !     write (formato, '(A,I1,A,A,A)') '(', sh(1), '(', trim(form), '&
-  !       &,1x))'
-  !   end if
-
-  !   do i = 1, sh(2)
-  !     write (u, formato) b(:, i)
-  !   end do
-
-  !   IF (closef) close (u)
-  ! end subroutine savetxt
-
   ! save_array1D Stores an array to file or stdout
-  subroutine save_array1D(X, ncols, fname, fmt, header, unit)!delimiter, header, footer, comment, unit)
+  subroutine save_array1D(X, ncols, fname, delimiter, fmt, header, footer, unit, comment)
     implicit none
     real(dp), dimension(:), intent(IN) :: X        !< Array to store
     integer, optional, intent(IN) :: ncols !< Number of columns to write. Default 1
 
     character(len=*), optional, intent(IN) :: fname  !< Filename. Default: stdout
     character(len=*), optional, intent(IN) :: fmt    !< String with format. Default 'g0.5' for each data
-    ! character(len=1), optional, intent(IN) :: delimiter  !< Separator between columns. Default " "
+    character(len=1), optional, intent(IN) :: delimiter  !< Separator between columns. Default " "
     character(len=*), optional, intent(IN) :: header  !< If present, text to write before data.
-    ! character(len=1), optional, intent(IN) :: comment  !< Separator between columns. Default " "
-    ! character(len=*), optional, intent(IN) :: footer  !< If present, text to write after data.
+    character(len=1), optional, intent(IN) :: comment  !< Separator between columns. Default " "
+    character(len=*), optional, intent(IN) :: footer  !< If present, text to write after data.
     integer, optional, intent(IN) :: unit            !< If the file is already open, the unit at which it is associated.
 
     real(dp), dimension(:, :), allocatable :: b
     integer :: ncols_, nrows_
-    integer :: i
-    integer :: u
-    ! character(len=3), allocatable :: delimiter_
-    ! character(len=1) :: comment_
+    integer :: unit_
 
-    character(len=32) :: form = "g0.5" ! Default
-    character(len=32) :: formato
-    logical :: closef
+    character(len=*), parameter :: default_fmt = "g0.5" ! Default
+    character(len=:), allocatable :: fmt_
+    character(len=:), allocatable :: fname_
+    character(len=:), allocatable :: delimiter_
+    character(len=:), allocatable :: comment_
+    character(len=:), allocatable :: header_
+    character(len=:), allocatable :: footer_
 
     ncols_ = 1; IF (Present(ncols)) ncols_ = ncols
 
@@ -308,40 +250,35 @@ contains
     &//" for saving", "save_arrays", errcode=1)
 
     b = reshape(X, [ncols_, nrows_], order=[2, 1])
-    ! call save_array(b)
 
-    ! Si fname está presente => Toma precedencia sobre unit.
-    closef = .False.
-    u = stdout    ! Si no está ni fname ni unit está usa stdout
+    IF (Present(fname) .and. Present(unit)) call print_msg("Only one of fname or unit &
+    & may be present", "save_array", errcode=1)
 
-    if (Present(fname)) then
-      if (trim(fname) /= '' .and. trim(fname) /= 'stdout') then
-        open (newunit=u, file=trim(fname))
-        closef = .True.
-      end if
-    else if (Present(unit)) then ! The file was already open before
-      ! invoking the function
-      IF (unit >= 0 .and. unit <= 99) u = unit
-    end if
+    ! Check delimiter and comment
+    delimiter_ = '"'//delimiter_default//'"'
+    IF (Present(delimiter)) delimiter_ = "'"//delimiter//"'"
+    comment_ = comment_default; IF (Present(comment)) comment_ = comment
 
-    if (present(fmt) .and. (trim(fmt) /= 'default') .and. (trim(fmt) /= '')) then
-      if (index(fmt, '(') == 0) then
-        write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(fmt), '&
-        &,1x))'
-      else
-        formato = fmt
-      end if
-    else
-      write (formato, '(A,I1,A,A,A)') '(', ncols_, '(', trim(form), '&
-      &,1x))'
-    end if
+    ! Check presence of filename
+    fname_ = ''
+    IF (Present(fname)) fname_ = trim(fname)
 
-    if (Present(header)) write (u, '(A)') "# "//trim(header)
-    do i = 1, nrows_
-      write (u, formato) b(:, i)
-    end do
+    ! Check presence of unit
+    unit_ = stdout; if (Present(unit)) unit_ = unit
 
-    IF (closef) close (u)
+    ! Check presence of format
+    fmt_ = default_fmt; IF (Present(fmt)) fmt_ = trim(fmt)
+
+    ! Check presence of header and footer
+    header_ = ''; if (Present(header)) header_ = trim(header)
+    footer_ = ''; if (Present(footer)) footer_ = trim(footer)
+
+    IF ((fname_ /= '')) open (newunit=unit_, file=fname_)
+
+    call save_array(b, delimiter=delimiter_, fmt=fmt_,&
+      & header=header_, footer=footer_, unit=unit_, comment=comment_)
+
+    IF (unit_ /= stdout) close (unit_)
   end subroutine save_array1D
 
   subroutine save_array2D(X, fname, delimiter, fmt, header, footer, unit, comment)
@@ -358,7 +295,7 @@ contains
 
     integer, dimension(2) :: theshape
     integer :: ncols_, nrows_
-    character(len=3), allocatable :: delimiter_
+    character(len=3) :: delimiter_
     character(len=1) :: comment_
 
     integer :: i
@@ -367,41 +304,38 @@ contains
     character(len=*), parameter :: default_fmt = "g0.5" ! Default
     character(len=:), allocatable :: fmt_
     character(len=:), allocatable :: fname_
+    character(len=:), allocatable :: header_
+    character(len=:), allocatable :: footer_
     character(len=32) :: formato
-    logical :: closef
-
-    theshape = shape(X)
-    ncols_ = theshape(1)
-    nrows_ = theshape(2)
-    ! IF (nrows_ * ncols_ /= size(X)) call print_msg("Incompatible&
-    !   & number of columns"//str(ncols_)//" and size(X)="//str(size(X))&
-    !   &//" for saving", "save_arrays", errcode=1)
-
-    ! Si fname está presente => Toma precedencia sobre unit.
-    closef = .False.
-    unit_ = stdout    ! If not fname nor unit: Default output is stdout
+    !
+    IF (Present(fname) .and. Present(unit)) call print_msg("Only one of fname or unit &
+    & may be present", "save_array", errcode=1)
 
     ! Check delimiter and comment
     delimiter_ = '"'//delimiter_default//'"'
     IF (Present(delimiter)) delimiter_ = "'"//delimiter//"'"
-    comment_ = "#"; IF (Present(comment)) comment_ = comment
-    !
-    ! Check presence of filename and unit
+    comment_ = comment_default; IF (Present(comment)) comment_ = comment
+
+    ! Check presence of filename
     fname_ = ''
-    if (Present(fname)) then    ! First check for filename
-      fname_ = trim(fname)
-    else if (Present(unit)) then ! The file was already open before
-      unit_ = unit
-    end if
-    !
+    IF (Present(fname)) fname_ = trim(fname)
+
+    ! Check presence of unit
+    unit_ = stdout; if (Present(unit)) unit_ = unit
+
     ! Check presence of format
     fmt_ = default_fmt; IF (Present(fmt)) fmt_ = trim(fmt)
 
-    if (fname_ /= '' .and. fname_ /= 'stdout') then
-      open (newunit=unit_, file=fname_)
-      closef = .True.
-    end if
+    ! Check presence of header and footer
+    header_ = ''; if (Present(header)) header_ = trim(header)
+    footer_ = ''; if (Present(footer)) footer_ = trim(footer)
+
+    IF ((fname_ /= '')) open (newunit=unit_, file=fname_)
     !
+    !
+    theshape = shape(X)
+    ncols_ = theshape(1)
+    nrows_ = theshape(2)
     if (fmt_ /= 'default' .and. (fmt_ /= '')) then
       if (index(fmt_, '(') == 0) then
         write (formato, '(A,I1,A,A,A,A,A)') '(', ncols_, '(', trim(fmt_), ',', delimiter_, '))'
@@ -412,13 +346,13 @@ contains
       write (formato, '(A,I1,A,A,A,A,A)') '(', ncols_, '(', trim(default_fmt), ',', delimiter_, '))'
     end if
 
-    if (Present(header)) write (unit_, '(A)') comment_//" "//trim(header)
+    if (header_ /= '') write (unit_, '(A)') comment_//" "//header_
     do i = 1, nrows_
       write (unit_, formato) X(:, i)
     end do
-    if (Present(footer)) write (unit_, '(A)') comment_//" "//trim(footer)
+    if (footer_ /= '') write (unit_, '(A)') comment_//" "//footer_
 
-    IF (closef) close (unit_)
+    IF (unit_ /= stdout) close (unit_)
   end subroutine save_array2D
 end module array_utils
 
