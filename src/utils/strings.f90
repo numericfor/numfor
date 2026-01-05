@@ -1,5 +1,5 @@
 !> @file strings.f90 provides routines for common string manipulation
-!! @date "2025-09-22 11:28:10"
+!! @date "2026-01-05 18:25:46"
 
 !> @ingroup utils
 !> This module defines functions to manipulate strings of characters.
@@ -353,10 +353,11 @@ contains
     integer, optional, intent(in) :: count !< Maximum number of occurrences to replace
     character(len=:), allocatable :: Sout !< New string created
 
-    integer :: i, c, nold
+    integer :: b, e             ! index of beginning and end of match
+    integer :: c, nold
     integer :: count_
 
-    Sout = S
+    Sout = ''
     nold = len(old)
 
     count_ = 1; IF (present(count)) count_ = count
@@ -364,9 +365,10 @@ contains
     c = 0
     do
       IF (c == count_) exit
-      i = index(Sout, old)
-      IF (i == 0) exit
-      Sout = Sout(:i - 1)//new//Sout(i + nold:)
+      e = index(Sin(b:), old) + b - 1
+      IF (e == b - 1) exit
+      Sout = Sout//Sin(b:e - 1)//new
+      b = e + 1
       c = c + 1
     end do
   end function replace
